@@ -3,20 +3,24 @@
 #define F3 0.333333333
 #define G3 0.166666667
 
-layout(triangles, equal_spacing, cw) in;
+layout(triangles, equal_spacing, ccw) in;
 
-//uniform vec4 planes[6];
 uniform mat4 P;
 uniform mat4 V;
 uniform mat4 MVP;
+uniform int oct;
+uniform float lac;
 
 in vec3 tcPosition[];
 in vec3 tcNormal[];
 in vec4 tcColor[];
+in vec2 tcTexCoord[];
 
 out float p;
 out vec3 vcNormal;
 out vec4 vcColor;
+out vec2 vcTexCoord;
+
 
 out vec3 tePosition;
 
@@ -228,20 +232,10 @@ float iqfBm(vec3 v, int octaves, float lacunarity, float gain )
 	return sum;
 }
 
-float rand(vec2 co){
-    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
-}
-
-float noise(vec2 n) {
-	const vec2 d = vec2(0.0, 1.0);
-    vec2 b = floor(n), f = smoothstep(vec2(0.0), vec2(1.0), fract(n));
-	return mix(mix(rand(b), rand(b + d.yx), f.x), mix(rand(b + d.xy), rand(b + d.yy), f.x), f.y);
-}
-
 void main(){
-    vec3 newTcPosition0 = (tcPosition[0]); newTcPosition0.y = iqfBm(newTcPosition0, 8, 16, 1);
-    vec3 newTcPosition1 = (tcPosition[1]); newTcPosition1.y = iqfBm(newTcPosition1, 8, 16, 1);
-    vec3 newTcPosition2 = (tcPosition[2]); newTcPosition2.y = iqfBm(newTcPosition2, 8, 16, 1);
+    vec3 newTcPosition0 = (tcPosition[0]); newTcPosition0.y = iqfBm(newTcPosition0, oct, lac, 1);
+    vec3 newTcPosition1 = (tcPosition[1]); newTcPosition1.y = iqfBm(newTcPosition1, oct, lac, 1);
+    vec3 newTcPosition2 = (tcPosition[2]); newTcPosition2.y = iqfBm(newTcPosition2, oct, lac, 1);
 
     vec3 p0 = gl_TessCoord.x * newTcPosition0;
     vec3 p1 = gl_TessCoord.y * newTcPosition1;
@@ -252,12 +246,17 @@ void main(){
     vec3 n0 = gl_TessCoord.x * tcNormal[0];
     vec3 n1 = gl_TessCoord.y * tcNormal[1];
     vec3 n2 = gl_TessCoord.z * tcNormal[2];
-    vcNormal = (n0 + n1 + n2);
+    vcNormal = normalize(n0 + n1 + n2);
 
     vec4 c0 = gl_TessCoord.x * tcColor[0];
     vec4 c1 = gl_TessCoord.y * tcColor[1];
     vec4 c2 = gl_TessCoord.z * tcColor[2];
     vcColor = (c0 + c1 + c2);
+
+    vec2 t0 = gl_TessCoord.x * tcTexCoord[0];
+    vec2 t1 = gl_TessCoord.y * tcTexCoord[1];
+    vec2 t2 = gl_TessCoord.z * tcTexCoord[2];
+    vcTexCoord = (t0 + t1 + t2);
 
     p = tePosition.y;
     gl_Position = MVP * vec4(tePosition, 1.0);

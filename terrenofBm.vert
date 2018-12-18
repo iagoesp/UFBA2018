@@ -3,13 +3,19 @@
 #define F2 0.366025403
 #define G2 0.211324865
 
-in vec2 position;
-
-uniform float amp;
+layout (location = 0) in vec2 position;
+layout (location = 1) in vec3 aColor;
+layout (location = 2) in vec2 aTexCoord;
 
 out float h;
 out vec3 vNormal;
 out vec4 vColor;
+out vec2 TexCoord;
+
+uniform mat4 V;
+uniform mat4 M;
+uniform int oct;
+uniform float lac;
 
 out vec3 vPosition;
 
@@ -145,13 +151,12 @@ vec3 dnoise(vec2 v){
 	return vec3( 40.0f * (n0 + n1 + n2), dnoise_dx, dnoise_dy ); // TODO: The scale factor is preliminary!
 }
 
-float iqfBm(vec2 v, int octaves, float lacunarity, float gain )
-{
+float iqfBm(vec2 v, int octaves, float lacunarity, float gain ){
 	float sum	= 0.0;
-	float amp	= 1f;
+	float amp	= 4.5f;
 	float dx	= 0.0;
 	float dy	= 0.0;
-	float freq	= 1.0;
+	float freq	= 2.0;
 	for( int i = 0; i < octaves; i++ ) {
 		vec3 d = dnoise( v * freq );
 		dx += d.y;
@@ -165,15 +170,19 @@ float iqfBm(vec2 v, int octaves, float lacunarity, float gain )
 }
 
 void main(){
-    h 			= iqfBm (position, 32, 2.0f, 0.55f);//amp * cos((position.x)) * sin((position.y))+1;
+    h 			= iqfBm (position, oct, lac, 1.f);//amp * cos((position.x)) * sin((position.y))+1;
     vNormal.x	= (position.x);
     vNormal.z	= (position.y);
     vNormal.y   = h;
+    vNormal     = normalize(vNormal);
 
-    vColor.r 	= h*2 / 3.0;
-    vColor.g 	= 0.0;
-    vColor.b 	= 1.0 - h*2 / 4.0;
+    vColor.r 	= h*3 / 3.0;
+    vColor.g 	= 0.1;
+    vColor.b 	= 1.0 - h*2 / 3.0;
     vColor.a 	= 1.0f;
 
+	TexCoord    = vec2(aTexCoord.x, aTexCoord.y);
     vPosition 	= vec3(position.x, h, position.y);
+    gl_Position = vec4(vPosition, 1.0);
+
 }

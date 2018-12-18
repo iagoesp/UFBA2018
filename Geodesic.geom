@@ -3,12 +3,9 @@
 layout (triangles) in;
 layout (triangle_strip, max_vertices = 100) out;
 
-//in vec3 vPosition;
-
 in vec3 vNormal[];
 in vec4 vColor[];
 
-//out vec4 gl_Position;
 out vec3 gNormal;
 out vec4 gColor;
 
@@ -16,6 +13,8 @@ uniform float px;
 uniform float py;
 uniform float pz;
 uniform mat4 MVP;
+uniform int oct;
+uniform float lac;
 
 struct Triangulo{
     vec4 v0;
@@ -43,7 +42,17 @@ void main(){
     camV.z = pz;
     camV.w = 1.0;
 
+    gColor = vColor[0] + vColor[1] + vColor[2];
+    gl_Position = MVP * gl_in[0].gl_Position;
+    EmitVertex();
+    gl_Position = MVP * gl_in[1].gl_Position;
+    EmitVertex();
+    gl_Position = MVP * gl_in[2].gl_Position;
+    EmitVertex();
+    EndPrimitive();
+
     Triangulo p0;
+
     p0.v0 = gl_in[0].gl_Position;
     p0.v1 = gl_in[1].gl_Position;
     p0.v2 = gl_in[2].gl_Position;
@@ -55,19 +64,19 @@ void main(){
     p0.distCO = dist(p0.cO, camV);
     p0.distCA = dist(p0.cA, camV);
 
-    if((p0.distCA < 45.f) ||
-       (p0.distCO < 45.f) ||
-       (p0.distH < 45.f)){
+    if((p0.distCA < 30.f) ||
+       (p0.distCO < 30.f) ||
+       (p0.distH < 30.f)){
 
-        if((p0.distCA < 45) && (p0.distCO < 45) && (p0.distH < 45)){ //7
+        if((p0.distCA < 45) && (p0.distCO < 30) && (p0.distH < 30)){ //7
             Triangulo p1;
-                gl_Position = p0.v0;
+                gl_Position = MVP * p0.v0;
                 EmitVertex();
 
-                gl_Position = p0.cH;
+                gl_Position = MVP * p0.cH;
                 EmitVertex();
 
-                gl_Position = p0.cA;
+                gl_Position = MVP * p0.cA;
                 EmitVertex();
                 EndPrimitive();
 
@@ -84,13 +93,13 @@ void main(){
 
 
             Triangulo p2;
-                gl_Position = p0.cA;
+                gl_Position = MVP * p0.cA;
                 EmitVertex();
 
-                gl_Position = p0.cH;
+                gl_Position = MVP * p0.cH;
                 EmitVertex();
 
-                gl_Position = p0.v2;
+                gl_Position = MVP * p0.v2;
                 EmitVertex();
                 EndPrimitive();
 
@@ -99,13 +108,13 @@ void main(){
                 p2.v2 = p0.v2;
 
             Triangulo p3;
-                gl_Position = p0.cH;
+                gl_Position = MVP * p0.cH;
                 EmitVertex();
 
-                gl_Position = p0.cO;
+                gl_Position = MVP * p0.cO;
                 EmitVertex();
 
-                gl_Position = p0.v2;
+                gl_Position = MVP * p0.v2;
                 EmitVertex();
                 EndPrimitive();
 
@@ -114,13 +123,13 @@ void main(){
                 p3.v2 = p0.v2;
 
             Triangulo p4;
-                gl_Position = p0.cH;
+                gl_Position = MVP * p0.cH;
                 EmitVertex();
 
-                gl_Position = p0.v1;
+                gl_Position = MVP * p0.v1;
                 EmitVertex();
 
-                gl_Position = p0.cO;
+                gl_Position = MVP * p0.cO;
                 EmitVertex();
                 EndPrimitive();
 
@@ -128,15 +137,15 @@ void main(){
                 p4.v1 = p0.v1;
                 p4.v2 = p0.cO;
         }
-        else if((p0.distH < 45) && !(p0.distCA < 45) && (p0.distCO < 45)){ //6
+        else if((p0.distH < 30) && !(p0.distCA < 30) && (p0.distCO < 30)){ //6
             Triangulo p1;
-                gl_Position = p0.v0;
+                gl_Position = MVP * p0.v0;
                 EmitVertex();
 
-                gl_Position = p0.cH;
+                gl_Position = MVP * p0.cH;
                 EmitVertex();
 
-                gl_Position = p0.v2;
+                gl_Position = MVP * p0.v2;
                 EmitVertex();
                 EndPrimitive();
 
@@ -152,13 +161,13 @@ void main(){
                 p1.distCA = dist(p1.cA, camV);
 
             Triangulo p2;
-                gl_Position = p0.cH;
+                gl_Position = MVP * p0.cH;
                 EmitVertex();
 
-                gl_Position = p0.cO;
+                gl_Position = MVP * p0.cO;
                 EmitVertex();
 
-                gl_Position = p0.v2;
+                gl_Position = MVP * p0.v2;
                 EmitVertex();
                 EndPrimitive();
 
@@ -167,13 +176,13 @@ void main(){
                 p2.v2 = p0.v2;
 
             Triangulo p3;
-                gl_Position = p0.cH;
+                gl_Position = MVP * p0.cH;
                 EmitVertex();
 
-                gl_Position = p0.v1;
+                gl_Position = MVP * p0.v1;
                 EmitVertex();
 
-                gl_Position = p0.cO;
+                gl_Position = MVP * p0.cO;
                 EmitVertex();
                 EndPrimitive();
 
@@ -181,15 +190,15 @@ void main(){
                 p3.v1 = p0.v1;
                 p3.v2 = p0.cO;
         }
-        else if((p0.distH < 45) && (p0.distCA < 45) && !(p0.distCO < 45)){ //5
+        else if((p0.distH < 30) && (p0.distCA < 30) && !(p0.distCO < 30)){ //5
             Triangulo p1;
-                gl_Position = p0.v0;
+                gl_Position = MVP * p0.v0;
                 EmitVertex();
 
-                gl_Position = p0.cH;
+                gl_Position = MVP * p0.cH;
                 EmitVertex();
 
-                gl_Position = p0.cA;
+                gl_Position = MVP * p0.cA;
                 EmitVertex();
                 EndPrimitive();
 
@@ -205,13 +214,13 @@ void main(){
                 p1.distCA = dist(p1.cA, camV);
 
             Triangulo p2;
-                gl_Position = p0.cA;
+                gl_Position = MVP * p0.cA;
                 EmitVertex();
 
-                gl_Position = p0.cH;
+                gl_Position = MVP * p0.cH;
                 EmitVertex();
 
-                gl_Position = p0.v2;
+                gl_Position = MVP * p0.v2;
                 EmitVertex();
                 EndPrimitive();
 
@@ -220,13 +229,13 @@ void main(){
                 p2.v2 = p0.v2;
 
             Triangulo p3;
-                gl_Position = p0.cH;
+                gl_Position = MVP * p0.cH;
                 EmitVertex();
 
-                gl_Position = p0.v1;
+                gl_Position = MVP * p0.v1;
                 EmitVertex();
 
-                gl_Position = p0.v2;
+                gl_Position = MVP * p0.v2;
                 EmitVertex();
                 EndPrimitive();
 
@@ -234,15 +243,15 @@ void main(){
                 p3.v1 = p0.v1;
                 p3.v2 = p0.v2;
         }
-        else if(!(p0.distH < 45) && (p0.distCA < 45) && (p0.distCO < 45)){ //4
+        else if(!(p0.distH < 30) && (p0.distCA < 30) && (p0.distCO < 30)){ //4
             Triangulo p1;
-                gl_Position = p0.v0;
+                gl_Position = MVP * p0.v0;
                 EmitVertex();
 
-                gl_Position = p0.v1;
+                gl_Position = MVP * p0.v1;
                 EmitVertex();
 
-                gl_Position = p0.cO;
+                gl_Position = MVP * p0.cO;
                 EmitVertex();
                 EndPrimitive();
 
@@ -258,13 +267,13 @@ void main(){
                 p1.distCA = dist(p1.cA, camV);
 
             Triangulo p2;
-                gl_Position = p0.v0;
+                gl_Position = MVP * p0.v0;
                 EmitVertex();
 
-                gl_Position = p0.cO;
+                gl_Position = MVP * p0.cO;
                 EmitVertex();
 
-                gl_Position = p0.cA;
+                gl_Position = MVP * p0.cA;
                 EmitVertex();
                 EndPrimitive();
 
@@ -273,13 +282,13 @@ void main(){
                 p2.v2 = p0.cA;
 
             Triangulo p3;
-                gl_Position = p0.cA;
+                gl_Position = MVP * p0.cA;
                 EmitVertex();
 
-                gl_Position = p0.cO;
+                gl_Position = MVP * p0.cO;
                 EmitVertex();
 
-                gl_Position = p0.v2;
+                gl_Position = MVP * p0.v2;
                 EmitVertex();
                 EndPrimitive();
 
@@ -287,15 +296,15 @@ void main(){
                 p3.v1 = p0.cO;
                 p3.v2 = p0.v2;
         }
-        else if((p0.distH < 45) && !(p0.distCA < 45) && !(p0.distCO < 45)){ //3
+        else if((p0.distH < 30) && !(p0.distCA < 30) && !(p0.distCO < 30)){ //3
             Triangulo p1;
-                gl_Position = p0.v0;
+                gl_Position = MVP * p0.v0;
                 EmitVertex();
 
-                gl_Position = p0.cH;
+                gl_Position = MVP * p0.cH;
                 EmitVertex();
 
-                gl_Position = p0.v2;
+                gl_Position = MVP * p0.v2;
                 EmitVertex();
                 EndPrimitive();
 
@@ -311,13 +320,13 @@ void main(){
                 p1.distCA = dist(p1.cA, camV);
 
             Triangulo p2;
-                gl_Position = p0.cH;
+                gl_Position = MVP * p0.cH;
                 EmitVertex();
 
-                gl_Position = p0.v1;
+                gl_Position = MVP * p0.v1;
                 EmitVertex();
 
-                gl_Position = p0.v2;
+                gl_Position = MVP * p0.v2;
                 EmitVertex();
                 EndPrimitive();
 
@@ -325,15 +334,15 @@ void main(){
                 p2.v1 = p0.v1;
                 p2.v2 = p0.v2;
         }
-        else if(!(p0.distH < 45) && (p0.distCA < 45) && !(p0.distCO < 45)){//2
+        else if(!(p0.distH < 30) && (p0.distCA < 30) && !(p0.distCO < 30)){//2
             Triangulo p1;
-                gl_Position = p0.v0;
+                gl_Position = MVP * p0.v0;
                 EmitVertex();
 
-                gl_Position = p0.v1;
+                gl_Position = MVP * p0.v1;
                 EmitVertex();
 
-                gl_Position = p0.cA;
+                gl_Position = MVP * p0.cA;
                 EmitVertex();
                 EndPrimitive();
 
@@ -349,13 +358,13 @@ void main(){
                 p1.distCA = dist(p1.cA, camV);
 
             Triangulo p2;
-                gl_Position = p0.cA;
+                gl_Position = MVP * p0.cA;
                 EmitVertex();
 
-                gl_Position = p0.v1;
+                gl_Position = MVP * p0.v1;
                 EmitVertex();
 
-                gl_Position = p0.v2;
+                gl_Position = MVP * p0.v2;
                 EmitVertex();
                 EndPrimitive();
 
@@ -363,15 +372,15 @@ void main(){
                 p2.v1 = p0.v1;
                 p2.v2 = p0.v2;
         }
-        else if(!(p0.distH < 45) && !(p0.distCA < 45) && (p0.distCO < 45)){ //1
+        else if(!(p0.distH < 30) && !(p0.distCA < 30) && (p0.distCO < 30)){ //1
             Triangulo p1;
-                gl_Position = p0.v0;
+                gl_Position = MVP * p0.v0;
                 EmitVertex();
 
-                gl_Position = p0.v1;
+                gl_Position = MVP * p0.v1;
                 EmitVertex();
 
-                gl_Position = p0.cO;
+                gl_Position = MVP * p0.cO;
                 EmitVertex();
                 EndPrimitive();
 
@@ -387,13 +396,13 @@ void main(){
                 p1.distCA = dist(p1.cA, camV);
 
             Triangulo p2;
-                gl_Position = p0.v0;
+                gl_Position = MVP * p0.v0;
                 EmitVertex();
 
-                gl_Position = p0.cO;
+                gl_Position = MVP * p0.cO;
                 EmitVertex();
 
-                gl_Position = p0.v2;
+                gl_Position = MVP * p0.v2;
                 EmitVertex();
                 EndPrimitive();
 

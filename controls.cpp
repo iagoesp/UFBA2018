@@ -5,6 +5,8 @@
 // Include GLM
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <iostream>
+using namespace std;
 using namespace glm;
 
 #include "controls.hpp"
@@ -21,11 +23,11 @@ glm::mat4 getProjectionMatrix(){
 
 
 // Initial position : on +Z
-glm::vec3 position = glm::vec3( -9, -25, 56 );
+glm::vec3 position = glm::vec3( -4, 26, 0 );
 // Initial horizontal angle : toward -Z
-float horizontalAngle = 3.09f;
+float horizontalAngle = 3.85f;
 // Initial vertical angle : none
-float verticalAngle = 0.0f;
+float verticalAngle = 90.0f;
 // Initial Field of View
 float initialFoV = 45.0f;
 
@@ -33,7 +35,8 @@ float speed = 9.0f; // 3 units / second
 float mouseSpeed = 0.005f;
 
 void computeMatricesFromInputs(GLFWwindow* window){
-
+  //  cout<<"hA = "<<horizontalAngle<<",vA = "<<verticalAngle<<endl;
+    //cout<<"px = "<<position.x<<",py = "<<position.y<<",pz = "<<position.z<<endl;
 	// glfwGetTime is called only once, the first time this function is called
 	static double lastTime = glfwGetTime();
 

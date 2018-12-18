@@ -1,8 +1,12 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include "vectormath/vectormath.h"
+//#include "stb_image.h"
 
+#include "filesystem.h"
+#include "vectormath/vectormath.h"
+#include <cstdlib>
+#include <SOIL/stb_image.h>
 // Include GLEW
 #include <GL/glew.h>
 
@@ -32,13 +36,12 @@ int main(int argv, char** argc){
     cout<<"Press J to get the Geometry Shader"<<endl;
     cout<<"Press K to get the Adapt Tessellation Shader"<<endl;
     cout<<"Press L to get the Uniform Tessellation Shader"<<endl;
-	// Initialise GLFW
+
     glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	// Open a window and create its OpenGL context
 	window = glfwCreateWindow( 1280, 1024, "IPSinewave_v6", NULL, NULL);
 	if( window == NULL ){
     cout << "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n";
@@ -47,32 +50,26 @@ int main(int argv, char** argc){
 	}
 	glfwMakeContextCurrent(window);
 
-	// Initialize GLEW
-	glewExperimental = true; // Needed for core profile
+	glewExperimental = true;
 	if (glewInit() != GLEW_OK) {
 		cout<<"Failed to initialize GLEW\n";
 		glfwTerminate();
 		return -1;
 	}
 
-	// Ensure we can capture the escape key being pressed below
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
-    // Hide the mouse and enable unlimited mouvement
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-    // Set the mouse at the center of the screen
     glfwPollEvents();
     glfwSetCursorPos(window, 1280/2, 1024/2);
 
-	// Dark blue background
-	glClearColor(1.f, 0.5f, 1.0f, 1.0f);
+	glClearColor(0.5f, 0.5f, 0.8f, 1.0f);
 
-	// Enable depth test
 	glEnable(GL_DEPTH_TEST);
 
 	// Accept fragment if it closer to the camera than the former one
-	//glDepthFunc(GL_LESS);
+	glDepthFunc(GL_LESS);
 
 	// Cull triangles which normal is not towards the camera
 	//glEnable(GL_CULL_FACE);
@@ -83,48 +80,21 @@ int main(int argv, char** argc){
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
-	// Create and compile our GLSL program from the shaders
-    GLuint programAdaptID = LoadShaders( "terrenofBm.vert",  "tessAdapt.tesc", "tessAdapt.tese", "tessAdapt.frag");
-    GLuint programGeomID  = LoadShaders( "Geodesic.vert", "Geodesic.geom","Geodesic.frag");
-    GLuint programUnifID  = LoadShaders( "terrenofBm.vert",  "tessUnif.tesc", "tessUnif.tese", "tessUnif.frag");
-	// Get a handle for all uniforms
-	GLuint MatrixID             = glGetUniformLocation(programAdaptID, "MVP");
-	GLuint ModelMatrixID        = glGetUniformLocation(programAdaptID, "M");
-	GLuint ViewMatrixID         = glGetUniformLocation(programAdaptID, "V");
-	GLuint ProjectionMatrixID   = glGetUniformLocation(programAdaptID, "P");
-    GLuint cameraPosIDX         = glGetUniformLocation(programAdaptID, "px");
-    GLuint cameraPosIDY         = glGetUniformLocation(programAdaptID, "py");
-    GLuint cameraPosIDZ         = glGetUniformLocation(programAdaptID, "pz");
-	GLuint ampValue             = glGetUniformLocation(programAdaptID, "amp");
+	//GLuint programAdaptID = LoadShaders( "terrenofBm.vert","tessAdapt.frag");
+    GLuint programAdaptID = LoadShaders( "terrenofBm.vert", "tessAdapt.tesc","tessAdapt.tese", "tessAdapt.frag");
+    GLuint programGeomID  = LoadShaders( "terrenofBm.vert", "Geodesic.geom", "Geodesic.frag");
+    GLuint programUnifID  = LoadShaders( "terrenofBm.vert", "tessUnif.tesc", "tessAdapt.tese", "tessAdapt.frag");
 
-	// Get a handle for all uniforms
-    GLuint MatrixUID             = glGetUniformLocation(programUnifID, "MVP");
-	GLuint ModelMatrixUID        = glGetUniformLocation(programUnifID, "M");
-	GLuint ViewMatrixUID         = glGetUniformLocation(programUnifID, "V");
-	GLuint ProjectionMatrixUID   = glGetUniformLocation(programUnifID, "P");
-    GLuint cameraPosUIDX         = glGetUniformLocation(programUnifID, "px");
-    GLuint cameraPosUIDY         = glGetUniformLocation(programUnifID, "py");
-    GLuint cameraPosUIDZ         = glGetUniformLocation(programUnifID, "pz");
-	GLuint ampUValue             = glGetUniformLocation(programUnifID, "amp");
-    GLuint TessLevelInnerUID     = glGetUniformLocation(programUnifID, "TessLevelInner" );// Inner tessellation paramter
-    GLuint TessLevelOuterUID     = glGetUniformLocation(programUnifID, "TessLevelOuter" );  // TessLevelOuter tessellation paramter
 
-    //GLuint programGeomID = LoadShaders("terrenofBm_vG.vert", "tessGeom.geom","tessUnif.frag");
-	// Get a handle for all uniforms
-    GLuint MatrixGID             = glGetUniformLocation(programGeomID, "MVP");
-	GLuint ModelMatrixGID        = glGetUniformLocation(programGeomID, "M");
-	GLuint ViewMatrixGID         = glGetUniformLocation(programGeomID, "V");
-	GLuint ProjectionMatrixGID   = glGetUniformLocation(programGeomID, "P");
-    GLuint cameraPosGIDX         = glGetUniformLocation(programGeomID, "px");
-    GLuint cameraPosGIDY         = glGetUniformLocation(programGeomID, "py");
-    GLuint cameraPosGIDZ         = glGetUniformLocation(programGeomID, "pz");
-	GLuint ampGValue             = glGetUniformLocation(programGeomID, "amp");
-    GLuint TessLevelInnerGID     = glGetUniformLocation(programGeomID, "TessLevelInner" );// Inner tessellation paramter
-    GLuint TessLevelOuterGID     = glGetUniformLocation(programGeomID, "TessLevelOuter" );  // TessLevelOuter tessellation paramter
+
+    GLuint MatrixID, ModelMatrixID, ViewMatrixID, ProjectionMatrixID,
+    cameraPosIDX, cameraPosIDY, cameraPosIDZ, ampValue, octavesValue,
+    lacunarityValue, LightID, TessLevelInnerID, TessLevelOuterID;
+
 
     vector<unsigned short> indices;
-    const GLuint index = 40.0;
-    const GLfloat meshSize = 40.0;
+    const GLuint index = 10.0;
+    const GLfloat meshSize = 80.0;
     float tamAmostra = meshSize / (float)index;
     for (GLuint i = 0 ; i < index ; i++){
 		for (GLuint j = 0 ; j < index ; j++) {
@@ -138,22 +108,13 @@ int main(int argv, char** argc){
 		}
 	}
 
-    float freq = 3.0, amp = 4.0;
-    vector<glm::vec3> vec_y;
+    float amp = 4.0;
+    glm::vec3 lightPos = glm::vec3(4,4,4);
+    int oct = rand() % 100; cout<<oct<<endl;
+    float lac = rand() % 8; cout<<lac<<endl;
     vector<GLfloat> vertices;
-    float minn=100000000, maxx=-1000000000;
     for (GLfloat i = 0 ; i <= index ; i+=1.0){
 		for (GLfloat j = 0 ; j <= index ; j+=1.0) {
-            float y = cos((i*tamAmostra)) * sin((j*tamAmostra));
-            y = y*amp;
-            //cout<<"y = "<< y<<endl;
-            if(y<minn) minn=y;
-            if(y>maxx) maxx=y;
-            glm::vec3 aux;
-            aux.x = i*tamAmostra;
-            aux.y = y;
-            aux.z = j*tamAmostra;
-            vec_y.push_back(aux);
             vertices.push_back((float)(i*tamAmostra));
             vertices.push_back((float)(j*tamAmostra));
         }
@@ -175,6 +136,30 @@ int main(int argv, char** argc){
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLushort), &indices[0], GL_STATIC_DRAW);
 
+     unsigned int texture;
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+    // set the texture wrapping parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // load image, create texture and generate mipmaps
+    int width, height, nrChannels;
+    // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
+    unsigned char *data = stbi_load("C:\\Users\\iagop\\Documents\\Pesquisa2018\\container.jpg", &width, &height, &nrChannels, 0);
+    if (data)
+    {
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(data);
+
     //GLuint normalbuffer;
     //glGenBuffers(1, &normalbuffer);
     //glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
@@ -184,9 +169,7 @@ int main(int argv, char** argc){
     // For speed computation
     TessLevelInner = 1.0f;
     TessLevelOuter = 4.0f;
-    float distance;
     glm::vec3 camerapos = position;
-    float minnn=100000000, maxxx=-1000000000;
 
     do{
 
@@ -196,12 +179,34 @@ int main(int argv, char** argc){
         // Use our shader
         //glUseProgram(programAdaptID);
         if (glfwGetKey( window, GLFW_KEY_J ) == GLFW_PRESS){
-           glUseProgram(programAdaptID);
-           adapt = true;
-           unif = false;
-           geom = false;
+            MatrixID             = glGetUniformLocation(programAdaptID, "MVP");
+            ModelMatrixID        = glGetUniformLocation(programAdaptID, "M");
+            ViewMatrixID         = glGetUniformLocation(programAdaptID, "V");
+            ProjectionMatrixID   = glGetUniformLocation(programAdaptID, "P");
+            cameraPosIDX         = glGetUniformLocation(programAdaptID, "px");
+            cameraPosIDY         = glGetUniformLocation(programAdaptID, "py");
+            cameraPosIDZ         = glGetUniformLocation(programAdaptID, "pz");
+            ampValue             = glGetUniformLocation(programAdaptID, "amp");
+            octavesValue         = glGetUniformLocation(programAdaptID, "oct");
+            lacunarityValue      = glGetUniformLocation(programAdaptID, "lac");
+            LightID              = glGetUniformLocation(programAdaptID, "LightPosition_worldspace");
+            glUseProgram(programAdaptID);
+            adapt = true;
+            unif = false;
+            geom = false;
         }
         if (glfwGetKey( window, GLFW_KEY_K ) == GLFW_PRESS){
+            MatrixID             = glGetUniformLocation(programUnifID, "MVP");
+            ModelMatrixID        = glGetUniformLocation(programUnifID, "M");
+            ViewMatrixID         = glGetUniformLocation(programUnifID, "V");
+            ProjectionMatrixID   = glGetUniformLocation(programUnifID, "P");
+            cameraPosIDX         = glGetUniformLocation(programUnifID, "px");
+            cameraPosIDY         = glGetUniformLocation(programUnifID, "py");
+            cameraPosIDZ         = glGetUniformLocation(programUnifID, "pz");
+            ampValue             = glGetUniformLocation(programUnifID, "amp");
+            octavesValue         = glGetUniformLocation(programUnifID, "oct");
+            lacunarityValue      = glGetUniformLocation(programUnifID, "lac");
+            LightID              = glGetUniformLocation(programUnifID, "LightPosition_worldspace");
            glUseProgram(programUnifID);
            adapt = false;
            unif = true;
@@ -209,6 +214,17 @@ int main(int argv, char** argc){
         }
 
         if (glfwGetKey( window, GLFW_KEY_L ) == GLFW_PRESS){
+            MatrixID             = glGetUniformLocation(programGeomID, "MVP");
+            ModelMatrixID        = glGetUniformLocation(programGeomID, "M");
+            ViewMatrixID         = glGetUniformLocation(programGeomID, "V");
+            ProjectionMatrixID   = glGetUniformLocation(programGeomID, "P");
+            cameraPosIDX         = glGetUniformLocation(programGeomID, "px");
+            cameraPosIDY         = glGetUniformLocation(programGeomID, "py");
+            cameraPosIDZ         = glGetUniformLocation(programGeomID, "pz");
+            ampValue             = glGetUniformLocation(programGeomID, "amp");
+            octavesValue         = glGetUniformLocation(programGeomID, "oct");
+            lacunarityValue      = glGetUniformLocation(programGeomID, "lac");
+            LightID              = glGetUniformLocation(programGeomID, "LightPosition_worldspace");
            glUseProgram(programGeomID);
            adapt = false;
            unif = false;
@@ -225,6 +241,7 @@ int main(int argv, char** argc){
         // Send our transformation to the currently bound shader,
         // in the "MVP" uniform
         float px = position.x; float py = position.y; float pz = position.z;
+
                //cout<<"     min = "<<minnn<<" e max = "<<maxxx<<endl;
         if (glfwGetKey( window, GLFW_KEY_U ) == GLFW_PRESS){
            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -238,50 +255,78 @@ int main(int argv, char** argc){
         if (glfwGetKey( window, GLFW_KEY_P ) == GLFW_PRESS){
             glDisable(GL_CULL_FACE);
         }
+        if (glfwGetKey( window, GLFW_KEY_M ) == GLFW_PRESS){
+            oct = rand() % 7;
+            cout<<oct<<endl;
+        }
+        if (glfwGetKey( window, GLFW_KEY_N ) == GLFW_PRESS){
+            lac = rand() % 11;
+            cout<<lac<<endl;
+        }
 
         if(adapt){
             glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
             glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
             glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
             glUniformMatrix4fv(ProjectionMatrixID, 1, GL_FALSE, &ProjectionMatrix[0][0]);
+            glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
             glUniform1f(cameraPosIDX, px);
             glUniform1f(cameraPosIDY, py);
             glUniform1f(cameraPosIDZ, pz);
             glUniform1f(ampValue,amp);
+            glUniform1i(octavesValue,oct);
+            glUniform1f(lacunarityValue,lac);
         }
         else if(unif){
-            glUniformMatrix4fv(MatrixUID, 1, GL_FALSE, &MVP[0][0]);
-            glUniformMatrix4fv(ModelMatrixUID, 1, GL_FALSE, &ModelMatrix[0][0]);
-            glUniformMatrix4fv(ViewMatrixUID, 1, GL_FALSE, &ViewMatrix[0][0]);
-            glUniformMatrix4fv(ProjectionMatrixUID, 1, GL_FALSE, &ProjectionMatrix[0][0]);
-            glUniform1f( TessLevelInnerUID, TessLevelInner );
-            glUniform1f( TessLevelOuterUID, TessLevelOuter );
-            glUniform1f(cameraPosUIDX, px);
-            glUniform1f(cameraPosUIDY, py);
-            glUniform1f(cameraPosUIDZ, pz);
-            glUniform1f(ampUValue,amp);
+            glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+            glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
+            glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
+            glUniformMatrix4fv(ProjectionMatrixID, 1, GL_FALSE, &ProjectionMatrix[0][0]);
+            glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+            glUniform1f( TessLevelInnerID, TessLevelInner );
+            glUniform1f( TessLevelOuterID, TessLevelOuter );
+            glUniform1f(cameraPosIDX, px);
+            glUniform1f(cameraPosIDY, py);
+            glUniform1f(cameraPosIDZ, pz);
+            glUniform1f(ampValue,amp);
+            glUniform1i(octavesValue,oct);
+            glUniform1f(lacunarityValue,lac);
+
         }
         else if(geom){
-            glUniformMatrix4fv(MatrixGID, 1, GL_FALSE, &MVP[0][0]);
-            glUniformMatrix4fv(ModelMatrixGID, 1, GL_FALSE, &ModelMatrix[0][0]);
-            glUniformMatrix4fv(ViewMatrixGID, 1, GL_FALSE, &ViewMatrix[0][0]);
-            glUniformMatrix4fv(ProjectionMatrixGID, 1, GL_FALSE, &ProjectionMatrix[0][0]);
-            glUniform1f(cameraPosGIDX, px);
-            glUniform1f(cameraPosGIDY, py);
-            glUniform1f(cameraPosGIDZ, pz);
-            glUniform1f(ampGValue,amp);
+            glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+            glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
+            glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
+            glUniformMatrix4fv(ProjectionMatrixID, 1, GL_FALSE, &ProjectionMatrix[0][0]);
+            glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+            glUniform1f(cameraPosIDX, px);
+            glUniform1f(cameraPosIDY, py);
+            glUniform1f(cameraPosIDZ, pz);
+            glUniform1f(ampValue,amp);
+            glUniform1i(octavesValue,oct);
+            glUniform1f(lacunarityValue,lac);
         }
 
         if(adapt || unif)
             glPatchParameteri(GL_PATCH_VERTICES, 3);
+
 
         // 1rst attribute buffer : vertices
         glEnableVertexAttribArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
         glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
+        // color attribute
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+
+        // texture coord attribute
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+
         // Index buffer
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+        glBindTexture(GL_TEXTURE_2D, texture);
 
         // Draw the triangles !
         if(adapt || unif){
