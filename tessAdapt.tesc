@@ -25,9 +25,8 @@ float LOD(vec3 posV, float posCX, float posCY, float posCZ){
   float dist = sqrt((posV.x - posCX)*(posV.x - posCX)
                   + (posV.y - posCY)*(posV.y - posCY)
                   + (posV.z - posCZ)*(posV.z - posCZ));
-  if(dist<=5) return 64.0;
-  else if(dist>5 && dist<=10) return 32.0;
-  else if(dist>10 && dist<=15) return 16.0;
+  if(dist<=5) return 32.0;
+  else if(dist>5 && dist<=15) return 16.0;
   else if(dist>15 && dist<=20) return 8.0;
   else if(dist>20 && dist<=30) return 4.0;
   else if(dist>30 && dist<=40) return 2.0;

@@ -6,9 +6,11 @@
 #include "filesystem.h"
 #include "vectormath/vectormath.h"
 #include <cstdlib>
-#include <SOIL/stb_image.h>
 // Include GLEW
 #include <GL/glew.h>
+#include "stb_image.h"
+#include "SOIL.h"
+//#include "SOIL.c"
 
 // Include GLFW
 #include <GLFW/glfw3.h>
@@ -67,6 +69,8 @@ int main(int argv, char** argc){
 	glClearColor(0.5f, 0.5f, 0.8f, 1.0f);
 
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	// Accept fragment if it closer to the camera than the former one
 	glDepthFunc(GL_LESS);
@@ -89,7 +93,7 @@ int main(int argv, char** argc){
 
     GLuint MatrixID, ModelMatrixID, ViewMatrixID, ProjectionMatrixID,
     cameraPosIDX, cameraPosIDY, cameraPosIDZ, ampValue, octavesValue,
-    lacunarityValue, LightID, TessLevelInnerID, TessLevelOuterID;
+    lacunarityValue, LightID, TessLevelInnerID, TessLevelOuterID, TextureID, TextureID2, decalTexLocation, bumpTexLocation;
 
 
     vector<unsigned short> indices;
@@ -113,10 +117,14 @@ int main(int argv, char** argc){
     int oct = rand() % 100; cout<<oct<<endl;
     float lac = rand() % 8; cout<<lac<<endl;
     vector<GLfloat> vertices;
+    vector<GLfloat> texcoord;
+
     for (GLfloat i = 0 ; i <= index ; i+=1.0){
 		for (GLfloat j = 0 ; j <= index ; j+=1.0) {
             vertices.push_back((float)(i*tamAmostra));
             vertices.push_back((float)(j*tamAmostra));
+            texcoord.push_back((float)i);
+            texcoord.push_back((float)j);
         }
 	}
 
@@ -136,9 +144,15 @@ int main(int argv, char** argc){
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLushort), &indices[0], GL_STATIC_DRAW);
 
-     unsigned int texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture); // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+    GLuint texturebuffer;
+    glGenBuffers(1, &texturebuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, texturebuffer);
+    glBufferData(GL_ARRAY_BUFFER, texcoord.size() * sizeof(GLfloat), texcoord.data(), GL_STATIC_DRAW);
+
+    GLuint decalTexHandle;
+    glGenTextures(1, &decalTexHandle);
+
+     // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
     // set the texture wrapping parameters
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -148,11 +162,43 @@ int main(int argv, char** argc){
     // load image, create texture and generate mipmaps
     int width, height, nrChannels;
     // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
-    unsigned char *data = stbi_load("C:\\Users\\iagop\\Documents\\Pesquisa2018\\container.jpg", &width, &height, &nrChannels, 0);
+    unsigned char *textura1 = SOIL_load_image("container.jpg", &width, &height, &nrChannels, SOIL_LOAD_RGB);
+    if (textura1)
+    {
+        glActiveTexture(GL_TEXTURE0 + 0);
+        glBindTexture(GL_TEXTURE_2D, decalTexHandle);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textura1);
+        glGenerateMipmap(GL_TEXTURE_2D);
+        TextureID = glGetUniformLocation(programAdaptID, "tex1");
+        glUniform1ui(TextureID, 0);
+
+
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(textura1);
+
+    GLuint bumpHandle;
+    glGenTextures(1, &bumpHandle);
+
+      // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+    // set the texture wrapping parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    unsigned char *data = SOIL_load_image("azul.jpg", &width, &height, &nrChannels, SOIL_LOAD_RGB);
     if (data)
     {
+        glActiveTexture(GL_TEXTURE0 + 1); // Texture unit 1
+        glBindTexture(GL_TEXTURE_2D, bumpHandle);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
+
     }
     else
     {
@@ -190,6 +236,8 @@ int main(int argv, char** argc){
             octavesValue         = glGetUniformLocation(programAdaptID, "oct");
             lacunarityValue      = glGetUniformLocation(programAdaptID, "lac");
             LightID              = glGetUniformLocation(programAdaptID, "LightPosition_worldspace");
+            decalTexLocation = glGetUniformLocation(programAdaptID, "DecalTex");
+            bumpTexLocation  = glGetUniformLocation(programAdaptID, "BumpTex");
             glUseProgram(programAdaptID);
             adapt = true;
             unif = false;
@@ -276,6 +324,8 @@ int main(int argv, char** argc){
             glUniform1f(ampValue,amp);
             glUniform1i(octavesValue,oct);
             glUniform1f(lacunarityValue,lac);
+            glUniform1i(decalTexLocation, 0);
+            glUniform1i(bumpTexLocation,  1);
         }
         else if(unif){
             glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
@@ -322,11 +372,12 @@ int main(int argv, char** argc){
 
         // texture coord attribute
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+        glBindBuffer(GL_ARRAY_BUFFER, texturebuffer);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
         // Index buffer
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-        glBindTexture(GL_TEXTURE_2D, texture);
+       // glBindTexture(GL_TEXTURE_2D, texture);
 
         // Draw the triangles !
         if(adapt || unif){
