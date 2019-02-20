@@ -170,7 +170,7 @@ float iqfBm(vec2 v, int octaves, float lacunarity, float gain ){
 }
 
 void main(){
-    h 			= iqfBm (position, 4, 1.9, 1.3f);//amp * cos((position.x)) * sin((position.y))+1;
+    h 			= iqfBm (position, 3, 32.f, 1.2f)*400;//amp * cos((position.x)) * sin((position.y))+1;
     vNormal.x	= (position.x);
     vNormal.z	= (position.y);
     vNormal.y   = h;

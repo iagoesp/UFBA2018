@@ -233,9 +233,9 @@ float iqfBm(vec3 v, int octaves, float lacunarity, float gain )
 }
 
 void main(){
-    vec3 newTcPosition0 = (tcPosition[0]); newTcPosition0.y = iqfBm(newTcPosition0, 2, 2, 8);
-    vec3 newTcPosition1 = (tcPosition[1]); newTcPosition1.y = iqfBm(newTcPosition1, 2, 2, 8);
-    vec3 newTcPosition2 = (tcPosition[2]); newTcPosition2.y = iqfBm(newTcPosition2, 2, 2, 8);
+    vec3 newTcPosition0 = (tcPosition[0]); newTcPosition0.y = iqfBm(newTcPosition0, 2, 32, 8);
+    vec3 newTcPosition1 = (tcPosition[1]); newTcPosition1.y = iqfBm(newTcPosition1, 2, 32, 8);
+    vec3 newTcPosition2 = (tcPosition[2]); newTcPosition2.y = iqfBm(newTcPosition2, 2, 32, 8);
 
     vec3 p0 = gl_TessCoord.x * newTcPosition0;
     vec3 p1 = gl_TessCoord.y * newTcPosition1;
