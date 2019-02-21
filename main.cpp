@@ -149,8 +149,8 @@ int main(int argv, char** argc){
     glBindBuffer(GL_ARRAY_BUFFER, texturebuffer);
     glBufferData(GL_ARRAY_BUFFER, texcoord.size() * sizeof(GLfloat), texcoord.data(), GL_STATIC_DRAW);
 
-    GLuint decalTexHandle;
-    glGenTextures(1, &decalTexHandle);
+    GLuint allTextures[4];
+    glGenTextures(1, &allTextures[0]);
 
      // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
     // set the texture wrapping parameters
@@ -166,7 +166,7 @@ int main(int argv, char** argc){
     if (textura1)
     {
         glActiveTexture(GL_TEXTURE0 + 0);
-        glBindTexture(GL_TEXTURE_2D, decalTexHandle);
+        glBindTexture(GL_TEXTURE_2D, allTextures[0]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textura1);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
@@ -176,8 +176,7 @@ int main(int argv, char** argc){
     }
     stbi_image_free(textura1);
 
-    GLuint bumpHandle;
-    glGenTextures(1, &bumpHandle);
+    glGenTextures(1, &allTextures[1]);
 
       // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
     // set the texture wrapping parameters
@@ -191,7 +190,7 @@ int main(int argv, char** argc){
     if (data)
     {
         glActiveTexture(GL_TEXTURE0 + 1); // Texture unit 1
-        glBindTexture(GL_TEXTURE_2D, bumpHandle);
+        glBindTexture(GL_TEXTURE_2D, allTextures[1]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
         glGenerateMipmap(GL_TEXTURE_2D);
     }
@@ -201,8 +200,7 @@ int main(int argv, char** argc){
     }
     stbi_image_free(data);
 
-    GLuint gramaHundle;
-    glGenTextures(1, &gramaHundle);
+    glGenTextures(1, &allTextures[2]);
 
       // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
     // set the texture wrapping parameters
@@ -216,7 +214,7 @@ int main(int argv, char** argc){
     if (grama)
     {
         glActiveTexture(GL_TEXTURE0 + 2); // Texture unit 1
-        glBindTexture(GL_TEXTURE_2D, gramaHundle);
+        glBindTexture(GL_TEXTURE_2D, allTextures[2]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, grama);
         glGenerateMipmap(GL_TEXTURE_2D);
 
@@ -227,8 +225,7 @@ int main(int argv, char** argc){
     }
     stbi_image_free(grama);
 
-    GLuint iceHundle;
-    glGenTextures(1, &iceHundle);
+    glGenTextures(1, &allTextures[3]);
 
       // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
     // set the texture wrapping parameters
@@ -242,7 +239,7 @@ int main(int argv, char** argc){
     if (ice)
     {
         glActiveTexture(GL_TEXTURE0 + 3); // Texture unit 1
-        glBindTexture(GL_TEXTURE_2D, iceHundle);
+        glBindTexture(GL_TEXTURE_2D, allTextures[3]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, ice);
         glGenerateMipmap(GL_TEXTURE_2D);
 

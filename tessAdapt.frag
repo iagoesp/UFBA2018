@@ -24,40 +24,6 @@ float weightStone;
 float weightGrass;
 float heightBlendFactor = 1.f;
 
-vec3 lerp(vec3 v1, vec3 v2, float t)
-{
-    t = clamp01(t);
-    return v1 + ((v2 - v1) * t);
-}
-
-vec3 surf(vec4 t1, vec4 texTerra)
-{
-    vec3 v1 = t1.rgb;
-    vec3 v2 = texTerra.rgb;
-    float t = vcTexCoord.x;
-
-    return lerp(v1, v2, t);
-}
-
-float norma(float a){
-    if(a<0){
-        a*=-1;
-        for(float i = a; i>=0 && i <=1; i/=2.f){
-            a = i;
-        }
-        return -a;
-    }
-    for(float i = a; i>=0 && i <=1; i/=2.f){
-            a = i;
-    }
-    return a;
-}
-
-void weight(float w, float s){
-    weightWater = w;
-    weightStone = s;
-    weightGrass = 1.0 - weightWater - weightStone;
-}
 
 
 vec3 heightblend(vec3 tex1, float height1, vec3 tex2, float height2)
@@ -88,22 +54,22 @@ vec3 blend(vec4 texture1, float a1, vec4 texture2, float a2)
 
 void main(){
     float height = p;
+    vec4 blank = vec4 ( 1.0f, 1.0f, 1.0f, 1.0f );
     vec4 vTexColor = vec4 ( 1.0f, 1.0f, 1.0f, 1.0f );
 
-    const float fRangem = -1.f;
-	const float fRange0 = 0.f;
-	const float fRange1 = 1.f;
-	const float fRange2 = 2.f;
+    const float level0 = 0.f;
+	const float level1 = 1.f;
+	const float level2 = 3.0f;
+	const float level3 = 4.f;
 
-
-	if(height <= fRangem){
-        vTexColor = vec4(surf(texAgua, 0.1f, texTerra, 0.0000000000001f), 1.f);
+	if(height <= level0){
+        vTexColor = vec4(surf(texGrama , height, texTerra, level0), 1.f);
 	}
-	else if(height > fRangem && height <= fRange0){
-        vTexColor = vec4(surf(texAgua, fRangem, texTerra, height), 1.f);
+	else if(height > level0 && height <= level1){
+        vTexColor = vec4(surf(texTerra, level0, texGrama, height), 1.f);
     }
-    else if(height > fRange0){
-        vTexColor = vec4(surf(texTerra , 1-height , texGrama, fRange0), 1.f);
+    else if(height > level1){
+        vTexColor = vec4(surf(texGrama , level1 , texSnow, height-1), 1.f);
     }
 
 	vec4 vFinalTexColor = vTexColor;
