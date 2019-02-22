@@ -1,3 +1,5 @@
+#define QuantText 5
+
 #include <vector>
 #include <iostream>
 #include <string>
@@ -30,9 +32,15 @@ bool adapt = true;
 bool unif  = false;
 bool geom = false;
 static GLsizei IndexCount;
-static const GLuint PositionSlot = 0;
 static float TessLevelInner;
 static float TessLevelOuter;
+GLuint allTextures[QuantText];
+const char* filenames[QuantText] = {"container.jpg",
+                                    "agua.jpg",
+                                    "grama.jpg",
+                                    "snow.jpg",
+                                    "mountain.jpg"};
+
 
 int main(int argv, char** argc){
     cout<<"Press J to get the Geometry Shader"<<endl;
@@ -93,7 +101,7 @@ int main(int argv, char** argc){
 
     GLuint MatrixID, ModelMatrixID, ViewMatrixID, ProjectionMatrixID,
     cameraPosIDX, cameraPosIDY, cameraPosIDZ, ampValue, octavesValue,
-    lacunarityValue, LightID, TessLevelInnerID, TessLevelOuterID, TextureID, TextureID2, decalTexLocation, bumpTexLocation, grassID, iceID;
+    lacunarityValue, LightID, TessLevelInnerID, TessLevelOuterID, TextureID, TextureID2, groundID, waterID, grassID, iceID, mountainID;
 
 
     vector<unsigned short> indices;
@@ -149,7 +157,7 @@ int main(int argv, char** argc){
     glBindBuffer(GL_ARRAY_BUFFER, texturebuffer);
     glBufferData(GL_ARRAY_BUFFER, texcoord.size() * sizeof(GLfloat), texcoord.data(), GL_STATIC_DRAW);
 
-    GLuint allTextures[4];
+
     glGenTextures(1, &allTextures[0]);
 
      // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
@@ -162,7 +170,7 @@ int main(int argv, char** argc){
     // load image, create texture and generate mipmaps
     int width, height, nrChannels;
     // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
-    unsigned char *textura1 = SOIL_load_image("container.jpg", &width, &height, &nrChannels, SOIL_LOAD_RGB);
+    unsigned char *textura1 = SOIL_load_image(filenames[0], &width, &height, &nrChannels, SOIL_LOAD_RGB);
     if (textura1)
     {
         glActiveTexture(GL_TEXTURE0 + 0);
@@ -186,7 +194,7 @@ int main(int argv, char** argc){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    unsigned char *data = SOIL_load_image("agua.jpg", &width, &height, &nrChannels, SOIL_LOAD_RGB);
+    unsigned char *data = SOIL_load_image(filenames[1], &width, &height, &nrChannels, SOIL_LOAD_RGB);
     if (data)
     {
         glActiveTexture(GL_TEXTURE0 + 1); // Texture unit 1
@@ -210,7 +218,7 @@ int main(int argv, char** argc){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    unsigned char *grama = SOIL_load_image("grama.jpg", &width, &height, &nrChannels, SOIL_LOAD_RGB);
+    unsigned char *grama = SOIL_load_image(filenames[2], &width, &height, &nrChannels, SOIL_LOAD_RGB);
     if (grama)
     {
         glActiveTexture(GL_TEXTURE0 + 2); // Texture unit 1
@@ -235,7 +243,7 @@ int main(int argv, char** argc){
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    unsigned char *ice = SOIL_load_image("snow.jpg", &width, &height, &nrChannels, SOIL_LOAD_RGB);
+    unsigned char *ice = SOIL_load_image(filenames[3], &width, &height, &nrChannels, SOIL_LOAD_RGB);
     if (ice)
     {
         glActiveTexture(GL_TEXTURE0 + 3); // Texture unit 1
@@ -250,6 +258,30 @@ int main(int argv, char** argc){
     }
     stbi_image_free(ice);
 
+    glGenTextures(1, &allTextures[4]);
+
+      // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+    // set the texture wrapping parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    // set texture filtering parameters
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    unsigned char *mountain = SOIL_load_image(filenames[4], &width, &height, &nrChannels, SOIL_LOAD_RGB);
+    if (mountain)
+    {
+        glActiveTexture(GL_TEXTURE0 + 4); // Texture unit 1
+        glBindTexture(GL_TEXTURE_2D, allTextures[4]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, mountain);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+    }
+    stbi_image_free(mountain);
 
 
     //GLuint normalbuffer;
@@ -282,10 +314,11 @@ int main(int argv, char** argc){
             octavesValue         = glGetUniformLocation(programAdaptID, "oct");
             lacunarityValue      = glGetUniformLocation(programAdaptID, "lac");
             LightID              = glGetUniformLocation(programAdaptID, "LightPosition_worldspace");
-            decalTexLocation = glGetUniformLocation(programAdaptID, "terra");
-            bumpTexLocation  = glGetUniformLocation(programAdaptID, "agua");
+            groundID = glGetUniformLocation(programAdaptID, "terra");
+            waterID  = glGetUniformLocation(programAdaptID, "agua");
             grassID  = glGetUniformLocation(programAdaptID, "grama");
             iceID  = glGetUniformLocation(programAdaptID, "snow");
+            mountainID  = glGetUniformLocation(programAdaptID, "mountain");
             glUseProgram(programAdaptID);
             adapt = true;
             unif = false;
@@ -372,10 +405,11 @@ int main(int argv, char** argc){
             glUniform1f(ampValue,amp);
             glUniform1i(octavesValue,oct);
             glUniform1f(lacunarityValue,lac);
-            glUniform1i(decalTexLocation, 0);
-            glUniform1i(bumpTexLocation,  1);
+            glUniform1i(groundID, 0);
+            glUniform1i(waterID,  1);
             glUniform1i(grassID, 2);
             glUniform1i(iceID, 3);
+            glUniform1i(mountainID, 4);
         }
         else if(unif){
             glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
