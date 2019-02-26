@@ -3,21 +3,15 @@
 #define F2 0.366025403
 #define G2 0.211324865
 
-layout (location = 0) in vec2 position;
-layout (location = 1) in vec3 aColor;
-layout (location = 2) in vec2 aTexCoord;
+layout (location = 0) in vec2 Position_VS_in;
+layout (location = 1) in vec3 Color_VS_in;
+layout (location = 2) in vec2 TexCoord_VS_in;
 
-out float h;
-out vec3 vNormal;
-out vec4 vColor;
-out vec2 TexCoord;
-
-uniform mat4 V;
 uniform mat4 M;
-uniform int oct;
-uniform float lac;
 
-out vec3 vPosition;
+out vec3 WorldPos_CS_in;
+out vec2 TexCoord_CS_in;
+out vec3 Normal_CS_in;
 
 float gx0, gy0, gx1, gy1, gx2, gy2;
 
@@ -169,20 +163,16 @@ float iqfBm(vec2 v, int octaves, float lacunarity, float gain ){
 	return sum;
 }
 
-void main(){
-    h 			= iqfBm (position, 3, 4.f, 1.2f);//amp * cos((position.x)) * sin((position.y))+1;
-    vNormal.x	= (position.x);
-    vNormal.z	= (position.y);
-    vNormal.y   = h;
-    vNormal     = normalize(vNormal);
+void main()
+{
+    Normal_CS_in.x	= (Position_VS_in.x);
+    Normal_CS_in.z	= (Position_VS_in.y);
+    Normal_CS_in.y   = 1.0f;
+    Normal_CS_in     = normalize(M * vec4(Normal_CS_in, 0.0)).xyz;
 
-    vColor.r 	= h*3 / 3.0;
-    vColor.g 	= 0.1;
-    vColor.b 	= 1.0 - h*2 / 3.0;
-    vColor.a 	= 1.0f;
 
-	TexCoord    = vec2(aTexCoord.x, aTexCoord.y);
-    vPosition 	= vec3(position.x, h, position.y);
-    gl_Position = vec4(vPosition, 1.0);
+    WorldPos_CS_in = (M * vec4(Position_VS_in.x, iqfBm (Position_VS_in, 3, 4.f, 1.2f), Position_VS_in.y, 1.0)).xyz;
 
+
+    TexCoord_CS_in = TexCoord_VS_in;
 }

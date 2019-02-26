@@ -1,9 +1,58 @@
-#version 430 core
 
-in vec3 vcNormal;
-in vec4 vcColor;
-in float p;
-in vec2 vcTexCoord;
+#version 410 core
+
+const int MAX_POINT_LIGHTS = 2;
+const int MAX_SPOT_LIGHTS = 2;
+
+in vec2 TexCoord_FS_in;
+in vec3 Normal_FS_in;
+in vec3 WorldPos_FS_in;
+
+out vec4 FragColor;
+
+struct BaseLight
+{
+    vec3 Color;
+    float AmbientIntensity;
+    float DiffuseIntensity;
+};
+
+struct DirectionalLight
+{
+    BaseLight Base;
+    vec3 Direction;
+};
+
+struct Attenuation
+{
+    float Constant;
+    float Linear;
+    float Exp;
+};
+
+struct PointLight
+{
+    BaseLight Base;
+    vec3 Position;
+    Attenuation Atten;
+};
+
+struct SpotLight
+{
+    PointLight Base;
+    vec3 Direction;
+    float Cutoff;
+};
+
+uniform int gNumPointLights;
+uniform int gNumSpotLights;
+uniform DirectionalLight gDirectionalLight;
+uniform PointLight gPointLights[MAX_POINT_LIGHTS];
+uniform SpotLight gSpotLights[MAX_SPOT_LIGHTS];
+uniform sampler2D gColorMap;
+uniform vec3 gEyeWorldPos;
+uniform float gMatSpecularIntensity;
+uniform float gSpecularPower;
 
 uniform sampler2D terra;
 uniform sampler2D agua;
@@ -11,66 +60,64 @@ uniform sampler2D grama;
 uniform sampler2D snow;
 uniform sampler2D mountain;
 
-out vec4 fragColor;
-
-#define clamp01(x) clamp(x, 0.0, 1.0)
-
-vec4 texAgua = texture2D(agua, vcTexCoord);
-vec4 texTerra = texture2D(terra, vcTexCoord);
-vec4 texGrama = texture2D(grama, vcTexCoord);
-vec4 texSnow = texture2D(snow, vcTexCoord);
-vec4 texMountain = texture2D(mountain, vcTexCoord);
-
-float weightWater;
-float weightStone;
-float weightGrass;
-
-vec3 heightblend(vec3 tex1, float height1, vec3 tex2, float height2)
+vec4 CalcLightInternal(BaseLight Light, vec3 LightDirection, vec3 Normal)
 {
-    float heightBlendFactor = 1.f;
-    float height_start = max(height1, height2 - 1) - heightBlendFactor;
-    float level1 = max(height1 - height_start, 0);
-    float level2 = max(height2 - height_start -1, 0);
-    return ((tex1 * level1) + (tex2 * level2)) / (level1 + level2);
+    vec4 AmbientColor = vec4(Light.Color * Light.AmbientIntensity, 1.0f);
+    float DiffuseFactor = dot(Normal, -LightDirection);
+
+    vec4 DiffuseColor  = vec4(0, 0, 0, 0);
+    vec4 SpecularColor = vec4(0, 0, 0, 0);
+
+    if (DiffuseFactor > 0) {
+        DiffuseColor = vec4(Light.Color * Light.DiffuseIntensity * DiffuseFactor, 1.0f);
+
+        vec3 VertexToEye = normalize(gEyeWorldPos - WorldPos_FS_in);
+        vec3 LightReflect = normalize(reflect(LightDirection, Normal));
+        float SpecularFactor = dot(VertexToEye, LightReflect);
+        if (SpecularFactor > 0) {
+            SpecularFactor = pow(SpecularFactor, gSpecularPower);
+            SpecularColor = vec4(Light.Color * gMatSpecularIntensity * SpecularFactor, 1.0f);
+        }
+    }
+
+    return (AmbientColor + DiffuseColor + SpecularColor);
 }
 
-vec3 surf(vec4 tex1, float h1, vec4 tex2, float h2)
+vec4 CalcDirectionalLight(vec3 Normal)
 {
-    vec3 t1 = tex1.rgb;
-    vec3 t2 = tex2.rgb;
-    return heightblend (t1, h1, t2, h2);
+    return CalcLightInternal(gDirectionalLight.Base, gDirectionalLight.Direction, Normal);
 }
 
-void main(){
-    float height = p;
-    vec4 blank = vec4 ( 1.0f, 1.0f, 1.0f, 1.0f );
-    vec4 blue = vec4 ( 0.0f, 0.0f, 1.0f, 1.0f );
-    vec4 vTexColor = vec4 ( 1.0f, 1.0f, 1.0f, 1.0f );
+vec4 CalcPointLight(PointLight l, vec3 Normal)
+{
+    vec3 LightDirection = WorldPos_FS_in - l.Position;
+    float Distance = length(LightDirection);
+    LightDirection = normalize(LightDirection);
 
-    const float leveli1 = -2.f;
-    const float level0 = 0.f;
-	const float level1 = 2.f;
-	const float level2 = 4.f;
-	const float level3 = 6.f;
-	const float level4 = 8.f;
+    vec4 Color = CalcLightInternal(l.Base, LightDirection, Normal);
+    float Attenuation =  l.Atten.Constant +
+                         l.Atten.Linear * Distance +
+                         l.Atten.Exp * Distance * Distance;
 
-	if(height <= leveli1){
-        vTexColor = vec4(surf(texAgua, leveli1, texGrama , height), 1.f);
-	}
-	else if(height > leveli1 && height <= level0){
-        vTexColor = vec4(surf(texAgua, leveli1, texGrama , height), 1.f);
-	}
-	else if(height > level0 && height <= level2){
-        vTexColor = vec4(surf(texGrama, level0, texTerra , height), 1.f);
+    return Color / Attenuation;
+}
+
+vec4 CalcSpotLight(SpotLight l, vec3 Normal)
+{
+    vec3 LightToPixel = normalize(WorldPos_FS_in - l.Base.Position);
+    float SpotFactor = dot(LightToPixel, l.Direction);
+
+    if (SpotFactor > l.Cutoff) {
+        vec4 Color = CalcPointLight(l.Base, Normal);
+        return Color * (1.0 - (1.0 - SpotFactor) * 1.0/(1.0 - l.Cutoff));
     }
-    else if(height > level2 && height <= level3){
-        vTexColor = vec4(surf(texTerra, level2, texMountain, height), 1.f);
+    else {
+        return vec4(0,0,0,0);
     }
-    else if(height > level3){
-        vTexColor = vec4(surf(texMountain , level3 , texSnow , height-1), 1.f);
-    }
+}
 
-	vec4 vFinalTexColor = vTexColor;
+void main()
+{
 
-   	fragColor = vFinalTexColor;
+    FragColor = texture(terra, TexCoord_FS_in.xy);
 }
