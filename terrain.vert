@@ -9,6 +9,7 @@ layout (location = 2) in vec2 aTexCoord;
 
 out float h;
 out vec3 vNormal;
+out vec3 WorldPos;
 out vec4 vColor;
 out vec2 TexCoord;
 
@@ -183,6 +184,7 @@ void main(){
 
 	TexCoord    = vec2(aTexCoord.x, aTexCoord.y);
     vPosition 	= vec3(position.x, h, position.y);
+    WorldPos = (M * vec4(position.x, iqfBm (position, 3, 4.f, 1.2f), position.y, 1.0)).xyz;
     gl_Position = vec4(vPosition, 1.0);
 
 }

@@ -46,9 +46,12 @@
 		<Unit filename="controls.cpp" />
 		<Unit filename="controls.hpp" />
 		<Unit filename="main.cpp" />
+		<Unit filename="terrain.frag" />
 		<Unit filename="terrain.geom" />
+		<Unit filename="terrain.tesc" />
+		<Unit filename="terrain.tese" />
+		<Unit filename="terrain.vert" />
 		<Unit filename="terrenofBm.vert" />
-		<Unit filename="tessAdapt.frag" />
 		<Unit filename="tessAdapt.tesc" />
 		<Unit filename="tessAdapt.tese" />
 		<Unit filename="tessUnif.tesc" />

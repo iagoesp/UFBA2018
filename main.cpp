@@ -31,15 +31,31 @@ extern glm::vec3 position;
 bool adapt = true;
 bool unif  = false;
 bool geom = false;
+float amp;
+glm::vec3 lightPos;
+GLuint activeShader;
+GLuint programGeomID;
+GLuint programAdaptID;
+GLuint programUnifID;
+
 static GLsizei IndexCount;
 static float TessLevelInner;
 static float TessLevelOuter;
 GLuint allTextures[QuantText];
+vector<unsigned short> indices;
+vector<GLfloat> vertices;
+vector<GLfloat> texcoord;
+
 const char* filenames[QuantText] = {"container.jpg",
                                     "agua.jpg",
                                     "grama.jpg",
                                     "snow.jpg",
                                     "mountain.jpg"};
+
+GLuint MatrixID, ModelMatrixID, ViewMatrixID, ProjectionMatrixID,
+    cameraPosIDX, cameraPosIDY, cameraPosIDZ, ampValue, octavesValue,
+    lacunarityValue, LightID, TessLevelInnerID, TessLevelOuterID, TextureID,
+    TextureID2, groundID, waterID, grassID, iceID, mountainID;
 
 
 int main(int argv, char** argc){
@@ -77,34 +93,18 @@ int main(int argv, char** argc){
 	glClearColor(0.5f, 0.5f, 0.8f, 1.0f);
 
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    glDepthFunc(GL_LESS);
 
-	// Accept fragment if it closer to the camera than the former one
-	glDepthFunc(GL_LESS);
-
-	// Cull triangles which normal is not towards the camera
-	//glEnable(GL_CULL_FACE);
-    //	if()
-	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	glEnable(GL_CULL_FACE);
 
 	GLuint VertexArrayID;
 	glGenVertexArrays(1, &VertexArrayID);
 	glBindVertexArray(VertexArrayID);
 
-	//GLuint programAdaptID = LoadShaders( "terrenofBm.vert","tessAdapt.frag");
-    GLuint programAdaptID = LoadShaders( "terrenofBm.vert", "tessAdapt.tesc","tessAdapt.tese", "tessAdapt.frag");
-    GLuint programGeomID  = LoadShaders( "terrenofBm.vert", "Geodesic.geom", "Geodesic.frag");
-    GLuint programUnifID  = LoadShaders( "terrenofBm.vert", "tessUnif.tesc", "tessAdapt.tese", "tessAdapt.frag");
+    programAdaptID = LoadShaders( "terrain.vert", "tessAdapt.tesc","tessAdapt.tese", "terrain.frag");
+    programGeomID  = LoadShaders( "terrenofBm.vert", "Geodesic.geom", "Geodesic.frag");
+    programUnifID  = LoadShaders( "terrain.vert", "tessUnif.tesc", "tessUnif.tese", "terrain.frag");
 
-
-
-    GLuint MatrixID, ModelMatrixID, ViewMatrixID, ProjectionMatrixID,
-    cameraPosIDX, cameraPosIDY, cameraPosIDZ, ampValue, octavesValue,
-    lacunarityValue, LightID, TessLevelInnerID, TessLevelOuterID, TextureID, TextureID2, groundID, waterID, grassID, iceID, mountainID;
-
-
-    vector<unsigned short> indices;
     const GLuint index = 10.0;
     const GLfloat meshSize = 80.0;
     float tamAmostra = meshSize / (float)index;
@@ -120,12 +120,10 @@ int main(int argv, char** argc){
 		}
 	}
 
-    float amp = 4.0;
-    glm::vec3 lightPos = glm::vec3(4,4,4);
+    amp = 4.0;
+    lightPos = glm::vec3(4,4,4);
     int oct = rand() % 100; cout<<oct<<endl;
     float lac = rand() % 8; cout<<lac<<endl;
-    vector<GLfloat> vertices;
-    vector<GLfloat> texcoord;
 
     for (GLfloat i = 0 ; i <= index ; i+=1.0){
 		for (GLfloat j = 0 ; j <= index ; j+=1.0) {
@@ -283,14 +281,6 @@ int main(int argv, char** argc){
     }
     stbi_image_free(mountain);
 
-
-    //GLuint normalbuffer;
-    //glGenBuffers(1, &normalbuffer);
-    //glBindBuffer(GL_ARRAY_BUFFER, normalbuffer);
-//	glBufferData(GL_ARRAY_BUFFER, indexed_normals.size() * sizeof(glm::vec3), &indexed_normals[0], GL_STATIC_DRAW);
-
-
-    // For speed computation
     TessLevelInner = 1.0f;
     TessLevelOuter = 4.0f;
     glm::vec3 camerapos = position;
@@ -301,64 +291,42 @@ int main(int argv, char** argc){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Use our shader
-        //glUseProgram(programAdaptID);
         if (glfwGetKey( window, GLFW_KEY_J ) == GLFW_PRESS){
-            MatrixID             = glGetUniformLocation(programAdaptID, "MVP");
-            ModelMatrixID        = glGetUniformLocation(programAdaptID, "M");
-            ViewMatrixID         = glGetUniformLocation(programAdaptID, "V");
-            ProjectionMatrixID   = glGetUniformLocation(programAdaptID, "P");
-            cameraPosIDX         = glGetUniformLocation(programAdaptID, "px");
-            cameraPosIDY         = glGetUniformLocation(programAdaptID, "py");
-            cameraPosIDZ         = glGetUniformLocation(programAdaptID, "pz");
-            ampValue             = glGetUniformLocation(programAdaptID, "amp");
-            octavesValue         = glGetUniformLocation(programAdaptID, "oct");
-            lacunarityValue      = glGetUniformLocation(programAdaptID, "lac");
-            LightID              = glGetUniformLocation(programAdaptID, "LightPosition_worldspace");
-            groundID = glGetUniformLocation(programAdaptID, "terra");
-            waterID  = glGetUniformLocation(programAdaptID, "agua");
-            grassID  = glGetUniformLocation(programAdaptID, "grama");
-            iceID  = glGetUniformLocation(programAdaptID, "snow");
-            mountainID  = glGetUniformLocation(programAdaptID, "mountain");
-            glUseProgram(programAdaptID);
+            activeShader = programAdaptID;
             adapt = true;
             unif = false;
             geom = false;
         }
         if (glfwGetKey( window, GLFW_KEY_K ) == GLFW_PRESS){
-            MatrixID             = glGetUniformLocation(programUnifID, "MVP");
-            ModelMatrixID        = glGetUniformLocation(programUnifID, "M");
-            ViewMatrixID         = glGetUniformLocation(programUnifID, "V");
-            ProjectionMatrixID   = glGetUniformLocation(programUnifID, "P");
-            cameraPosIDX         = glGetUniformLocation(programUnifID, "px");
-            cameraPosIDY         = glGetUniformLocation(programUnifID, "py");
-            cameraPosIDZ         = glGetUniformLocation(programUnifID, "pz");
-            ampValue             = glGetUniformLocation(programUnifID, "amp");
-            octavesValue         = glGetUniformLocation(programUnifID, "oct");
-            lacunarityValue      = glGetUniformLocation(programUnifID, "lac");
-            LightID              = glGetUniformLocation(programUnifID, "LightPosition_worldspace");
-           glUseProgram(programUnifID);
-           adapt = false;
-           unif = true;
-           geom = false;
+            activeShader = programUnifID;
+            adapt = false;
+            unif = true;
+            geom = false;
         }
 
         if (glfwGetKey( window, GLFW_KEY_L ) == GLFW_PRESS){
-            MatrixID             = glGetUniformLocation(programGeomID, "MVP");
-            ModelMatrixID        = glGetUniformLocation(programGeomID, "M");
-            ViewMatrixID         = glGetUniformLocation(programGeomID, "V");
-            ProjectionMatrixID   = glGetUniformLocation(programGeomID, "P");
-            cameraPosIDX         = glGetUniformLocation(programGeomID, "px");
-            cameraPosIDY         = glGetUniformLocation(programGeomID, "py");
-            cameraPosIDZ         = glGetUniformLocation(programGeomID, "pz");
-            ampValue             = glGetUniformLocation(programGeomID, "amp");
-            octavesValue         = glGetUniformLocation(programGeomID, "oct");
-            lacunarityValue      = glGetUniformLocation(programGeomID, "lac");
-            LightID              = glGetUniformLocation(programGeomID, "LightPosition_worldspace");
-           glUseProgram(programGeomID);
-           adapt = false;
-           unif = false;
-           geom = true;
+            activeShader = programGeomID;
+            adapt = false;
+            unif = false;
+            geom = true;
         }
+        MatrixID            = glGetUniformLocation(activeShader, "MVP");
+        ModelMatrixID       = glGetUniformLocation(activeShader, "M");
+        ViewMatrixID        = glGetUniformLocation(activeShader, "V");
+        ProjectionMatrixID  = glGetUniformLocation(activeShader, "P");
+        cameraPosIDX        = glGetUniformLocation(activeShader, "px");
+        cameraPosIDY        = glGetUniformLocation(activeShader, "py");
+        cameraPosIDZ        = glGetUniformLocation(activeShader, "pz");
+        ampValue            = glGetUniformLocation(activeShader, "amp");
+        octavesValue        = glGetUniformLocation(activeShader, "oct");
+        lacunarityValue     = glGetUniformLocation(activeShader, "lac");
+        LightID             = glGetUniformLocation(activeShader, "LightPosition_worldspace");
+        groundID            = glGetUniformLocation(activeShader, "terra");
+        waterID             = glGetUniformLocation(activeShader, "agua");
+        grassID             = glGetUniformLocation(activeShader, "grama");
+        iceID               = glGetUniformLocation(activeShader, "snow");
+        mountainID          = glGetUniformLocation(activeShader, "mountain");
+        glUseProgram(activeShader);
 
         // Compute the MVP matrix from keyboard and mouse input
         computeMatricesFromInputs(window);
@@ -393,57 +361,27 @@ int main(int argv, char** argc){
             cout<<lac<<endl;
         }
 
-        if(adapt){
-            glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-            glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
-            glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
-            glUniformMatrix4fv(ProjectionMatrixID, 1, GL_FALSE, &ProjectionMatrix[0][0]);
-            glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
-            glUniform1f(cameraPosIDX, px);
-            glUniform1f(cameraPosIDY, py);
-            glUniform1f(cameraPosIDZ, pz);
-            glUniform1f(ampValue,amp);
-            glUniform1i(octavesValue,oct);
-            glUniform1f(lacunarityValue,lac);
-            glUniform1i(groundID, 0);
-            glUniform1i(waterID,  1);
-            glUniform1i(grassID, 2);
-            glUniform1i(iceID, 3);
-            glUniform1i(mountainID, 4);
-        }
-        else if(unif){
-            glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-            glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
-            glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
-            glUniformMatrix4fv(ProjectionMatrixID, 1, GL_FALSE, &ProjectionMatrix[0][0]);
-            glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
-            glUniform1f( TessLevelInnerID, TessLevelInner );
-            glUniform1f( TessLevelOuterID, TessLevelOuter );
-            glUniform1f(cameraPosIDX, px);
-            glUniform1f(cameraPosIDY, py);
-            glUniform1f(cameraPosIDZ, pz);
-            glUniform1f(ampValue,amp);
-            glUniform1i(octavesValue,oct);
-            glUniform1f(lacunarityValue,lac);
-
-        }
-        else if(geom){
-            glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-            glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
-            glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
-            glUniformMatrix4fv(ProjectionMatrixID, 1, GL_FALSE, &ProjectionMatrix[0][0]);
-            glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
-            glUniform1f(cameraPosIDX, px);
-            glUniform1f(cameraPosIDY, py);
-            glUniform1f(cameraPosIDZ, pz);
-            glUniform1f(ampValue,amp);
-            glUniform1i(octavesValue,oct);
-            glUniform1f(lacunarityValue,lac);
-        }
+        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+        glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
+        glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
+        glUniformMatrix4fv(ProjectionMatrixID, 1, GL_FALSE, &ProjectionMatrix[0][0]);
+        glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
+        glUniform1f(cameraPosIDX, px);
+        glUniform1f(cameraPosIDY, py);
+        glUniform1f(cameraPosIDZ, pz);
+        glUniform1f(ampValue,amp);
+        glUniform1i(octavesValue,oct);
+        glUniform1f(lacunarityValue,lac);
+        glUniform1f( TessLevelInnerID, TessLevelInner );
+        glUniform1f( TessLevelOuterID, TessLevelOuter );
+        glUniform1i(groundID, 0);
+        glUniform1i(waterID,  1);
+        glUniform1i(grassID, 2);
+        glUniform1i(iceID, 3);
+        glUniform1i(mountainID, 4);
 
         if(adapt || unif)
             glPatchParameteri(GL_PATCH_VERTICES, 3);
-
 
         // 1rst attribute buffer : vertices
         glEnableVertexAttribArray(0);
@@ -461,27 +399,12 @@ int main(int argv, char** argc){
 
         // Index buffer
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-       // glBindTexture(GL_TEXTURE_2D, texture);
-
-        // Draw the triangles !
         if(adapt || unif){
-            glEnableVertexAttribArray(0);
-            glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
         // Index buffer
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
             glDrawElements(GL_PATCHES, indices.size(), GL_UNSIGNED_SHORT, (void*)0);
 
         }
         else{
-            glEnableVertexAttribArray(0);
-            glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-            glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-            // Index buffer
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-
             glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, (void*)0);
         }
         glDisableVertexAttribArray(0);
@@ -497,6 +420,7 @@ int main(int argv, char** argc){
         // Cleanup VBO and shader
     glDeleteBuffers(1, &vertexbuffer);
     glDeleteBuffers(1, &elementbuffer);
+    glDeleteBuffers(1, &texturebuffer);
     if(adapt)
         glDeleteProgram(programAdaptID);
     else if(unif)
