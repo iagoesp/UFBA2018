@@ -231,10 +231,14 @@ float iqfBm(vec3 v, int octaves, float lacunarity, float gain )
 }
 
 void main(){
-    vec3 newTcPosition0 = (tcPosition[0]); newTcPosition0.y = iqfBm(newTcPosition0, 3, 8, 8);
-    vec3 newTcPosition1 = (tcPosition[1]); newTcPosition1.y = iqfBm(newTcPosition1, 3, 8, 8);
-    vec3 newTcPosition2 = (tcPosition[2]); newTcPosition2.y = iqfBm(newTcPosition2, 3, 8, 8);
-
+    vec3 newTcPosition0 = (tcPosition[0]);
+    vec3 newTcPosition1 = (tcPosition[1]);
+    vec3 newTcPosition2 = (tcPosition[2]);
+/*
+    newTcPosition0.y = iqfBm(newTcPosition0, 3, 8, 8);
+    newTcPosition1.y = iqfBm(newTcPosition1, 3, 8, 8);
+    newTcPosition2.y = iqfBm(newTcPosition2, 3, 8, 8);
+*/
     vec3 p0 = gl_TessCoord.x * newTcPosition0;
     vec3 p1 = gl_TessCoord.y * newTcPosition1;
     vec3 p2 = gl_TessCoord.z * newTcPosition2;
@@ -249,6 +253,9 @@ void main(){
     vec4 c0 = gl_TessCoord.x * tcColor[0];
     vec4 c1 = gl_TessCoord.y * tcColor[1];
     vec4 c2 = gl_TessCoord.z * tcColor[2];
+    c0 = vec4(1.f, 0.0, 0.0, 1.f);
+    c1 = vec4(0.0, 1.f, 0.0, 1.f);
+    c2 = vec4(0.0, 0.0, 1.f, 1.f);
     vcColor = (c0 + c1 + c2);
 
     vec2 t0 = gl_TessCoord.x * tcTexCoord[0];

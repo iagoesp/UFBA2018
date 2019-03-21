@@ -70,7 +70,9 @@ void main(){
         vTexColor = vec4(surf(texMountain , level3 , texSnow , height-1), 1.f);
     }
 
-	vec4 vFinalTexColor = vTexColor;
+    vec4 vFinalTexColor;
+        //vFinalTexColor= vcColor;
+        vFinalTexColor = vTexColor;
 
    	fragColor = vFinalTexColor;
 }

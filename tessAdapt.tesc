@@ -22,6 +22,8 @@ float TessLevelOuter;
 #define ID gl_InvocationID
 
 float LOD(vec3 posV, float posCX, float posCY, float posCZ){
+    return 1.0;
+
   float dist = sqrt((posV.x - posCX)*(posV.x - posCX)
                   + (posV.y - posCY)*(posV.y - posCY)
                   + (posV.z - posCZ)*(posV.z - posCZ));
@@ -39,7 +41,6 @@ void main(){
     tcPosition[ID]  = vPosition[ID];
     tcNormal[ID]    = vNormal[ID];
     tcColor[ID]     = vColor[ID];
-
 
     if (ID == 0) {
         vec3 vPos = vPosition[0];
