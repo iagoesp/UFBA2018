@@ -3,7 +3,7 @@
 #define F2 0.366025403
 #define G2 0.211324865
 
-layout (location = 0) in vec2 position;
+layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 aColor;
 layout (location = 2) in vec2 aTexCoord;
 
@@ -170,10 +170,10 @@ float iqfBm(vec2 v, int octaves, float lacunarity, float gain ){
 }
 
 void main(){
-    h 			= iqfBm (position, 3, 4.f, 1.2f);//amp * cos((position.x)) * sin((position.y))+1;
+    //h 			= iqfBm (position, 3, 4.f, 1.2f);
     //h           = 1;
     vNormal.x	= (position.x);
-    vNormal.z	= (position.y);
+    vNormal.z	= (position.z);
     vNormal.y   = h;
     vNormal     = normalize(vNormal);
 
@@ -183,7 +183,7 @@ void main(){
     vColor.a 	= 1.0f;
 
 	TexCoord    = vec2(aTexCoord.x, aTexCoord.y);
-    vPosition 	= vec3(position.x, h, position.y);
+    vPosition 	= position;//vec3(position.x, h, position.y);
     gl_Position = vec4(vPosition, 1.0);
 
 }

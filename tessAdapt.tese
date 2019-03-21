@@ -253,9 +253,12 @@ void main(){
     vec4 c0 = gl_TessCoord.x * tcColor[0];
     vec4 c1 = gl_TessCoord.y * tcColor[1];
     vec4 c2 = gl_TessCoord.z * tcColor[2];
+
+/*
     c0 = vec4(1.f, 0.0, 0.0, 1.f);
     c1 = vec4(0.0, 1.f, 0.0, 1.f);
     c2 = vec4(0.0, 0.0, 1.f, 1.f);
+*/
     vcColor = (c0 + c1 + c2);
 
     vec2 t0 = gl_TessCoord.x * tcTexCoord[0];

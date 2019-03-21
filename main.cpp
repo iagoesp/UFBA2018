@@ -12,6 +12,7 @@
 #include <GL/glew.h>
 #include "stb_image.h"
 #include "SOIL.h"
+#include "simplex.h"
 //#include "SOIL.c"
 
 // Include GLFW
@@ -105,7 +106,7 @@ int main(int argv, char** argc){
     programGeomID  = LoadShaders( "terrenofBm.vert", "Geodesic.geom", "Geodesic.frag");
     programUnifID  = LoadShaders( "terrain.vert", "tessUnif.tesc", "tessUnif.tese", "terrain.frag");
 
-    const GLuint index = 10.0;
+    const GLuint index = 20.0;
     const GLfloat meshSize = 80.0;
     float tamAmostra = meshSize / (float)index;
     for (GLuint i = 0 ; i < index ; i++){
@@ -127,8 +128,11 @@ int main(int argv, char** argc){
 
     for (GLfloat i = 0 ; i <= index ; i+=1.0){
 		for (GLfloat j = 0 ; j <= index ; j+=1.0) {
-            vertices.push_back((float)(i*tamAmostra));
-            vertices.push_back((float)(j*tamAmostra));
+            glm::vec2 vert = vec2((float)(i*tamAmostra), (float)(j*tamAmostra));
+            float h = Simplex::iqfBm (vert, 3.8, 4.2f, 5.7f);
+            vertices.push_back(vert.x);
+            vertices.push_back(h);
+            vertices.push_back(vert.y);
             texcoord.push_back((float)i);
             texcoord.push_back((float)j);
         }
@@ -386,7 +390,7 @@ int main(int argv, char** argc){
         // 1rst attribute buffer : vertices
         glEnableVertexAttribArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-        glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
         // color attribute
         glEnableVertexAttribArray(1);
