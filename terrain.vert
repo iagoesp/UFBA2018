@@ -9,7 +9,6 @@ layout (location = 2) in vec2 aTexCoord;
 
 float h;
 out vec3 vNormal;
-out vec3 WorldPos;
 out vec4 vColor;
 out vec2 TexCoord;
 
@@ -172,7 +171,7 @@ float iqfBm(vec2 v, int octaves, float lacunarity, float gain ){
 
 void main(){
     h 			= iqfBm (position, 3, 4.f, 1.2f);//amp * cos((position.x)) * sin((position.y))+1;
-    h           = 1;
+    //h           = 1;
     vNormal.x	= (position.x);
     vNormal.z	= (position.y);
     vNormal.y   = h;
@@ -185,7 +184,6 @@ void main(){
 
 	TexCoord    = vec2(aTexCoord.x, aTexCoord.y);
     vPosition 	= vec3(position.x, h, position.y);
-    WorldPos = (M * vec4(position.x, iqfBm (position, 3, 4.f, 1.2f), position.y, 1.0)).xyz;
     gl_Position = vec4(vPosition, 1.0);
 
 }
