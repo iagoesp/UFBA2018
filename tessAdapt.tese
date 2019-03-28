@@ -5,8 +5,6 @@
 
 layout(triangles, equal_spacing, ccw) in;
 
-uniform mat4 P;
-uniform mat4 V;
 uniform mat4 MVP;
 
 in vec3 tcPosition[];

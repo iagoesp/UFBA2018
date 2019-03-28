@@ -13,8 +13,6 @@ using namespace glm;
 
 glm::mat4 ViewMatrix;
 glm::mat4 ProjectionMatrix;
-glm::mat4 ModelMatrix;
-glm::mat4 MVP;
 
 glm::mat4 getViewMatrix(){
 	return ViewMatrix;
@@ -25,12 +23,12 @@ glm::mat4 getProjectionMatrix(){
 
 
 // Initial position : on +Z
-glm::vec3 position = glm::vec3( 25, 26, 25 );
+glm::vec3 position = glm::vec3( -4, 26, 0 )*15.f;
 glm::vec3 direction;
 // Initial horizontal angle : toward -Z
-float horizontalAngle = 23.85f;
+float horizontalAngle = 3.85f;
 // Initial vertical angle : none
-float verticalAngle = 60.0f;
+float verticalAngle = 90.0f;
 // Initial Field of View
 float initialFoV = 45.0f;
 

@@ -12,9 +12,6 @@ out vec3 vNormal;
 out vec4 vColor;
 out vec2 TexCoord;
 
-uniform mat4 V;
-uniform mat4 M;
-
 out vec3 vPosition;
 
 float gx0, gy0, gx1, gy1, gx2, gy2;

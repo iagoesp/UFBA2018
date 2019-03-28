@@ -6,7 +6,6 @@ vector<unsigned short> indices;
 vector<GLfloat> vertices;
 vector<GLfloat> texcoord;
 
-
 int initGL(){
     glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
@@ -223,6 +222,42 @@ void createTextures(){
     }
     stbi_image_free(mountain);
 }
+
+void createProgram(){
+    programTessID = LoadShaders( "terrain.vert", "terrain.tesc", "terrain.tese", "terrain.frag");
+    programGeomID  = LoadShaders( "terrenofBm.vert", "Geodesic.geom", "Geodesic.frag");
+}
+
+void getLocations(){
+        MatrixID            = glGetUniformLocation(activeShader, "MVP");
+        ModelMatrixID       = glGetUniformLocation(activeShader, "M");
+        ViewMatrixID        = glGetUniformLocation(activeShader, "V");
+        ProjectionMatrixID  = glGetUniformLocation(activeShader, "P");
+        cameraPosIDX        = glGetUniformLocation(activeShader, "px");
+        cameraPosIDY        = glGetUniformLocation(activeShader, "py");
+        cameraPosIDZ        = glGetUniformLocation(activeShader, "pz");
+        groundID            = glGetUniformLocation(activeShader, "terra");
+        waterID             = glGetUniformLocation(activeShader, "agua");
+        grassID             = glGetUniformLocation(activeShader, "grama");
+        iceID               = glGetUniformLocation(activeShader, "snow");
+        mountainID          = glGetUniformLocation(activeShader, "mountain");
+        enableTessID        = glGetUniformLocation(activeShader, "tess");
+}
+void deleteBuffers(){
+    glDeleteBuffers(1, &vertexbuffer);
+    glDeleteBuffers(1, &elementbuffer);
+    glDeleteBuffers(1, &texturebuffer);
+}
+
+void deleteProgram(){
+    glDeleteProgram(programTessID);
+    glDeleteProgram(programGeomID);
+}
+
+void deleteVertexArray(){
+    glDeleteVertexArrays(1, &VertexArrayID);
+}
+
 int main(int argv, char** argc){
     cout<<"Press J to get the Geometry Shader"<<endl;
     cout<<"Press K to get the Adapt Tessellation Shader"<<endl;
@@ -232,16 +267,12 @@ int main(int argv, char** argc){
 
     createBuffer();
 
-    programTessID = LoadShaders( "terrain.vert", "terrain.tesc", "terrain.tese", "terrain.frag");
-    programGeomID  = LoadShaders( "terrenofBm.vert", "Geodesic.geom", "Geodesic.frag");
-
+    createProgram();
     createVerticesIndexes();
     bindBuffer();
 
     createTextures();
 
-    TessLevelInner = 1.0f;
-    TessLevelOuter = 4.0f;
     glm::vec3 camerapos = position;
 
     activeShader = programTessID;
@@ -257,20 +288,7 @@ int main(int argv, char** argc){
         }
         tIsPressed = tIsCurrentlyPressed;
 
-        MatrixID            = glGetUniformLocation(activeShader, "MVP");
-        ModelMatrixID       = glGetUniformLocation(activeShader, "M");
-        ViewMatrixID        = glGetUniformLocation(activeShader, "V");
-        ProjectionMatrixID  = glGetUniformLocation(activeShader, "P");
-        cameraPosIDX        = glGetUniformLocation(activeShader, "px");
-        cameraPosIDY        = glGetUniformLocation(activeShader, "py");
-        cameraPosIDZ        = glGetUniformLocation(activeShader, "pz");
-        LightID             = glGetUniformLocation(activeShader, "LightPosition_worldspace");
-        groundID            = glGetUniformLocation(activeShader, "terra");
-        waterID             = glGetUniformLocation(activeShader, "agua");
-        grassID             = glGetUniformLocation(activeShader, "grama");
-        iceID               = glGetUniformLocation(activeShader, "snow");
-        mountainID          = glGetUniformLocation(activeShader, "mountain");
-        enableTessID        = glGetUniformLocation(activeShader, "tess");
+        getLocations();
         glUseProgram(activeShader);
 
         // Compute the MVP matrix from keyboard and mouse input
@@ -302,12 +320,9 @@ int main(int argv, char** argc){
         glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
         glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
         glUniformMatrix4fv(ProjectionMatrixID, 1, GL_FALSE, &ProjectionMatrix[0][0]);
-        glUniform3f(LightID, lightPos.x, lightPos.y, lightPos.z);
         glUniform1f(cameraPosIDX, px);
         glUniform1f(cameraPosIDY, py);
         glUniform1f(cameraPosIDZ, pz);
-        glUniform1f( TessLevelInnerID, TessLevelInner );
-        glUniform1f( TessLevelOuterID, TessLevelOuter );
         glUniform1i(groundID, 0);
         glUniform1i(waterID,  1);
         glUniform1i(grassID, 2);
@@ -347,19 +362,15 @@ int main(int argv, char** argc){
         glfwSwapBuffers(window);
         glfwPollEvents();
 
-    } // Check if the ESC key was pressed or the window was closed
+    }
+
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
         glfwWindowShouldClose(window) == 0 );
 
-        // Cleanup VBO and shader
-    glDeleteBuffers(1, &vertexbuffer);
-    glDeleteBuffers(1, &elementbuffer);
-    glDeleteBuffers(1, &texturebuffer);
-    glDeleteProgram(programTessID);
-    glDeleteProgram(programGeomID);
-    glDeleteVertexArrays(1, &VertexArrayID);
+    deleteBuffers();
+    deleteProgram();
+    deleteVertexArray();
 
-    // Close OpenGL window and terminate GLFW
     glfwTerminate();
 
     return 0;
