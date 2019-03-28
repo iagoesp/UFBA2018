@@ -1,75 +1,19 @@
-#define QuantText 5
+#include "main.hpp"
 
-#include <vector>
-#include <iostream>
-#include <string>
-//#include "stb_image.h"
-
-//////#include "filesystem.h"
-#include "vectormath/vectormath.h"
-#include <cstdlib>
-// Include GLEW
-#include <GL/glew.h>
-#include "stb_image.h"
-#include "SOIL.h"
-#include "simplex.h"
-//#include "SOIL.c"
-
-// Include GLFW
-#include <GLFW/glfw3.h>
-GLFWwindow* window;
-
-// Include GLM
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-using namespace glm;
-using namespace std;
-
-#include "LoadShaders.hpp"
-#include "controls.hpp"
 extern glm::vec3 position;
 
-bool adapt = true;
-bool unif  = false;
-bool geom = false;
-float amp;
-glm::vec3 lightPos;
-GLuint activeShader;
-GLuint programGeomID;
-GLuint programAdaptID;
-GLuint programUnifID;
-
-static GLsizei IndexCount;
-static float TessLevelInner;
-static float TessLevelOuter;
-GLuint allTextures[QuantText];
 vector<unsigned short> indices;
 vector<GLfloat> vertices;
 vector<GLfloat> texcoord;
 
-const char* filenames[QuantText] = {"container.jpg",
-                                    "agua.jpg",
-                                    "grama.jpg",
-                                    "snow.jpg",
-                                    "mountain.jpg"};
 
-GLuint MatrixID, ModelMatrixID, ViewMatrixID, ProjectionMatrixID,
-    cameraPosIDX, cameraPosIDY, cameraPosIDZ, ampValue, octavesValue,
-    lacunarityValue, LightID, TessLevelInnerID, TessLevelOuterID, TextureID,
-    TextureID2, groundID, waterID, grassID, iceID, mountainID;
-
-
-int main(int argv, char** argc){
-    cout<<"Press J to get the Geometry Shader"<<endl;
-    cout<<"Press K to get the Adapt Tessellation Shader"<<endl;
-    cout<<"Press L to get the Uniform Tessellation Shader"<<endl;
-
+int initGL(){
     glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	window = glfwCreateWindow( 1280, 1024, "IPSinewave_v6", NULL, NULL);
+	window = glfwCreateWindow( WIDTH, HEIGHT, projectTitle, NULL, NULL);
 	if( window == NULL ){
     cout << "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n";
 		glfwTerminate();
@@ -84,30 +28,49 @@ int main(int argv, char** argc){
 		return -1;
 	}
 
+	return 0;
+}
+
+int init(){
+    initGL();
+
 	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
 
     glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     glfwPollEvents();
-    glfwSetCursorPos(window, 1280/2, 1024/2);
+    glfwSetCursorPos(window, WIDTH/2, HEIGHT/2);
 
 	glClearColor(0.5f, 0.5f, 0.8f, 1.0f);
 
-	glEnable(GL_DEPTH_TEST);
+    glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
 
 	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+}
 
-	GLuint VertexArrayID;
+void createBuffer(){
 	glGenVertexArrays(1, &VertexArrayID);
-	glBindVertexArray(VertexArrayID);
+    glGenBuffers(1, &vertexbuffer);
+    glGenBuffers(1, &elementbuffer);
+}
 
-    programAdaptID = LoadShaders( "terrain.vert", "tessAdapt.tesc","tessAdapt.tese", "terrain.frag");
-    programGeomID  = LoadShaders( "terrenofBm.vert", "Geodesic.geom", "Geodesic.frag");
-    programUnifID  = LoadShaders( "terrain.vert", "tessUnif.tesc", "tessUnif.tese", "terrain.frag");
+void bindBuffer(){
+    glBindVertexArray(VertexArrayID);
 
-    const GLuint index = 20.0;
-    const GLfloat meshSize = 80.0;
+    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLushort), &indices[0], GL_STATIC_DRAW);
+
+    glGenBuffers(1, &texturebuffer);
+    glBindBuffer(GL_ARRAY_BUFFER, texturebuffer);
+    glBufferData(GL_ARRAY_BUFFER, texcoord.size() * sizeof(GLfloat), texcoord.data(), GL_STATIC_DRAW);
+}
+
+void createVerticesIndexes(){
     float tamAmostra = meshSize / (float)index;
     for (GLuint i = 0 ; i < index ; i++){
 		for (GLuint j = 0 ; j < index ; j++) {
@@ -121,11 +84,6 @@ int main(int argv, char** argc){
 		}
 	}
 
-    amp = 4.0;
-    lightPos = glm::vec3(4,4,4);
-    int oct = rand() % 100; cout<<oct<<endl;
-    float lac = rand() % 8; cout<<lac<<endl;
-
     for (GLfloat i = 0 ; i <= index ; i+=1.0){
 		for (GLfloat j = 0 ; j <= index ; j+=1.0) {
             glm::vec2 vert = vec2((float)(i*tamAmostra), (float)(j*tamAmostra));
@@ -137,29 +95,9 @@ int main(int argv, char** argc){
             texcoord.push_back((float)j);
         }
 	}
+}
 
-    IndexCount = sizeof(indices) / sizeof(indices[0]);
-
-    // Create the VBO for positions:
-    GLuint vertexbuffer;
-    //GLsizei stride = 2 * sizeof(float);
-
-    glGenBuffers(1, &vertexbuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(GLfloat), vertices.data(), GL_STATIC_DRAW);
-
-    // Create the VBO for indices:
-    GLuint elementbuffer;
-    glGenBuffers(1, &elementbuffer);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(GLushort), &indices[0], GL_STATIC_DRAW);
-
-    GLuint texturebuffer;
-    glGenBuffers(1, &texturebuffer);
-    glBindBuffer(GL_ARRAY_BUFFER, texturebuffer);
-    glBufferData(GL_ARRAY_BUFFER, texcoord.size() * sizeof(GLfloat), texcoord.data(), GL_STATIC_DRAW);
-
-
+void createTextures(){
     glGenTextures(1, &allTextures[0]);
 
      // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
@@ -284,36 +222,41 @@ int main(int argv, char** argc){
         std::cout << "Failed to load texture" << std::endl;
     }
     stbi_image_free(mountain);
+}
+int main(int argv, char** argc){
+    cout<<"Press J to get the Geometry Shader"<<endl;
+    cout<<"Press K to get the Adapt Tessellation Shader"<<endl;
+    cout<<"Press L to get the Uniform Tessellation Shader"<<endl;
+
+    init();
+
+    createBuffer();
+
+    programTessID = LoadShaders( "terrain.vert", "terrain.tesc", "terrain.tese", "terrain.frag");
+    programGeomID  = LoadShaders( "terrenofBm.vert", "Geodesic.geom", "Geodesic.frag");
+
+    createVerticesIndexes();
+    bindBuffer();
+
+    createTextures();
 
     TessLevelInner = 1.0f;
     TessLevelOuter = 4.0f;
     glm::vec3 camerapos = position;
 
+    activeShader = programTessID;
     do{
 
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Use our shader
-        if (glfwGetKey( window, GLFW_KEY_J ) == GLFW_PRESS){
-            activeShader = programAdaptID;
-            adapt = true;
-            unif = false;
-            geom = false;
+        bool tIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_T ) == GLFW_PRESS);
+        if (!tIsPressed && tIsCurrentlyPressed){
+            enableTess = (enableTess+1)%3;
         }
-        if (glfwGetKey( window, GLFW_KEY_K ) == GLFW_PRESS){
-            activeShader = programUnifID;
-            adapt = false;
-            unif = true;
-            geom = false;
-        }
+        tIsPressed = tIsCurrentlyPressed;
 
-        if (glfwGetKey( window, GLFW_KEY_L ) == GLFW_PRESS){
-            activeShader = programGeomID;
-            adapt = false;
-            unif = false;
-            geom = true;
-        }
         MatrixID            = glGetUniformLocation(activeShader, "MVP");
         ModelMatrixID       = glGetUniformLocation(activeShader, "M");
         ViewMatrixID        = glGetUniformLocation(activeShader, "V");
@@ -321,15 +264,13 @@ int main(int argv, char** argc){
         cameraPosIDX        = glGetUniformLocation(activeShader, "px");
         cameraPosIDY        = glGetUniformLocation(activeShader, "py");
         cameraPosIDZ        = glGetUniformLocation(activeShader, "pz");
-        ampValue            = glGetUniformLocation(activeShader, "amp");
-        octavesValue        = glGetUniformLocation(activeShader, "oct");
-        lacunarityValue     = glGetUniformLocation(activeShader, "lac");
         LightID             = glGetUniformLocation(activeShader, "LightPosition_worldspace");
         groundID            = glGetUniformLocation(activeShader, "terra");
         waterID             = glGetUniformLocation(activeShader, "agua");
         grassID             = glGetUniformLocation(activeShader, "grama");
         iceID               = glGetUniformLocation(activeShader, "snow");
         mountainID          = glGetUniformLocation(activeShader, "mountain");
+        enableTessID        = glGetUniformLocation(activeShader, "tess");
         glUseProgram(activeShader);
 
         // Compute the MVP matrix from keyboard and mouse input
@@ -356,14 +297,6 @@ int main(int argv, char** argc){
         if (glfwGetKey( window, GLFW_KEY_P ) == GLFW_PRESS){
             glDisable(GL_CULL_FACE);
         }
-        if (glfwGetKey( window, GLFW_KEY_M ) == GLFW_PRESS){
-            oct = rand() % 7;
-            cout<<oct<<endl;
-        }
-        if (glfwGetKey( window, GLFW_KEY_N ) == GLFW_PRESS){
-            lac = rand() % 11;
-            cout<<lac<<endl;
-        }
 
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
         glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
@@ -373,9 +306,6 @@ int main(int argv, char** argc){
         glUniform1f(cameraPosIDX, px);
         glUniform1f(cameraPosIDY, py);
         glUniform1f(cameraPosIDZ, pz);
-        glUniform1f(ampValue,amp);
-        glUniform1i(octavesValue,oct);
-        glUniform1f(lacunarityValue,lac);
         glUniform1f( TessLevelInnerID, TessLevelInner );
         glUniform1f( TessLevelOuterID, TessLevelOuter );
         glUniform1i(groundID, 0);
@@ -383,9 +313,9 @@ int main(int argv, char** argc){
         glUniform1i(grassID, 2);
         glUniform1i(iceID, 3);
         glUniform1i(mountainID, 4);
+        glUniform1i(enableTessID, enableTess);
 
-        if(adapt || unif)
-            glPatchParameteri(GL_PATCH_VERTICES, 3);
+        glPatchParameteri(GL_PATCH_VERTICES, 3);
 
         // 1rst attribute buffer : vertices
         glEnableVertexAttribArray(0);
@@ -403,7 +333,7 @@ int main(int argv, char** argc){
 
         // Index buffer
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-        if(adapt || unif){
+        if(activeShader == programTessID){
         // Index buffer
             glDrawElements(GL_PATCHES, indices.size(), GL_UNSIGNED_SHORT, (void*)0);
 
@@ -425,12 +355,8 @@ int main(int argv, char** argc){
     glDeleteBuffers(1, &vertexbuffer);
     glDeleteBuffers(1, &elementbuffer);
     glDeleteBuffers(1, &texturebuffer);
-    if(adapt)
-        glDeleteProgram(programAdaptID);
-    else if(unif)
-        glDeleteProgram(programUnifID);
-    else if(geom)
-        glDeleteProgram(programGeomID);
+    glDeleteProgram(programTessID);
+    glDeleteProgram(programGeomID);
     glDeleteVertexArrays(1, &VertexArrayID);
 
     // Close OpenGL window and terminate GLFW

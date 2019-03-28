@@ -15,9 +15,7 @@ out vec4 tcColor[];
 uniform float px;
 uniform float py;
 uniform float pz;
-
-float TessLevelInner;
-float TessLevelOuter;
+uniform int tess;
 
 #define ID gl_InvocationID
 
@@ -36,6 +34,8 @@ float LOD(vec3 posV, float posCX, float posCY, float posCZ){
 }
 
 void main(){
+    float TessLevelInner;
+    float TessLevelOuter;
 
     tcTexCoord[ID]  = TexCoord[ID];
     tcPosition[ID]  = vPosition[ID];
@@ -44,12 +44,21 @@ void main(){
 
     if (ID == 0) {
         vec3 vPos = vPosition[0];
-        TessLevelInner = LOD(vPos, px, py, pz);
-        TessLevelOuter = LOD(vPos, px, py, pz);
+        if(tess==0){
+            TessLevelInner = LOD(vPos, px, py, pz);
+        }
+        else if(tess == 1){
+            TessLevelInner = 1;
+        }
+        else if(tess == 2){
+            TessLevelInner = 2;
+        }
+        TessLevelOuter = TessLevelInner;
+
         gl_TessLevelInner[0] = TessLevelInner;
         gl_TessLevelOuter[0] = TessLevelOuter;
         gl_TessLevelOuter[1] = TessLevelOuter;
         gl_TessLevelOuter[2] = TessLevelOuter;
-    }
+  }
 
 }

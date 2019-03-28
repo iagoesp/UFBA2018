@@ -8,8 +8,6 @@ layout(triangles, equal_spacing, ccw) in;
 uniform mat4 P;
 uniform mat4 V;
 uniform mat4 MVP;
-uniform int oct;
-uniform float lac;
 
 in vec3 tcPosition[];
 in vec3 tcNormal[];

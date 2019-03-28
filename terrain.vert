@@ -14,8 +14,6 @@ out vec2 TexCoord;
 
 uniform mat4 V;
 uniform mat4 M;
-uniform int oct;
-uniform float lac;
 
 out vec3 vPosition;
 
