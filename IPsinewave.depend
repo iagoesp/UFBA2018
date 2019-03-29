@@ -282,7 +282,7 @@
 
 1550550805 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\soil.h
 
-1550704562 source:c:\users\iago.labcg-pc\documents\ufba2018\controls.cpp
+1553816386 source:c:\users\iago.labcg-pc\documents\ufba2018\controls.cpp
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
@@ -305,20 +305,8 @@
 
 1550704562 c:\users\iago.labcg-pc\documents\ufba2018\loadshaders.hpp
 
-1550708557 source:c:\users\iago.labcg-pc\documents\ufba2018\main.cpp
-	<vector>
-	<iostream>
-	<string>
-	"vectormath/vectormath.h"
-	<cstdlib>
-	<GL/glew.h>
-	"stb_image.h"
-	"SOIL.h"
-	<GLFW/glfw3.h>
-	<glm/glm.hpp>
-	<glm/gtc/matrix_transform.hpp>
-	"LoadShaders.hpp"
-	"controls.hpp"
+1553807404 source:c:\users\iago.labcg-pc\documents\ufba2018\main.cpp
+	"main.hpp"
 
 1550704562 c:\users\iago.labcg-pc\documents\ufba2018\vectormath\vectormath.h
 	"vectormath_aos_v.h"
@@ -395,4 +383,32 @@
 	"LoadShaders.hpp"
 	"controls.hpp"
 	"vectormath/vectormath.h"
+
+1553806911 c:\users\iago.labcg-pc\documents\ufba2018\main.hpp
+	<iostream>
+	<vector>
+	<string>
+	<cstdlib>
+	<GL/glew.h>
+	<GLFW/glfw3.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	"stb_image.h"
+	"SOIL.h"
+	"simplex.h"
+	"LoadShaders.hpp"
+	"controls.hpp"
+	"vectormath/vectormath.h"
+
+1553806911 c:\users\iago.labcg-pc\documents\ufba2018\simplex.h
+	<functional>
+	<array>
+	<random>
+	<math.h>
+	<stdlib.h>
+	<glm/geometric.hpp>
+	<glm/vec2.hpp>
+	<glm/vec3.hpp>
+	<glm/vec4.hpp>
+	<glm/mat2x2.hpp>
 

@@ -230,9 +230,6 @@ void createProgram(){
 
 void getLocations(){
         MatrixID            = glGetUniformLocation(activeShader, "MVP");
-        ModelMatrixID       = glGetUniformLocation(activeShader, "M");
-        ViewMatrixID        = glGetUniformLocation(activeShader, "V");
-        ProjectionMatrixID  = glGetUniformLocation(activeShader, "P");
         cameraPosIDX        = glGetUniformLocation(activeShader, "px");
         cameraPosIDY        = glGetUniformLocation(activeShader, "py");
         cameraPosIDZ        = glGetUniformLocation(activeShader, "pz");
@@ -243,6 +240,7 @@ void getLocations(){
         mountainID          = glGetUniformLocation(activeShader, "mountain");
         enableTessID        = glGetUniformLocation(activeShader, "tess");
 }
+
 void deleteBuffers(){
     glDeleteBuffers(1, &vertexbuffer);
     glDeleteBuffers(1, &elementbuffer);
@@ -293,10 +291,7 @@ int main(int argv, char** argc){
 
         // Compute the MVP matrix from keyboard and mouse input
         computeMatricesFromInputs(window);
-        glm::mat4 ProjectionMatrix = getProjectionMatrix();
-        glm::mat4 ViewMatrix = getViewMatrix();
-        glm::mat4 ModelMatrix = glm::mat4(1.0);
-        glm::mat4 MVP = ProjectionMatrix * ViewMatrix * ModelMatrix;
+        glm::mat4 MVP = getProjectionMatrix() * getViewMatrix() * glm::mat4(1.0);
 
         // Send our transformation to the currently bound shader,
         // in the "MVP" uniform
@@ -317,9 +312,6 @@ int main(int argv, char** argc){
         }
 
         glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-        glUniformMatrix4fv(ModelMatrixID, 1, GL_FALSE, &ModelMatrix[0][0]);
-        glUniformMatrix4fv(ViewMatrixID, 1, GL_FALSE, &ViewMatrix[0][0]);
-        glUniformMatrix4fv(ProjectionMatrixID, 1, GL_FALSE, &ProjectionMatrix[0][0]);
         glUniform1f(cameraPosIDX, px);
         glUniform1f(cameraPosIDY, py);
         glUniform1f(cameraPosIDZ, pz);
