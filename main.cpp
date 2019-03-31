@@ -40,7 +40,7 @@ int init(){
     glfwPollEvents();
     glfwSetCursorPos(window, WIDTH/2, HEIGHT/2);
 
-	glClearColor(0.5f, 0.5f, 0.8f, 1.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -67,6 +67,14 @@ void bindBuffer(){
     glGenBuffers(1, &texturebuffer);
     glBindBuffer(GL_ARRAY_BUFFER, texturebuffer);
     glBufferData(GL_ARRAY_BUFFER, texcoord.size() * sizeof(GLfloat), texcoord.data(), GL_STATIC_DRAW);
+}
+
+
+void deleteBuffers(){
+    glDeleteVertexArrays(1, &VertexArrayID);
+    glDeleteBuffers(1, &vertexbuffer);
+    glDeleteBuffers(1, &elementbuffer);
+    glDeleteBuffers(1, &texturebuffer);
 }
 
 void createVerticesIndexes(){
@@ -97,130 +105,34 @@ void createVerticesIndexes(){
 }
 
 void createTextures(){
-    glGenTextures(1, &allTextures[0]);
+    for(int i = 0; i < QTDTEXTURAS; i++){
+        unsigned char* texturas;
 
-     // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
-    // set the texture wrapping parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    // set texture filtering parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    // load image, create texture and generate mipmaps
-    int width, height, nrChannels;
-    // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
-    unsigned char *textura1 = SOIL_load_image(filenames[0], &width, &height, &nrChannels, SOIL_LOAD_RGB);
-    if (textura1)
-    {
-        glActiveTexture(GL_TEXTURE0 + 0);
-        glBindTexture(GL_TEXTURE_2D, allTextures[0]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, textura1);
-        glGenerateMipmap(GL_TEXTURE_2D);
+        glGenTextures(1, &allTextures[i]);
+
+        // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
+        // set the texture wrapping parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        // set texture filtering parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        // load image, create texture and generate mipmaps
+        // The FileSystem::getPath(...) is part of the GitHub repository so we can find files on any IDE/platform; replace it with your own image path.
+        texturas = SOIL_load_image(filenames[i], &width, &height, &nrChannels, SOIL_LOAD_RGB);
+        if (texturas)
+        {
+            glActiveTexture(GL_TEXTURE0 + i);
+            glBindTexture(GL_TEXTURE_2D, allTextures[i]);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, texturas);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+        else
+        {
+            std::cout << "Failed to load texture" << filenames[i] << std::endl;
+        }
+        stbi_image_free(texturas);
     }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(textura1);
-
-    glGenTextures(1, &allTextures[1]);
-
-      // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
-    // set the texture wrapping parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    // set texture filtering parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    unsigned char *data = SOIL_load_image(filenames[1], &width, &height, &nrChannels, SOIL_LOAD_RGB);
-    if (data)
-    {
-        glActiveTexture(GL_TEXTURE0 + 1); // Texture unit 1
-        glBindTexture(GL_TEXTURE_2D, allTextures[1]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(data);
-
-    glGenTextures(1, &allTextures[2]);
-
-      // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
-    // set the texture wrapping parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    // set texture filtering parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    unsigned char *grama = SOIL_load_image(filenames[2], &width, &height, &nrChannels, SOIL_LOAD_RGB);
-    if (grama)
-    {
-        glActiveTexture(GL_TEXTURE0 + 2); // Texture unit 1
-        glBindTexture(GL_TEXTURE_2D, allTextures[2]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, grama);
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(grama);
-
-    glGenTextures(1, &allTextures[3]);
-
-      // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
-    // set the texture wrapping parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    // set texture filtering parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    unsigned char *ice = SOIL_load_image(filenames[3], &width, &height, &nrChannels, SOIL_LOAD_RGB);
-    if (ice)
-    {
-        glActiveTexture(GL_TEXTURE0 + 3); // Texture unit 1
-        glBindTexture(GL_TEXTURE_2D, allTextures[3]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, ice);
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(ice);
-
-    glGenTextures(1, &allTextures[4]);
-
-      // all upcoming GL_TEXTURE_2D operations now have effect on this texture object
-    // set the texture wrapping parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	// set texture wrapping to GL_REPEAT (default wrapping method)
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    // set texture filtering parameters
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-    unsigned char *mountain = SOIL_load_image(filenames[4], &width, &height, &nrChannels, SOIL_LOAD_RGB);
-    if (mountain)
-    {
-        glActiveTexture(GL_TEXTURE0 + 4); // Texture unit 1
-        glBindTexture(GL_TEXTURE_2D, allTextures[4]);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, mountain);
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-    }
-    else
-    {
-        std::cout << "Failed to load texture" << std::endl;
-    }
-    stbi_image_free(mountain);
 }
 
 void createProgram(){
@@ -228,39 +140,111 @@ void createProgram(){
     programGeomID  = LoadShaders( "terrenofBm.vert", "Geodesic.geom", "Geodesic.frag");
 }
 
-void getLocations(){
-        MatrixID            = glGetUniformLocation(activeShader, "MVP");
-        cameraPosIDX        = glGetUniformLocation(activeShader, "px");
-        cameraPosIDY        = glGetUniformLocation(activeShader, "py");
-        cameraPosIDZ        = glGetUniformLocation(activeShader, "pz");
-        groundID            = glGetUniformLocation(activeShader, "terra");
-        waterID             = glGetUniformLocation(activeShader, "agua");
-        grassID             = glGetUniformLocation(activeShader, "grama");
-        iceID               = glGetUniformLocation(activeShader, "snow");
-        mountainID          = glGetUniformLocation(activeShader, "mountain");
-        enableTessID        = glGetUniformLocation(activeShader, "tess");
-}
-
-void deleteBuffers(){
-    glDeleteBuffers(1, &vertexbuffer);
-    glDeleteBuffers(1, &elementbuffer);
-    glDeleteBuffers(1, &texturebuffer);
-}
-
 void deleteProgram(){
     glDeleteProgram(programTessID);
     glDeleteProgram(programGeomID);
 }
 
-void deleteVertexArray(){
-    glDeleteVertexArrays(1, &VertexArrayID);
+void setUnifLoc(){
+    MatrixID            = glGetUniformLocation(activeShader, "MVP");
+    cameraPosIDX        = glGetUniformLocation(activeShader, "px");
+    cameraPosIDY        = glGetUniformLocation(activeShader, "py");
+    cameraPosIDZ        = glGetUniformLocation(activeShader, "pz");
+    groundID            = glGetUniformLocation(activeShader, "terra");
+    waterID             = glGetUniformLocation(activeShader, "agua");
+    grassID             = glGetUniformLocation(activeShader, "grama");
+    iceID               = glGetUniformLocation(activeShader, "snow");
+    mountainID          = glGetUniformLocation(activeShader, "mountain");
+    enableTessID        = glGetUniformLocation(activeShader, "tess");
+}
+
+void setUnif(){
+    computeMatricesFromInputs(window);
+    glm::mat4 MVP = getProjectionMatrix() * getViewMatrix() * glm::mat4(1.0);
+    float px = position.x; float py = position.y; float pz = position.z;
+
+    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
+    glUniform1f(cameraPosIDX, px);
+    glUniform1f(cameraPosIDY, py);
+    glUniform1f(cameraPosIDZ, pz);
+    glUniform1i(groundID, 0);
+    glUniform1i(waterID,  1);
+    glUniform1i(grassID, 2);
+    glUniform1i(iceID, 3);
+    glUniform1i(mountainID, 4);
+    glUniform1i(enableTessID, enableTess);
+}
+
+void pressButtons(){
+    bool tIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_T ) == GLFW_PRESS);
+    if (!tIsPressed && tIsCurrentlyPressed){
+        enableTess = (enableTess+1)%3;
+    }
+    tIsPressed = tIsCurrentlyPressed;
+
+    bool pIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_P ) == GLFW_PRESS);
+    if (!pIsPressed && pIsCurrentlyPressed){
+        enablePolygon = !enablePolygon;
+        if(enablePolygon)
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        else
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+    pIsPressed = pIsCurrentlyPressed;
+
+    bool cIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_C ) == GLFW_PRESS);
+    if (!cIsPressed && cIsCurrentlyPressed){
+        enableCull = !enableCull;
+        if(enableCull)
+            glEnable(GL_CULL_FACE);
+        else
+            glDisable(GL_CULL_FACE);
+    }
+    cIsPressed = cIsCurrentlyPressed;
+
+}
+
+void draw(){
+    glPatchParameteri(GL_PATCH_VERTICES, 3);
+
+    // 1rst attribute buffer : vertices
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    // color attribute
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+
+    // texture coord attribute
+    glEnableVertexAttribArray(2);
+    glBindBuffer(GL_ARRAY_BUFFER, texturebuffer);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+
+    // Index buffer
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
+    if(activeShader == programTessID){
+        glDrawElements(GL_PATCHES, indices.size(), GL_UNSIGNED_SHORT, (void*)0);
+
+    }
+    else{
+        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, (void*)0);
+    }
+}
+
+void disableVertexAttribs(){
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
+}
+
+void swapBuffers(){
+    // Swap buffers
+    glfwSwapBuffers(window);
+    glfwPollEvents();
 }
 
 int main(int argv, char** argc){
-    cout<<"Press J to get the Geometry Shader"<<endl;
-    cout<<"Press K to get the Adapt Tessellation Shader"<<endl;
-    cout<<"Press L to get the Uniform Tessellation Shader"<<endl;
-
     init();
 
     createBuffer();
@@ -275,85 +259,18 @@ int main(int argv, char** argc){
 
     activeShader = programTessID;
     do{
-
         // Clear the screen
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Use our shader
-        bool tIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_T ) == GLFW_PRESS);
-        if (!tIsPressed && tIsCurrentlyPressed){
-            enableTess = (enableTess+1)%3;
-        }
-        tIsPressed = tIsCurrentlyPressed;
-
-        getLocations();
+        setUnifLoc();
         glUseProgram(activeShader);
 
-        // Compute the MVP matrix from keyboard and mouse input
-        computeMatricesFromInputs(window);
-        glm::mat4 MVP = getProjectionMatrix() * getViewMatrix() * glm::mat4(1.0);
+        pressButtons();
+        setUnif();
+        draw();
+        disableVertexAttribs();
 
-        // Send our transformation to the currently bound shader,
-        // in the "MVP" uniform
-        float px = position.x; float py = position.y; float pz = position.z;
-
-               //cout<<"     min = "<<minnn<<" e max = "<<maxxx<<endl;
-        if (glfwGetKey( window, GLFW_KEY_U ) == GLFW_PRESS){
-           glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        }
-        if (glfwGetKey( window, GLFW_KEY_I ) == GLFW_PRESS){
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        }
-        if (glfwGetKey( window, GLFW_KEY_O ) == GLFW_PRESS){
-            glEnable(GL_CULL_FACE);
-        }
-        if (glfwGetKey( window, GLFW_KEY_P ) == GLFW_PRESS){
-            glDisable(GL_CULL_FACE);
-        }
-
-        glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-        glUniform1f(cameraPosIDX, px);
-        glUniform1f(cameraPosIDY, py);
-        glUniform1f(cameraPosIDZ, pz);
-        glUniform1i(groundID, 0);
-        glUniform1i(waterID,  1);
-        glUniform1i(grassID, 2);
-        glUniform1i(iceID, 3);
-        glUniform1i(mountainID, 4);
-        glUniform1i(enableTessID, enableTess);
-
-        glPatchParameteri(GL_PATCH_VERTICES, 3);
-
-        // 1rst attribute buffer : vertices
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-        // color attribute
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-
-        // texture coord attribute
-        glEnableVertexAttribArray(2);
-        glBindBuffer(GL_ARRAY_BUFFER, texturebuffer);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-
-        // Index buffer
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-        if(activeShader == programTessID){
-        // Index buffer
-            glDrawElements(GL_PATCHES, indices.size(), GL_UNSIGNED_SHORT, (void*)0);
-
-        }
-        else{
-            glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, (void*)0);
-        }
-        glDisableVertexAttribArray(0);
-
-        // Swap buffers
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-
+        swapBuffers();
     }
 
     while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
@@ -361,7 +278,6 @@ int main(int argv, char** argc){
 
     deleteBuffers();
     deleteProgram();
-    deleteVertexArray();
 
     glfwTerminate();
 

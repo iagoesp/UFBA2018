@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <cstdlib>
+#include <typeinfo>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -15,7 +16,7 @@
 #include "controls.hpp"
 #include "vectormath/vectormath.h"
 
-#define QuantText 5
+#define QTDTEXTURAS 5
 #define HEIGHT 1024
 #define WIDTH   1280
 
@@ -31,7 +32,7 @@ GLuint programGeomID;
 GLuint programTessID;
 GLuint activeShader;
 
-bool gIsCurrentlyPressed, tIsPressed, gIsPressed, enableTessShader = true;
+bool tIsPressed, pIsPressed, enablePolygon, cIsPressed, enableCull;
 
 const GLuint index = 20.0;
 const GLfloat meshSize = 80.0;
@@ -39,16 +40,20 @@ const GLfloat meshSize = 80.0;
 static GLsizei IndexCount;
 static float TessLevelInner;
 static float TessLevelOuter;
-GLuint allTextures[QuantText];
 
-const char* filenames[QuantText] = {"container.jpg",
+const char* filenames[QTDTEXTURAS] = {"container.jpg",
                                     "agua.jpg",
                                     "grama.jpg",
                                     "snow.jpg",
                                     "mountain.jpg"};
 
+GLuint allTextures[QTDTEXTURAS];
+
+
+
 float px, py, pz;
 int enableTess = 0;
+    int width, height, nrChannels;
 
 GLuint MatrixID, ModelMatrixID, ViewMatrixID, ProjectionMatrixID,
     cameraPosIDX, cameraPosIDY, cameraPosIDZ, ampValue, octavesValue,
