@@ -32,10 +32,10 @@ GLuint programGeomID;
 GLuint programTessID;
 GLuint activeShader;
 
-bool tIsPressed, pIsPressed, enablePolygon, cIsPressed, enableCull;
+bool tIsPressed, pIsPressed, enablePolygon, cIsPressed, enableCull, plusIsPressed, minusIsPressed;
 
-const GLuint index = 20.0;
-const GLfloat meshSize = 80.0;
+static GLuint index = 20.0;
+const GLfloat meshSize = 1000.0;
 
 static GLsizei IndexCount;
 static float TessLevelInner;

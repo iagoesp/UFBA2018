@@ -69,12 +69,17 @@ void bindBuffer(){
     glBufferData(GL_ARRAY_BUFFER, texcoord.size() * sizeof(GLfloat), texcoord.data(), GL_STATIC_DRAW);
 }
 
-
 void deleteBuffers(){
     glDeleteVertexArrays(1, &VertexArrayID);
     glDeleteBuffers(1, &vertexbuffer);
     glDeleteBuffers(1, &elementbuffer);
     glDeleteBuffers(1, &texturebuffer);
+}
+
+void clearVectors(){
+    indices.clear();
+    vertices.clear();
+    texcoord.clear();
 }
 
 void createVerticesIndexes(){
@@ -102,6 +107,22 @@ void createVerticesIndexes(){
             texcoord.push_back((float)j);
         }
 	}
+}
+
+void disableVertexAttribs(){
+    glDisableVertexAttribArray(0);
+    glDisableVertexAttribArray(1);
+    glDisableVertexAttribArray(2);
+}
+
+void createProgram(){
+    programTessID = LoadShaders( "terrain.vert", "terrain.tesc", "terrain.tese", "terrain.frag");
+    programGeomID  = LoadShaders( "terrenofBm.vert", "Geodesic.geom", "Geodesic.frag");
+}
+
+void deleteProgram(){
+    glDeleteProgram(programTessID);
+    glDeleteProgram(programGeomID);
 }
 
 void createTextures(){
@@ -135,17 +156,9 @@ void createTextures(){
     }
 }
 
-void createProgram(){
-    programTessID = LoadShaders( "terrain.vert", "terrain.tesc", "terrain.tese", "terrain.frag");
-    programGeomID  = LoadShaders( "terrenofBm.vert", "Geodesic.geom", "Geodesic.frag");
-}
-
-void deleteProgram(){
-    glDeleteProgram(programTessID);
-    glDeleteProgram(programGeomID);
-}
-
 void setUnifLoc(){
+    glUseProgram(activeShader);
+
     MatrixID            = glGetUniformLocation(activeShader, "MVP");
     cameraPosIDX        = glGetUniformLocation(activeShader, "px");
     cameraPosIDY        = glGetUniformLocation(activeShader, "py");
@@ -202,9 +215,30 @@ void pressButtons(){
     }
     cIsPressed = cIsCurrentlyPressed;
 
+    bool plusIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_KP_ADD ) == GLFW_PRESS);
+    if (!plusIsPressed && plusIsCurrentlyPressed){
+        index*=2;
+        clearVectors();
+        createVerticesIndexes();
+        bindBuffer();
+    }
+    plusIsPressed = plusIsCurrentlyPressed;
+
+    bool minusIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_KP_SUBTRACT ) == GLFW_PRESS);
+    if (!minusIsPressed && minusIsCurrentlyPressed){
+        index/=2;
+        if(index<2)
+            index=2;
+        clearVectors();
+        createVerticesIndexes();
+        bindBuffer();
+    }
+    minusIsPressed = minusIsCurrentlyPressed;
 }
 
 void draw(){
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
     glPatchParameteri(GL_PATCH_VERTICES, 3);
 
     // 1rst attribute buffer : vertices
@@ -232,12 +266,6 @@ void draw(){
     }
 }
 
-void disableVertexAttribs(){
-    glDisableVertexAttribArray(0);
-    glDisableVertexAttribArray(1);
-    glDisableVertexAttribArray(2);
-}
-
 void swapBuffers(){
     // Swap buffers
     glfwSwapBuffers(window);
@@ -260,10 +288,8 @@ int main(int argv, char** argc){
     activeShader = programTessID;
     do{
         // Clear the screen
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         setUnifLoc();
-        glUseProgram(activeShader);
 
         pressButtons();
         setUnif();

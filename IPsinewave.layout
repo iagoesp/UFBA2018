@@ -2,56 +2,24 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Debug" />
+	<File name="tessAdapt.tesc" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1239" topLine="7" />
+		</Cursor>
+	</File>
 	<File name="tessAdapt.tese" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="1" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="152" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="controls.hpp" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="44" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="main.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="11989" topLine="85" />
-		</Cursor>
-		<Folding>
-			<Collapse line="8" />
-			<Collapse line="32" />
-			<Collapse line="51" />
-			<Collapse line="57" />
-			<Collapse line="71" />
-			<Collapse line="98" />
-			<Collapse line="225" />
-			<Collapse line="243" />
-			<Collapse line="249" />
-			<Collapse line="254" />
-		</Folding>
-	</File>
-	<File name="controls.cpp" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="725" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="terrenofBm.vert" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="-2" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="6530" topLine="154" />
-		</Cursor>
-	</File>
-	<File name="tessAdapt.tesc" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="714" topLine="0" />
-		</Cursor>
-	</File>
 	<File name="terrain.frag" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="2135" topLine="39" />
+			<Cursor1 position="2135" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="main.hpp" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1188" topLine="22" />
+			<Cursor1 position="684" topLine="27" />
 		</Cursor>
 	</File>
 	<File name="terrain.geom" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -59,14 +27,24 @@
 			<Cursor1 position="6735" topLine="9" />
 		</Cursor>
 	</File>
-	<File name="terrain.vert" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="terrenofBm.vert" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="-2" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="300" topLine="147" />
+			<Cursor1 position="6530" topLine="154" />
 		</Cursor>
 	</File>
 	<File name="simplex.h" open="1" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="8406" topLine="139" />
+		</Cursor>
+	</File>
+	<File name="terrain.vert" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="213" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="terrain.tesc" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="1052" topLine="26" />
 		</Cursor>
 	</File>
 	<File name="LoadShaders.cpp" open="1" top="0" tabpos="10" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -84,14 +62,36 @@
 			<Cursor1 position="9305" topLine="175" />
 		</Cursor>
 	</File>
-	<File name="terrain.tesc" open="1" top="0" tabpos="8" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1052" topLine="26" />
-		</Cursor>
-	</File>
 	<File name="tessUnif.tesc" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="795" topLine="20" />
+		</Cursor>
+	</File>
+	<File name="controls.hpp" open="1" top="0" tabpos="11" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="44" topLine="0" />
+		</Cursor>
+	</File>
+	<File name="main.cpp" open="1" top="1" tabpos="1" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="8392" topLine="110" />
+		</Cursor>
+		<Folding>
+			<Collapse line="8" />
+			<Collapse line="32" />
+			<Collapse line="51" />
+			<Collapse line="57" />
+			<Collapse line="72" />
+			<Collapse line="106" />
+			<Collapse line="137" />
+			<Collapse line="142" />
+			<Collapse line="160" />
+			<Collapse line="177" />
+		</Folding>
+	</File>
+	<File name="controls.cpp" open="1" top="0" tabpos="9" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+		<Cursor>
+			<Cursor1 position="725" topLine="33" />
 		</Cursor>
 	</File>
 </CodeBlocks_layout_file>
