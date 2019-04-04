@@ -305,7 +305,7 @@
 
 1550704562 c:\users\iago.labcg-pc\documents\ufba2018\loadshaders.hpp
 
-1554161439 source:c:\users\iago.labcg-pc\documents\ufba2018\main.cpp
+1554339581 source:c:\users\iago.labcg-pc\documents\ufba2018\main.cpp
 	"main.hpp"
 
 1550704562 c:\users\iago.labcg-pc\documents\ufba2018\vectormath\vectormath.h
@@ -384,12 +384,13 @@
 	"controls.hpp"
 	"vectormath/vectormath.h"
 
-1554161812 c:\users\iago.labcg-pc\documents\ufba2018\main.hpp
+1554330247 c:\users\iago.labcg-pc\documents\ufba2018\main.hpp
 	<iostream>
 	<vector>
 	<string>
 	<cstdlib>
 	<typeinfo>
+	<cmath>
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>

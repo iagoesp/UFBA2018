@@ -99,9 +99,9 @@ void createVerticesIndexes(){
     for (GLfloat i = 0 ; i <= index ; i+=1.0){
 		for (GLfloat j = 0 ; j <= index ; j+=1.0) {
             glm::vec2 vert = vec2((float)(i*tamAmostra), (float)(j*tamAmostra));
-            float h = Simplex::iqfBm (vert, 3.8, 4.2f, 5.7f);
+            //float h = Simplex::iqfBm(vert, 3.8, 4.2f, 5.7f);
             vertices.push_back(vert.x);
-            vertices.push_back(h);
+            //vertices.push_back(h);
             vertices.push_back(vert.y);
             texcoord.push_back((float)i);
             texcoord.push_back((float)j);
@@ -189,13 +189,13 @@ void setUnif(){
 }
 
 void pressButtons(){
-    bool tIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_T ) == GLFW_PRESS);
+    bool tIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_T ) == GLFW_PRESS && !(glfwGetKey( window, GLFW_KEY_RIGHT_SHIFT ) == GLFW_PRESS || glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS));
     if (!tIsPressed && tIsCurrentlyPressed){
         enableTess = (enableTess+1)%3;
     }
     tIsPressed = tIsCurrentlyPressed;
 
-    bool pIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_P ) == GLFW_PRESS);
+    bool pIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_T ) == GLFW_PRESS && (glfwGetKey( window, GLFW_KEY_RIGHT_SHIFT ) == GLFW_PRESS || glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS));
     if (!pIsPressed && pIsCurrentlyPressed){
         enablePolygon = !enablePolygon;
         if(enablePolygon)
@@ -215,25 +215,63 @@ void pressButtons(){
     }
     cIsPressed = cIsCurrentlyPressed;
 
-    bool plusIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_KP_ADD ) == GLFW_PRESS);
+    bool plusIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_KP_ADD ) == GLFW_PRESS &&
+                                         !(glfwGetKey( window, GLFW_KEY_RIGHT_SHIFT ) == GLFW_PRESS || glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS));
     if (!plusIsPressed && plusIsCurrentlyPressed){
-        index*=2;
+        GLuint saveIndex = index;
+        saveIndex*=2;
+//        if(saveIndex > meshSize)
+//            saveIndex=meshSize;
+        index = saveIndex;
         clearVectors();
         createVerticesIndexes();
         bindBuffer();
+        cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vértices = "<<vertices.size()<<" e quantidade dos índices"<<indices.size()<<endl;
     }
     plusIsPressed = plusIsCurrentlyPressed;
 
-    bool minusIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_KP_SUBTRACT ) == GLFW_PRESS);
+    bool minusIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_KP_SUBTRACT ) == GLFW_PRESS &&
+                                         !(glfwGetKey( window, GLFW_KEY_RIGHT_SHIFT ) == GLFW_PRESS || glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS));
     if (!minusIsPressed && minusIsCurrentlyPressed){
-        index/=2;
-        if(index<2)
-            index=2;
+        GLuint saveIndex = index;
+        saveIndex/=2;
+        if(saveIndex<2)
+            saveIndex=2;
+        index = saveIndex;
         clearVectors();
         createVerticesIndexes();
         bindBuffer();
+        cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vértices = "<<vertices.size()<<" e quantidade dos índices"<<indices.size()<<endl;
     }
     minusIsPressed = minusIsCurrentlyPressed;
+
+    bool shiftPlusIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_KP_ADD ) == GLFW_PRESS &&
+                                         (glfwGetKey( window, GLFW_KEY_RIGHT_SHIFT ) == GLFW_PRESS || glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS));
+    if (!shiftPlusIsPressed && shiftPlusIsCurrentlyPressed){
+        meshSize*=2;
+        clearVectors();
+        createVerticesIndexes();
+        bindBuffer();
+        cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vértices = "<<vertices.size()<<" e quantidade dos índices"<<indices.size()<<endl;
+    }
+    shiftPlusIsPressed = shiftPlusIsCurrentlyPressed;
+
+    bool shiftMinusIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_KP_SUBTRACT ) == GLFW_PRESS &&
+                                         (glfwGetKey( window, GLFW_KEY_RIGHT_SHIFT ) == GLFW_PRESS || glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS));
+    if (!shiftMinusIsPressed && shiftMinusIsCurrentlyPressed){
+        GLuint saveMesh = meshSize;
+        saveMesh/=2;
+        if(meshSize<2)
+            meshSize=2;
+        if(index > saveMesh)
+            saveMesh=index;
+        meshSize = saveMesh;
+        clearVectors();
+        createVerticesIndexes();
+        bindBuffer();
+        cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vértices = "<<vertices.size()<<" e quantidade dos índices"<<indices.size()<<endl;
+    }
+    shiftMinusIsPressed = shiftMinusIsCurrentlyPressed;
 }
 
 void draw(){
@@ -244,7 +282,7 @@ void draw(){
     // 1rst attribute buffer : vertices
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
     // color attribute
     glEnableVertexAttribArray(1);

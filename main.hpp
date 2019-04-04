@@ -3,6 +3,7 @@
 #include <string>
 #include <cstdlib>
 #include <typeinfo>
+#include <cmath>
 
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -32,10 +33,10 @@ GLuint programGeomID;
 GLuint programTessID;
 GLuint activeShader;
 
-bool tIsPressed, pIsPressed, enablePolygon, cIsPressed, enableCull, plusIsPressed, minusIsPressed;
+bool tIsPressed, pIsPressed, enablePolygon, cIsPressed, enableCull, plusIsPressed, minusIsPressed, shiftMinusIsPressed, shiftPlusIsPressed;
 
-static GLuint index = 20.0;
-const GLfloat meshSize = 1000.0;
+static GLuint index = 32.0;
+static GLfloat meshSize = 128.0;
 
 static GLsizei IndexCount;
 static float TessLevelInner;
