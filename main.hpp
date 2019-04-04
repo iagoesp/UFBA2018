@@ -33,7 +33,7 @@ GLuint programGeomID;
 GLuint programTessID;
 GLuint activeShader;
 
-bool tIsPressed, pIsPressed, enablePolygon, cIsPressed, enableCull, plusIsPressed, minusIsPressed, shiftMinusIsPressed, shiftPlusIsPressed;
+bool tIsPressed, pIsPressed, enablePolygon, cIsPressed, enableCull, plusIsPressed, minusIsPressed, shiftMinusIsPressed, shiftPlusIsPressed, mIsPressed;
 
 static GLuint index = 32.0;
 static GLfloat meshSize = 128.0;
@@ -53,8 +53,8 @@ GLuint allTextures[QTDTEXTURAS];
 
 
 float px, py, pz;
-int enableTess = 0;
-    int width, height, nrChannels;
+int enableTess = 0, modeMouse=0;
+int width, height, nrChannels;
 
 GLuint MatrixID, ModelMatrixID, ViewMatrixID, ProjectionMatrixID,
     cameraPosIDX, cameraPosIDY, cameraPosIDZ, ampValue, octavesValue,

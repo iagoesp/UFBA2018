@@ -189,21 +189,21 @@ void setUnif(){
 }
 
 void pressButtons(){
-    bool tIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_T ) == GLFW_PRESS && !(glfwGetKey( window, GLFW_KEY_RIGHT_SHIFT ) == GLFW_PRESS || glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS));
-    if (!tIsPressed && tIsCurrentlyPressed){
-        enableTess = (enableTess+1)%3;
+    bool mIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_M ) == GLFW_PRESS);
+    if (!mIsPressed && mIsCurrentlyPressed){
+        modeMouse = !modeMouse;
+        if(modeMouse){
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+            glfwMakeContextCurrent(0);
+            glfwWaitEventsTimeout(5000);
+        }
+        else{
+            glfwMakeContextCurrent(window);
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        }
+        //glfwPollEvents();
     }
-    tIsPressed = tIsCurrentlyPressed;
-
-    bool pIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_T ) == GLFW_PRESS && (glfwGetKey( window, GLFW_KEY_RIGHT_SHIFT ) == GLFW_PRESS || glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS));
-    if (!pIsPressed && pIsCurrentlyPressed){
-        enablePolygon = !enablePolygon;
-        if(enablePolygon)
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        else
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    }
-    pIsPressed = pIsCurrentlyPressed;
+    mIsPressed = mIsCurrentlyPressed;
 
     bool cIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_C ) == GLFW_PRESS);
     if (!cIsPressed && cIsCurrentlyPressed){
@@ -214,6 +214,24 @@ void pressButtons(){
             glDisable(GL_CULL_FACE);
     }
     cIsPressed = cIsCurrentlyPressed;
+
+    bool tIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_T ) == GLFW_PRESS &&
+                                !(glfwGetKey( window, GLFW_KEY_RIGHT_SHIFT ) == GLFW_PRESS || glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS));
+    if (!tIsPressed && tIsCurrentlyPressed){
+        enableTess = (enableTess+1)%3;
+    }
+    tIsPressed = tIsCurrentlyPressed;
+
+    bool pIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_T ) == GLFW_PRESS &&
+                                (glfwGetKey( window, GLFW_KEY_RIGHT_SHIFT ) == GLFW_PRESS || glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS));
+    if (!pIsPressed && pIsCurrentlyPressed){
+        enablePolygon = !enablePolygon;
+        if(enablePolygon)
+            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        else
+            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    }
+    pIsPressed = pIsCurrentlyPressed;
 
     bool plusIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_KP_ADD ) == GLFW_PRESS &&
                                          !(glfwGetKey( window, GLFW_KEY_RIGHT_SHIFT ) == GLFW_PRESS || glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS));
