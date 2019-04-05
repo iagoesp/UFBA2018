@@ -1,4 +1,4 @@
-// Include GLFW
+ // Include GLFW
 #include <GLFW/glfw3.h>
 //extern; // The "extern" keyword here is to access the variable "window" declared in tutorialXXX.cpp. This is a hack to keep the tutorials simple. Please avoid this.
 
@@ -73,11 +73,11 @@ void computeMatricesFromInputs(GLFWwindow* window){
 	// Up vector
 	glm::vec3 up = glm::cross( right, direction );
 
-	// Move forward
+	// moves forward
 	if (glfwGetKey( window, GLFW_KEY_W ) == GLFW_PRESS){
 		position += direction * deltaTime * speed;
 	}
-	// Move backward
+	// moves backward
 	if (glfwGetKey( window, GLFW_KEY_S ) == GLFW_PRESS){
 		position -= direction * deltaTime * speed;
 	}

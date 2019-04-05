@@ -54,10 +54,6 @@
 		<Unit filename="terrain.tesc" />
 		<Unit filename="terrain.tese" />
 		<Unit filename="terrain.vert" />
-		<Unit filename="terrenofBm.vert" />
-		<Unit filename="tessAdapt.tesc" />
-		<Unit filename="tessAdapt.tese" />
-		<Unit filename="tessUnif.tesc" />
 		<Extensions>
 			<code_completion />
 			<envvars />

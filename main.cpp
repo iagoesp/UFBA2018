@@ -99,9 +99,9 @@ void createVerticesIndexes(){
     for (GLfloat i = 0 ; i <= index ; i+=1.0){
 		for (GLfloat j = 0 ; j <= index ; j+=1.0) {
             glm::vec2 vert = vec2((float)(i*tamAmostra), (float)(j*tamAmostra));
-            //float h = Simplex::iqfBm(vert, 3.8, 4.2f, 5.7f);
+            float h = Simplex::iqfBm(vert, 3.8, 4.2f, 5.7f);
             vertices.push_back(vert.x);
-            //vertices.push_back(h);
+            vertices.push_back(h);
             vertices.push_back(vert.y);
             texcoord.push_back((float)i);
             texcoord.push_back((float)j);
@@ -169,6 +169,8 @@ void setUnifLoc(){
     iceID               = glGetUniformLocation(activeShader, "snow");
     mountainID          = glGetUniformLocation(activeShader, "mountain");
     enableTessID        = glGetUniformLocation(activeShader, "tess");
+    pos2ID              = glGetUniformLocation(activeShader, "pos2");
+    noiseID              = glGetUniformLocation(activeShader, "noised");
 }
 
 void setUnif(){
@@ -186,9 +188,31 @@ void setUnif(){
     glUniform1i(iceID, 3);
     glUniform1i(mountainID, 4);
     glUniform1i(enableTessID, enableTess);
+    glUniform1f(noiseID, noise);
+    glUniform1f(pos2ID, pos2);
 }
 
 void pressButtons(){
+    bool noiseIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_F ) == GLFW_PRESS);
+    if (!noise2IsPressed && noiseIsCurrentlyPressed){
+        noise = !noise;
+        if(noise)
+            cout<<"noise = true"<<endl;
+        else
+            cout<<"noise = false"<<endl;
+    }
+    noise2IsPressed = noiseIsCurrentlyPressed;
+
+    bool pos2IsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_C ) == GLFW_PRESS);
+    if (!pos2IsPressed && pos2IsCurrentlyPressed){
+        pos2 = !pos2;
+        if(pos2)
+            cout<<"cpu = true"<<endl;
+        else
+            cout<<"cpu = false"<<endl;
+    }
+    pos2IsPressed = pos2IsCurrentlyPressed;
+
     bool mIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_M ) == GLFW_PRESS);
     if (!mIsPressed && mIsCurrentlyPressed){
         modeMouse = !modeMouse;
@@ -300,7 +324,7 @@ void draw(){
     // 1rst attribute buffer : vertices
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
     // color attribute
     glEnableVertexAttribArray(1);

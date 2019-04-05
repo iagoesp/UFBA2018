@@ -33,7 +33,7 @@ GLuint programGeomID;
 GLuint programTessID;
 GLuint activeShader;
 
-bool tIsPressed, pIsPressed, enablePolygon, cIsPressed, enableCull, plusIsPressed, minusIsPressed, shiftMinusIsPressed, shiftPlusIsPressed, mIsPressed;
+bool tIsPressed, pIsPressed, enablePolygon, cIsPressed, enableCull, plusIsPressed, minusIsPressed, shiftMinusIsPressed, shiftPlusIsPressed, mIsPressed, pos2IsPressed, pos2 = true, noise2IsPressed, noise=true;
 
 static GLuint index = 32.0;
 static GLfloat meshSize = 128.0;
@@ -60,4 +60,4 @@ GLuint MatrixID, ModelMatrixID, ViewMatrixID, ProjectionMatrixID,
     cameraPosIDX, cameraPosIDY, cameraPosIDZ, ampValue, octavesValue,
     lacunarityValue, LightID, TessLevelInnerID, TessLevelOuterID, TextureID,
     TextureID2, groundID, waterID, grassID, iceID, mountainID, enableTessID,
-    VertexArrayID, vertexbuffer, elementbuffer, texturebuffer;
+    VertexArrayID, vertexbuffer, elementbuffer, texturebuffer, pos2ID, noiseID;
