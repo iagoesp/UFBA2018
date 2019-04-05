@@ -2,10 +2,6 @@
 
 extern glm::vec3 position;
 
-vector<unsigned short> indices;
-vector<GLfloat> vertices;
-vector<GLfloat> texcoord;
-
 int initGL(){
     glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);

@@ -33,6 +33,10 @@ GLuint programGeomID;
 GLuint programTessID;
 GLuint activeShader;
 
+vector<unsigned short> indices;
+vector<GLfloat> vertices;
+vector<GLfloat> texcoord;
+
 bool tIsPressed, pIsPressed, enablePolygon, cIsPressed, enableCull, plusIsPressed, minusIsPressed, shiftMinusIsPressed, shiftPlusIsPressed, mIsPressed, pos2IsPressed, pos2 = true, noise2IsPressed, noise=true;
 
 static GLuint index = 32.0;
