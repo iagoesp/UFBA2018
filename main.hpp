@@ -14,7 +14,7 @@
 #include "SOIL.h"
 #include "simplex.h"
 #include "LoadShaders.hpp"
-#include "controls.hpp"
+//#include "controls.hpp"
 #include "vectormath/vectormath.h"
 
 #define QTDTEXTURAS 5
@@ -53,7 +53,11 @@ const char* filenames[QTDTEXTURAS] = {"container.jpg",
                                     "mountain.jpg"};
 
 GLuint allTextures[QTDTEXTURAS];
-
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+bool firstMouse = true;
+float lastX = (float)WIDTH / 2.0;
+float lastY = (float)HEIGHT / 2.0;
 
 
 float px, py, pz;
@@ -65,3 +69,23 @@ GLuint MatrixID, ModelMatrixID, ViewMatrixID, ProjectionMatrixID,
     lacunarityValue, LightID, TessLevelInnerID, TessLevelOuterID, TextureID,
     TextureID2, groundID, waterID, grassID, iceID, mountainID, enableTessID,
     VertexArrayID, vertexbuffer, elementbuffer, texturebuffer, pos2ID, noiseID;
+
+int initGL();
+int init();
+void createBuffer();
+void bindBuffer();
+void deleteBuffers();
+void clearVectors();
+void createVerticesIndexes();
+void disableVertexAttribs();
+void createProgram();
+void deleteProgram();
+void createTextures();
+void setUnifLoc();
+void setUnif();
+void pressButtons();
+void draw();
+void framebuffer_size_callback(GLFWwindow* window, int width, int height);
+void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+void swapBuffers();
