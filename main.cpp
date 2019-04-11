@@ -5,6 +5,7 @@ extern glm::vec3 position;
 vector<unsigned short> indices;
 vector<GLfloat> vertices;
 vector<GLfloat> texcoord;
+Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 
 int initGL(){
     glfwInit();
