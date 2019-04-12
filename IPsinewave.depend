@@ -292,15 +292,23 @@
 
 1554489915 c:\users\iago.labcg-pc\documents\ufba2018\controls.hpp
 
-1554491823 source:c:\users\iago.labcg-pc\documents\ufba2018\loadshaders.cpp
-	"main.hpp"
+1555008637 source:c:\users\iago.labcg-pc\documents\ufba2018\loadshaders.cpp
+	<stdio.h>
+	<string>
+	<vector>
+	<iostream>
 	<fstream>
 	<algorithm>
+	<stdlib.h>
+	<string.h>
+	<GL/glew.h>
+	"LoadShaders.hpp"
 
 1554492161 c:\users\iago.labcg-pc\documents\ufba2018\loadshaders.hpp
 
-1554491682 source:c:\users\iago.labcg-pc\documents\ufba2018\main.cpp
+1555010222 source:c:\users\iago.labcg-pc\documents\ufba2018\main.cpp
 	"main.hpp"
+	"camera.h"
 
 1550704562 c:\users\iago.labcg-pc\documents\ufba2018\vectormath\vectormath.h
 	"vectormath_aos_v.h"
@@ -379,7 +387,7 @@
 	"LoadShaders.hpp"
 	"vectormath/vectormath.h"
 
-1554492145 c:\users\iago.labcg-pc\documents\ufba2018\main.hpp
+1555008640 c:\users\iago.labcg-pc\documents\ufba2018\main.hpp
 	<iostream>
 	<vector>
 	<string>
@@ -394,7 +402,6 @@
 	"SOIL.h"
 	"simplex.h"
 	"LoadShaders.hpp"
-	"controls.hpp"
 	"vectormath/vectormath.h"
 
 1553806911 c:\users\iago.labcg-pc\documents\ufba2018\simplex.h
@@ -410,6 +417,11 @@
 	<glm/mat2x2.hpp>
 
 1554970054 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\camera.h
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<vector>
+
+1555008640 c:\users\iago.labcg-pc\documents\ufba2018\camera.h
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
 	<vector>

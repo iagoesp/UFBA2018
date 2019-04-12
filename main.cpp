@@ -22,8 +22,6 @@ int main(int argv, char** argc){
         lastFrame = currentFrame;
         // Clear the screen
 
-        setUnifLoc();
-
         pressButtons();
         setUnif();
         draw();
@@ -196,40 +194,24 @@ void createTextures(){
     }
 }
 
-void setUnifLoc(){
-    glUseProgram(activeShader);
-
-    MatrixID            = glGetUniformLocation(activeShader, "MVP");
-    cameraPosIDX        = glGetUniformLocation(activeShader, "px");
-    cameraPosIDY        = glGetUniformLocation(activeShader, "py");
-    cameraPosIDZ        = glGetUniformLocation(activeShader, "pz");
-    groundID            = glGetUniformLocation(activeShader, "terra");
-    waterID             = glGetUniformLocation(activeShader, "agua");
-    grassID             = glGetUniformLocation(activeShader, "grama");
-    iceID               = glGetUniformLocation(activeShader, "snow");
-    mountainID          = glGetUniformLocation(activeShader, "mountain");
-    enableTessID        = glGetUniformLocation(activeShader, "tess");
-    pos2ID              = glGetUniformLocation(activeShader, "pos2");
-    noiseID              = glGetUniformLocation(activeShader, "noised");
-}
-
 void setUnif(){
+        glUseProgram(activeShader);
 //    computeMatricesFromInputs(window);
     glm::mat4 MVP = camera.getProjectionMatrix(WIDTH, HEIGHT) * camera.getViewMatrix() * glm::mat4(1.0);
     float px = camera.Position.x; float py = camera.Position.y; float pz = camera.Position.z;
 
-    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    glUniform1f(cameraPosIDX, px);
-    glUniform1f(cameraPosIDY, py);
-    glUniform1f(cameraPosIDZ, pz);
-    glUniform1i(groundID, 0);
-    glUniform1i(waterID,  1);
-    glUniform1i(grassID, 2);
-    glUniform1i(iceID, 3);
-    glUniform1i(mountainID, 4);
-    glUniform1i(enableTessID, enableTess);
-    glUniform1f(noiseID, noise);
-    glUniform1f(pos2ID, pos2);
+    glUniformMatrix4fv(glGetUniformLocation(activeShader, "MVP"), 1, GL_FALSE, &MVP[0][0]);
+    glUniform1f(glGetUniformLocation(activeShader, "px"), px);
+    glUniform1f(glGetUniformLocation(activeShader, "py"), py);
+    glUniform1f(glGetUniformLocation(activeShader, "pz"), pz);
+    glUniform1i(glGetUniformLocation(activeShader, "terra"), 0);
+    glUniform1i(glGetUniformLocation(activeShader, "agua"),  1);
+    glUniform1i(glGetUniformLocation(activeShader, "grama"), 2);
+    glUniform1i(glGetUniformLocation(activeShader, "snow"), 3);
+    glUniform1i(glGetUniformLocation(activeShader, "mountain"), 4);
+    glUniform1i(glGetUniformLocation(activeShader, "tess"), enableTess);
+    glUniform1f(glGetUniformLocation(activeShader, "noised"), noise);
+    glUniform1f(glGetUniformLocation(activeShader, "pos2"), pos2);
 }
 
 void pressButtons(){
@@ -402,8 +384,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-// glfw: whenever the mouse moves, this callback is called
-// -------------------------------------------------------
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
     if (firstMouse)
