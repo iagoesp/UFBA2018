@@ -337,6 +337,35 @@ void pressButtons(){
     }
     shiftMinusIsPressed = shiftMinusIsCurrentlyPressed;
 
+    bool pDownIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_PAGE_DOWN ) == GLFW_PRESS);
+    if (!pDownIsPressed && pDownIsCurrentlyPressed){
+        float sp = camera.MovementSpeed/2;
+		if(sp<0.5)
+            sp = 0.5;
+        camera.MovementSpeed = sp;
+       cout<<camera.MovementSpeed<<endl;
+    }
+    pDownIsPressed = pDownIsCurrentlyPressed;
+
+   bool pUpIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_PAGE_UP ) == GLFW_PRESS);
+    if (!pUpIsPressed && pUpIsCurrentlyPressed){
+		float sp = camera.MovementSpeed*1.5;
+		if(sp>150)
+            sp = 150;
+        camera.MovementSpeed = sp;
+        		cout<<camera.MovementSpeed<<endl;
+
+    }
+    pUpIsPressed = pUpIsCurrentlyPressed;
+
+    if ((glfwGetKey( window, GLFW_KEY_PAGE_DOWN ) == GLFW_PRESS)){
+
+	}
+
+  if ((glfwGetKey( window, GLFW_KEY_PAGE_UP ) == GLFW_PRESS)){
+
+	}
+
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         camera.ProcessKeyboard(FORWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)

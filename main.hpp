@@ -18,8 +18,7 @@
 #include "vectormath/vectormath.h"
 
 #define QTDTEXTURAS 5
-#define HEIGHT 1024
-#define WIDTH   1280
+
 
 const char* projectTitle = "Terrain";
 
@@ -37,7 +36,7 @@ vector<unsigned short> indices;
 vector<GLfloat> vertices;
 vector<GLfloat> texcoord;
 
-bool tIsPressed, pIsPressed, enablePolygon, cIsPressed, enableCull, plusIsPressed, minusIsPressed, shiftMinusIsPressed, shiftPlusIsPressed, mIsPressed, pos2IsPressed, pos2 = true, noise2IsPressed, noise=true;
+bool enablePolygon, enableCull,  pos2 = true,  noise=true;
 
 static GLuint index = 32.0;
 static GLfloat meshSize = 128.0;
@@ -56,8 +55,6 @@ GLuint allTextures[QTDTEXTURAS];
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 bool firstMouse = true;
-float lastX = (float)WIDTH / 2.0;
-float lastY = (float)HEIGHT / 2.0;
 
 
 float px, py, pz;

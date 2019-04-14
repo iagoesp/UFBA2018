@@ -1,5 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
+#define HEIGHT 1024
+#define WIDTH   1280
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -14,12 +16,18 @@ enum Camera_Movement {
     RIGHT
 };
 
+bool tIsPressed, pIsPressed, cIsPressed, plusIsPressed, minusIsPressed, shiftMinusIsPressed, shiftPlusIsPressed, mIsPressed, pos2IsPressed, noise2IsPressed, pDownIsPressed = false, pUpIsPressed = false;
+
+
 // Default camera values
 const float YAW         = -90.0f;
 const float PITCH       =  0.0f;
-const float SPEED       =  2.5f;
+static float SPEED       =  2.5f;
 const float SENSITIVITY =  0.1f;
 const float ZOOM        =  45.0f;
+
+float lastX = (float)WIDTH / 2.0;
+float lastY = (float)HEIGHT / 2.0;
 
 
 // An abstract camera class that processes input and calculates the corresponding Euler Angles, Vectors and Matrices for use in OpenGL
