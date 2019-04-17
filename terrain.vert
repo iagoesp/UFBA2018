@@ -14,7 +14,7 @@ out vec2 TexCoord;
 
 out vec3 vPosition;
 
-uniform bool pos2;
+uniform bool CPUnoise;
 uniform bool noise;
 
 float hash(float n) { return fract(sin(n) * 1e4); }
@@ -34,6 +34,22 @@ float noised(vec2 x) {
 	return mix(a, b, u.x) + (c - a) * u.y * (1.0 - u.x) + (d - b) * u.x * u.y;
 }
 
+vec3 noised3(vec2 x)
+{
+    vec2 f = fract(x);
+    vec2 u = f*f*(3.0-2.0*f);
+
+    // texel fetch version
+    vec2 p = vec2(floor(x));
+    float a = hash(p+vec2(0,0));
+	float b = hash(p+vec2(1,0));
+	float c = hash(p+vec2(0,1));
+	float d = hash(p+vec2(1,1));
+
+	return vec3(a+(b-a)*u.x+(c-a)*u.y+(a-b-c+d)*u.x*u.y,
+				6.0*f*(1.0-f)*(vec2(b-a,c-a)+(a-b-c+d)*u.yx));
+}
+
 const mat2 m2 = mat2(0.8,-0.6,0.6,0.8);
 
 float fbm(vec2 p){
@@ -49,7 +65,7 @@ float fbm(vec2 p){
 void main(){
 	TexCoord    = vec2(aTexCoord.x, aTexCoord.y);
 
-    if(pos2)
+    if(CPUnoise)
         vPosition 	=  position;
     else{
         vec2 posVec2    = vec2(position.x, position.z);
