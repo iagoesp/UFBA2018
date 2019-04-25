@@ -1,7 +1,7 @@
 #include "main.hpp"
 #include "camera.h"
 
-Camera camera(glm::vec3(75.0f, 50.0f, 75.0f));
+Camera camera(glm::vec3(75.0f, 15.0f, 75.0f));
 
 int main(int argv, char** argc){
     init();
@@ -121,21 +121,21 @@ void clearVectors(){
 }
 
 void createVerticesIndexes(){
-    float tamAmostra = meshSize / (float)index;
-    for (GLuint i = 0 ; i < index ; i++){
-		for (GLuint j = 0 ; j < index ; j++) {
-			indices.push_back( i*(index+1) 		+ j);		// V0
-			indices.push_back( i*(index+1) 		+ (j+1));	// V1
-			indices.push_back( (i+1)*(index+1) 	+ j);		// V2
+    float tamAmostra = meshSize / (float)indexSize;
+    for (GLuint i = 0 ; i < indexSize ; i++){
+		for (GLuint j = 0 ; j < indexSize ; j++) {
+			indices.push_back( i*(indexSize+1) 		+ j);		// V0
+			indices.push_back( i*(indexSize+1) 		+ (j+1));	// V1
+			indices.push_back( (i+1)*(indexSize+1) 	+ j);		// V2
 
-			indices.push_back( i*(index+1) 		+ (j+1));	// V1
-			indices.push_back( (i+1)*(index+1) 	+ (j+1));	// V3
-			indices.push_back( (i+1)*(index+1) 	+ j);		// V2
+			indices.push_back( i*(indexSize+1) 		+ (j+1));	// V1
+			indices.push_back( (i+1)*(indexSize+1) 	+ (j+1));	// V3
+			indices.push_back( (i+1)*(indexSize+1) 	+ j);		// V2
 		}
 	}
 
-    for (GLfloat i = 0 ; i <= index ; i+=1.0){
-		for (GLfloat j = 0 ; j <= index ; j+=1.0) {
+    for (GLfloat i = 0 ; i <= indexSize ; i+=1.0){
+		for (GLfloat j = 0 ; j <= indexSize ; j+=1.0) {
             glm::vec2 vert = vec2((float)(i*tamAmostra), (float)(j*tamAmostra));
             float h = 1.f;//Simplex::iqfBm(vert, 3.8, 4.2f, 5.7f);
             vertices.push_back(vert.x);
@@ -233,7 +233,7 @@ void draw(){
     glBindBuffer(GL_ARRAY_BUFFER, texturebuffer);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-    // Index buffer
+    // indexSize buffer
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
     if(activeShader == programTessID){
         glDrawElements(GL_PATCHES, indices.size(), GL_UNSIGNED_SHORT, (void*)0);

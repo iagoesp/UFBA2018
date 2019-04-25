@@ -306,7 +306,7 @@
 
 1554492161 c:\users\iago.labcg-pc\documents\ufba2018\loadshaders.hpp
 
-1555457268 source:c:\users\iago.labcg-pc\documents\ufba2018\main.cpp
+1556212937 source:c:\users\iago.labcg-pc\documents\ufba2018\main.cpp
 	"main.hpp"
 	"camera.h"
 
@@ -387,7 +387,7 @@
 	"LoadShaders.hpp"
 	"vectormath/vectormath.h"
 
-1555461671 c:\users\iago.labcg-pc\documents\ufba2018\main.hpp
+1556213051 c:\users\iago.labcg-pc\documents\ufba2018\main.hpp
 	<iostream>
 	<vector>
 	<string>
@@ -404,7 +404,7 @@
 	"LoadShaders.hpp"
 	"vectormath/vectormath.h"
 
-1553806911 c:\users\iago.labcg-pc\documents\ufba2018\simplex.h
+1556212973 c:\users\iago.labcg-pc\documents\ufba2018\simplex.h
 	<functional>
 	<array>
 	<random>
@@ -421,7 +421,7 @@
 	<glm/gtc/matrix_transform.hpp>
 	<vector>
 
-1555457268 c:\users\iago.labcg-pc\documents\ufba2018\camera.h
+1556212938 c:\users\iago.labcg-pc\documents\ufba2018\camera.h
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
 	<vector>

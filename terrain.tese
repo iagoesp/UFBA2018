@@ -62,7 +62,7 @@ void main(){
     vec3 newTcPosition0 = (tcPosition[0]);
     vec3 newTcPosition1 = (tcPosition[1]);
     vec3 newTcPosition2 = (tcPosition[2]);
-    if(noised){
+     if(noised){
         newTcPosition0.y = fbm(newTcPosition0)*10-5;
         newTcPosition1.y = fbm(newTcPosition1)*10-5;
         newTcPosition2.y = fbm(newTcPosition2)*10-5;

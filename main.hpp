@@ -36,9 +36,9 @@ vector<unsigned short> indices;
 vector<GLfloat> vertices;
 vector<GLfloat> texcoord;
 
-bool enablePolygon, enableCull,  CPUnoise = true,  noise=false;
+bool enablePolygon, enableCull,  CPUnoise = false,  noise=false;
 
-static GLuint index = 32.0;
+static GLuint indexSize = 32.0;
 static GLfloat meshSize = 128.0;
 
 static GLsizei IndexCount;

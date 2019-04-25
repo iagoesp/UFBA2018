@@ -192,30 +192,30 @@ public:
         bool plusIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_KP_ADD ) == GLFW_PRESS &&
                                              !(glfwGetKey( window, GLFW_KEY_RIGHT_SHIFT ) == GLFW_PRESS || glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS));
         if (!plusIsPressed && plusIsCurrentlyPressed){
-            GLuint saveIndex = index;
+            GLuint saveIndex = indexSize;
             saveIndex*=2;
         //        if(saveIndex > meshSize)
         //            saveIndex=meshSize;
-            index = saveIndex;
+            indexSize = saveIndex;
             clearVectors();
             createVerticesIndexes();
             bindBuffer();
-            cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vértices = "<<vertices.size()<<" e quantidade dos índices"<<indices.size()<<endl;
+            cout<<"indexSize = "<<indexSize<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vértices = "<<vertices.size()<<" e quantidade dos índices"<<indices.size()<<endl;
         }
         plusIsPressed = plusIsCurrentlyPressed;
 
         bool minusIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_KP_SUBTRACT ) == GLFW_PRESS &&
                                              !(glfwGetKey( window, GLFW_KEY_RIGHT_SHIFT ) == GLFW_PRESS || glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS));
         if (!minusIsPressed && minusIsCurrentlyPressed){
-            GLuint saveIndex = index;
+            GLuint saveIndex = indexSize;
             saveIndex/=2;
             if(saveIndex<2)
                 saveIndex=2;
-            index = saveIndex;
+            indexSize = saveIndex;
             clearVectors();
             createVerticesIndexes();
             bindBuffer();
-            cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vértices = "<<vertices.size()<<" e quantidade dos índices"<<indices.size()<<endl;
+            cout<<"indexSize = "<<indexSize<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vértices = "<<vertices.size()<<" e quantidade dos índices"<<indices.size()<<endl;
         }
         minusIsPressed = minusIsCurrentlyPressed;
 
@@ -226,7 +226,7 @@ public:
             clearVectors();
             createVerticesIndexes();
             bindBuffer();
-            cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vértices = "<<vertices.size()<<" e quantidade dos índices"<<indices.size()<<endl;
+            cout<<"indexSize = "<<indexSize<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vértices = "<<vertices.size()<<" e quantidade dos índices"<<indices.size()<<endl;
         }
         shiftPlusIsPressed = shiftPlusIsCurrentlyPressed;
 
@@ -237,13 +237,13 @@ public:
             saveMesh/=2;
             if(meshSize<2)
                 meshSize=2;
-            if(index > saveMesh)
-                saveMesh=index;
+            if(indexSize > saveMesh)
+                saveMesh=indexSize;
             meshSize = saveMesh;
             clearVectors();
             createVerticesIndexes();
             bindBuffer();
-            cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vértices = "<<vertices.size()<<" e quantidade dos índices"<<indices.size()<<endl;
+            cout<<"indexSize = "<<indexSize<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vértices = "<<vertices.size()<<" e quantidade dos índices"<<indices.size()<<endl;
         }
         shiftMinusIsPressed = shiftMinusIsCurrentlyPressed;
 
