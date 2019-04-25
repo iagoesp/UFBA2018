@@ -1,4 +1,4 @@
-#include "main.hpp"
+#include "Util.hpp"
 #include "camera.h"
 
 Camera camera(glm::vec3(75.0f, 15.0f, 75.0f));
