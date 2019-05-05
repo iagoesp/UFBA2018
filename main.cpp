@@ -1,7 +1,7 @@
-#include "main.hpp"
+#include "Util.hpp"
 #include "camera.h"
 
-Camera camera(glm::vec3(00.0f, 50.0f, 00.0f));
+Camera camera(glm::vec3(75.0f, 15.0f, 75.0f));
 
 int main(int argv, char** argc){
     init();
@@ -22,9 +22,7 @@ int main(int argv, char** argc){
         lastFrame = currentFrame;
         // Clear the screen
 
-        setUnifLoc();
-
-        pressButtons();
+        camera.pressButtons();
         setUnif();
         draw();
         disableVertexAttribs();
@@ -123,23 +121,23 @@ void clearVectors(){
 }
 
 void createVerticesIndexes(){
-    float tamAmostra = meshSize / (float)index;
-    for (GLuint i = 0 ; i < index ; i++){
-		for (GLuint j = 0 ; j < index ; j++) {
-			indices.push_back( i*(index+1) 		+ j);		// V0
-			indices.push_back( i*(index+1) 		+ (j+1));	// V1
-			indices.push_back( (i+1)*(index+1) 	+ j);		// V2
+    float tamAmostra = meshSize / (float)indexSize;
+    for (GLuint i = 0 ; i < indexSize ; i++){
+		for (GLuint j = 0 ; j < indexSize ; j++) {
+			indices.push_back( i*(indexSize+1) 		+ j);		// V0
+			indices.push_back( i*(indexSize+1) 		+ (j+1));	// V1
+			indices.push_back( (i+1)*(indexSize+1) 	+ j);		// V2
 
-			indices.push_back( i*(index+1) 		+ (j+1));	// V1
-			indices.push_back( (i+1)*(index+1) 	+ (j+1));	// V3
-			indices.push_back( (i+1)*(index+1) 	+ j);		// V2
+			indices.push_back( i*(indexSize+1) 		+ (j+1));	// V1
+			indices.push_back( (i+1)*(indexSize+1) 	+ (j+1));	// V3
+			indices.push_back( (i+1)*(indexSize+1) 	+ j);		// V2
 		}
 	}
 
-    for (GLfloat i = 0 ; i <= index ; i+=1.0){
-		for (GLfloat j = 0 ; j <= index ; j+=1.0) {
+    for (GLfloat i = 0 ; i <= indexSize ; i+=1.0){
+		for (GLfloat j = 0 ; j <= indexSize ; j+=1.0) {
             glm::vec2 vert = vec2((float)(i*tamAmostra), (float)(j*tamAmostra));
-            float h = 1.0;//Simplex::iqfBm(vert, 3.8, 4.2f, 5.7f);
+            float h = 1.f;//Simplex::iqfBm(vert, 3.8, 4.2f, 5.7f);
             vertices.push_back(vert.x);
             vertices.push_back(h);
             vertices.push_back(vert.y);
@@ -196,173 +194,24 @@ void createTextures(){
     }
 }
 
-void setUnifLoc(){
-    glUseProgram(activeShader);
-
-    MatrixID            = glGetUniformLocation(activeShader, "MVP");
-    cameraPosIDX        = glGetUniformLocation(activeShader, "px");
-    cameraPosIDY        = glGetUniformLocation(activeShader, "py");
-    cameraPosIDZ        = glGetUniformLocation(activeShader, "pz");
-    groundID            = glGetUniformLocation(activeShader, "terra");
-    waterID             = glGetUniformLocation(activeShader, "agua");
-    grassID             = glGetUniformLocation(activeShader, "grama");
-    iceID               = glGetUniformLocation(activeShader, "snow");
-    mountainID          = glGetUniformLocation(activeShader, "mountain");
-    enableTessID        = glGetUniformLocation(activeShader, "tess");
-    pos2ID              = glGetUniformLocation(activeShader, "pos2");
-    noiseID              = glGetUniformLocation(activeShader, "noised");
-}
-
 void setUnif(){
+        glUseProgram(activeShader);
 //    computeMatricesFromInputs(window);
     glm::mat4 MVP = camera.getProjectionMatrix(WIDTH, HEIGHT) * camera.getViewMatrix() * glm::mat4(1.0);
     float px = camera.Position.x; float py = camera.Position.y; float pz = camera.Position.z;
 
-    glUniformMatrix4fv(MatrixID, 1, GL_FALSE, &MVP[0][0]);
-    glUniform1f(cameraPosIDX, px);
-    glUniform1f(cameraPosIDY, py);
-    glUniform1f(cameraPosIDZ, pz);
-    glUniform1i(groundID, 0);
-    glUniform1i(waterID,  1);
-    glUniform1i(grassID, 2);
-    glUniform1i(iceID, 3);
-    glUniform1i(mountainID, 4);
-    glUniform1i(enableTessID, enableTess);
-    glUniform1f(noiseID, noise);
-    glUniform1f(pos2ID, pos2);
-}
-
-void pressButtons(){
-    bool noiseIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_F ) == GLFW_PRESS);
-    if (!noise2IsPressed && noiseIsCurrentlyPressed){
-        noise = !noise;
-        if(noise)
-            cout<<"noise = true"<<endl;
-        else
-            cout<<"noise = false"<<endl;
-    }
-    noise2IsPressed = noiseIsCurrentlyPressed;
-
-    bool pos2IsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_C ) == GLFW_PRESS);
-    if (!pos2IsPressed && pos2IsCurrentlyPressed){
-        pos2 = !pos2;
-        if(pos2)
-            cout<<"cpu = true"<<endl;
-        else
-            cout<<"cpu = false"<<endl;
-    }
-    pos2IsPressed = pos2IsCurrentlyPressed;
-
-    bool mIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_M ) == GLFW_PRESS);
-    if (!mIsPressed && mIsCurrentlyPressed){
-        modeMouse = !modeMouse;
-        if(modeMouse){
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-            glfwMakeContextCurrent(0);
-            glfwWaitEventsTimeout(5000);
-        }
-        else{
-            glfwMakeContextCurrent(window);
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        }
-        //glfwPollEvents();
-    }
-    mIsPressed = mIsCurrentlyPressed;
-
-    bool cIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_C ) == GLFW_PRESS);
-    if (!cIsPressed && cIsCurrentlyPressed){
-        enableCull = !enableCull;
-        if(enableCull)
-            glEnable(GL_CULL_FACE);
-        else
-            glDisable(GL_CULL_FACE);
-    }
-    cIsPressed = cIsCurrentlyPressed;
-
-    bool tIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_T ) == GLFW_PRESS &&
-                                !(glfwGetKey( window, GLFW_KEY_RIGHT_SHIFT ) == GLFW_PRESS || glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS));
-    if (!tIsPressed && tIsCurrentlyPressed){
-        enableTess = (enableTess+1)%3;
-    }
-    tIsPressed = tIsCurrentlyPressed;
-
-    bool pIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_T ) == GLFW_PRESS &&
-                                (glfwGetKey( window, GLFW_KEY_RIGHT_SHIFT ) == GLFW_PRESS || glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS));
-    if (!pIsPressed && pIsCurrentlyPressed){
-        enablePolygon = !enablePolygon;
-        if(enablePolygon)
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-        else
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    }
-    pIsPressed = pIsCurrentlyPressed;
-
-    bool plusIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_KP_ADD ) == GLFW_PRESS &&
-                                         !(glfwGetKey( window, GLFW_KEY_RIGHT_SHIFT ) == GLFW_PRESS || glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS));
-    if (!plusIsPressed && plusIsCurrentlyPressed){
-        GLuint saveIndex = index;
-        saveIndex*=2;
-//        if(saveIndex > meshSize)
-//            saveIndex=meshSize;
-        index = saveIndex;
-        clearVectors();
-        createVerticesIndexes();
-        bindBuffer();
-        cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos v�rtices = "<<vertices.size()<<" e quantidade dos �ndices"<<indices.size()<<endl;
-    }
-    plusIsPressed = plusIsCurrentlyPressed;
-
-    bool minusIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_KP_SUBTRACT ) == GLFW_PRESS &&
-                                         !(glfwGetKey( window, GLFW_KEY_RIGHT_SHIFT ) == GLFW_PRESS || glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS));
-    if (!minusIsPressed && minusIsCurrentlyPressed){
-        GLuint saveIndex = index;
-        saveIndex/=2;
-        if(saveIndex<2)
-            saveIndex=2;
-        index = saveIndex;
-        clearVectors();
-        createVerticesIndexes();
-        bindBuffer();
-        cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos v�rtices = "<<vertices.size()<<" e quantidade dos �ndices"<<indices.size()<<endl;
-    }
-    minusIsPressed = minusIsCurrentlyPressed;
-
-    bool shiftPlusIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_KP_ADD ) == GLFW_PRESS &&
-                                         (glfwGetKey( window, GLFW_KEY_RIGHT_SHIFT ) == GLFW_PRESS || glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS));
-    if (!shiftPlusIsPressed && shiftPlusIsCurrentlyPressed){
-        meshSize*=2;
-        clearVectors();
-        createVerticesIndexes();
-        bindBuffer();
-        cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos v�rtices = "<<vertices.size()<<" e quantidade dos �ndices"<<indices.size()<<endl;
-    }
-    shiftPlusIsPressed = shiftPlusIsCurrentlyPressed;
-
-    bool shiftMinusIsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_KP_SUBTRACT ) == GLFW_PRESS &&
-                                         (glfwGetKey( window, GLFW_KEY_RIGHT_SHIFT ) == GLFW_PRESS || glfwGetKey( window, GLFW_KEY_LEFT_SHIFT ) == GLFW_PRESS));
-    if (!shiftMinusIsPressed && shiftMinusIsCurrentlyPressed){
-        GLuint saveMesh = meshSize;
-        saveMesh/=2;
-        if(meshSize<2)
-            meshSize=2;
-        if(index > saveMesh)
-            saveMesh=index;
-        meshSize = saveMesh;
-        clearVectors();
-        createVerticesIndexes();
-        bindBuffer();
-        cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos v�rtices = "<<vertices.size()<<" e quantidade dos �ndices"<<indices.size()<<endl;
-    }
-    shiftMinusIsPressed = shiftMinusIsCurrentlyPressed;
-
-    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-        camera.ProcessKeyboard(FORWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-        camera.ProcessKeyboard(BACKWARD, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-        camera.ProcessKeyboard(LEFT, deltaTime);
-    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-        camera.ProcessKeyboard(RIGHT, deltaTime);
+    glUniformMatrix4fv(glGetUniformLocation(activeShader, "MVP"), 1, GL_FALSE, &MVP[0][0]);
+    glUniform1f(glGetUniformLocation(activeShader, "px"), px);
+    glUniform1f(glGetUniformLocation(activeShader, "py"), py);
+    glUniform1f(glGetUniformLocation(activeShader, "pz"), pz);
+    glUniform1i(glGetUniformLocation(activeShader, "terra"), 0);
+    glUniform1i(glGetUniformLocation(activeShader, "agua"),  1);
+    glUniform1i(glGetUniformLocation(activeShader, "grama"), 2);
+    glUniform1i(glGetUniformLocation(activeShader, "snow"), 3);
+    glUniform1i(glGetUniformLocation(activeShader, "mountain"), 4);
+    glUniform1i(glGetUniformLocation(activeShader, "tess"), enableTess);
+    glUniform1f(glGetUniformLocation(activeShader, "noised"), noise);
+    glUniform1f(glGetUniformLocation(activeShader, "CPUnoise"), CPUnoise);
 }
 
 void draw(){
@@ -384,7 +233,7 @@ void draw(){
     glBindBuffer(GL_ARRAY_BUFFER, texturebuffer);
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
 
-    // Index buffer
+    // indexSize buffer
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
     if(activeShader == programTessID){
         glDrawElements(GL_PATCHES, indices.size(), GL_UNSIGNED_SHORT, (void*)0);
@@ -402,8 +251,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     glViewport(0, 0, width, height);
 }
 
-// glfw: whenever the mouse moves, this callback is called
-// -------------------------------------------------------
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
     if (firstMouse)

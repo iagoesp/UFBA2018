@@ -163,7 +163,7 @@ inline void seed( uint32_t s );
 namespace details {
 	/*
 	 * Permutation table. This is just a random jumble of all numbers 0-255,
-	 * repeated twice to avoid wrapping the index at 255 for each lookup.
+	 * repeated twice to avoid wrapping the indexSize at 255 for each lookup.
 	 * This needs to be exactly the same for all instances on all platforms,
 	 * so it's easiest to just keep it as static explicit data.
 	 * This also removes the need for any initialisation of this class.
@@ -653,7 +653,7 @@ float noise( const glm::vec4 &v )
 	// then find the correct traversal order for the simplex weíre in.
 	// First, six pair-wise comparisons are performed between each possible pair
 	// of the four coordinates, and the results are used to add up binary bits
-	// for an integer index.
+	// for an integer indexSize.
 	int c1 = (x0 > y0) ? 32 : 0;
 	int c2 = (x0 > z0) ? 16 : 0;
 	int c3 = (y0 > z0) ? 8 : 0;
@@ -1096,7 +1096,7 @@ vec5 dnoise( const glm::vec4 &v )
 	// and then find the correct traversal order for the simplex weíre in.
 	// First, six pair-wise comparisons are performed between each possible pair
 	// of the four coordinates, and then the results are used to add up binary
-	// bits for an integer index into a precomputed lookup table, details::sSimplexLut[].
+	// bits for an integer indexSize into a precomputed lookup table, details::sSimplexLut[].
 	int c1 = (x0 > y0) ? 32 : 0;
 	int c2 = (x0 > z0) ? 16 : 0;
 	int c3 = (y0 > z0) ? 8 : 0;

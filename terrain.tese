@@ -62,17 +62,16 @@ void main(){
     vec3 newTcPosition0 = (tcPosition[0]);
     vec3 newTcPosition1 = (tcPosition[1]);
     vec3 newTcPosition2 = (tcPosition[2]);
-/*
-    if(noised){
+     if(noised){
         newTcPosition0.y = fbm(newTcPosition0)*10-5;
         newTcPosition1.y = fbm(newTcPosition1)*10-5;
         newTcPosition2.y = fbm(newTcPosition2)*10-5;
     }
-*/
     vec3 p0 = gl_TessCoord.x * newTcPosition0;
     vec3 p1 = gl_TessCoord.y * newTcPosition1;
     vec3 p2 = gl_TessCoord.z * newTcPosition2;
     tePosition = (p0 + p1 + p2);
+    //tePosition.y = iqfBm(tePosition, 1,2,0.5);
 
     vec3 n0 = gl_TessCoord.x * tcNormal[0];
     vec3 n1 = gl_TessCoord.y * tcNormal[1];

@@ -196,7 +196,7 @@ void main(void)
     vec4 Points[4]; // segments of curve in 3d
     vec4 colors[4]; // interpolated colors
     float zValues[4];
-    int j = 0; // bezier segment index for color interpolation
+    int j = 0; // bezier segment indexSize for color interpolation
     for (int i=0; i<=nSegments; ++i){
         /* first point */
         if (i==0){
