@@ -1,7 +1,7 @@
 #include "main.hpp"
 #include "camera.h"
 
-Camera camera(glm::vec3(75.0f, 50.0f, 75.0f));
+Camera camera(glm::vec3(00.0f, 50.0f, 00.0f));
 
 int main(int argv, char** argc){
     init();
@@ -139,7 +139,7 @@ void createVerticesIndexes(){
     for (GLfloat i = 0 ; i <= index ; i+=1.0){
 		for (GLfloat j = 0 ; j <= index ; j+=1.0) {
             glm::vec2 vert = vec2((float)(i*tamAmostra), (float)(j*tamAmostra));
-            float h = Simplex::iqfBm(vert, 3.8, 4.2f, 5.7f);
+            float h = 1.0;//Simplex::iqfBm(vert, 3.8, 4.2f, 5.7f);
             vertices.push_back(vert.x);
             vertices.push_back(h);
             vertices.push_back(vert.y);
@@ -308,7 +308,7 @@ void pressButtons(){
         clearVectors();
         createVerticesIndexes();
         bindBuffer();
-        cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vértices = "<<vertices.size()<<" e quantidade dos índices"<<indices.size()<<endl;
+        cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vï¿½rtices = "<<vertices.size()<<" e quantidade dos ï¿½ndices"<<indices.size()<<endl;
     }
     plusIsPressed = plusIsCurrentlyPressed;
 
@@ -323,7 +323,7 @@ void pressButtons(){
         clearVectors();
         createVerticesIndexes();
         bindBuffer();
-        cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vértices = "<<vertices.size()<<" e quantidade dos índices"<<indices.size()<<endl;
+        cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vï¿½rtices = "<<vertices.size()<<" e quantidade dos ï¿½ndices"<<indices.size()<<endl;
     }
     minusIsPressed = minusIsCurrentlyPressed;
 
@@ -334,7 +334,7 @@ void pressButtons(){
         clearVectors();
         createVerticesIndexes();
         bindBuffer();
-        cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vértices = "<<vertices.size()<<" e quantidade dos índices"<<indices.size()<<endl;
+        cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vï¿½rtices = "<<vertices.size()<<" e quantidade dos ï¿½ndices"<<indices.size()<<endl;
     }
     shiftPlusIsPressed = shiftPlusIsCurrentlyPressed;
 
@@ -351,7 +351,7 @@ void pressButtons(){
         clearVectors();
         createVerticesIndexes();
         bindBuffer();
-        cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vértices = "<<vertices.size()<<" e quantidade dos índices"<<indices.size()<<endl;
+        cout<<"index = "<<index<<" e tamanho da malha = "<<meshSize<<endl<<"Quantidades dos vï¿½rtices = "<<vertices.size()<<" e quantidade dos ï¿½ndices"<<indices.size()<<endl;
     }
     shiftMinusIsPressed = shiftMinusIsCurrentlyPressed;
 

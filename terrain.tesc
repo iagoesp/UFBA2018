@@ -41,6 +41,8 @@ void main(){
     tcColor[ID]     = vColor[ID];
 
     if (ID == 0) {
+    vec3 bTriangulo = (gl_in[0].gl_Position.xyz + gl_in[1].gl_Position.xyz
+                       + gl_in[2].gl_Position.xyz)/3;
         vec3 vPos = vPosition[0];
         if(tess==0){
             TessLevelInner = LOD(vPos, px, py, pz);

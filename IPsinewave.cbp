@@ -45,6 +45,8 @@
 		<Unit filename="LoadShaders.cpp" />
 		<Unit filename="LoadShaders.hpp" />
 		<Unit filename="camera.h" />
+		<Unit filename="culling.geom" />
+		<Unit filename="culling.vert" />
 		<Unit filename="main.cpp" />
 		<Unit filename="main.hpp" />
 		<Unit filename="simplex.h" />
