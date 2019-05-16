@@ -50,11 +50,11 @@
 		<Unit filename="main.cpp" />
 		<Unit filename="main.hpp" />
 		<Unit filename="simplex.h" />
-		<Unit filename="terrain.frag" />
-		<Unit filename="terrain.geom" />
-		<Unit filename="terrain.tesc" />
-		<Unit filename="terrain.tese" />
-		<Unit filename="terrain.vert" />
+		<Unit filename="terrainFrag.glsl" />
+		<Unit filename="terrainGeo.glsl" />
+		<Unit filename="terrainTesc.glsl" />
+		<Unit filename="terrainTese.glsl" />
+		<Unit filename="terrainVert.glsl" />
 		<Extensions>
 			<code_completion />
 			<envvars />

@@ -154,8 +154,8 @@ void disableVertexAttribs(){
 }
 
 void createProgram(){
-    programTessID = LoadShaders( "terrain.vert", "terrain.tesc", "terrain.tese", "terrain.frag");
-    programGeomID  = LoadShaders( "terrenofBm.vert", "Geodesic.geom", "Geodesic.frag");
+    programTessID = LoadShaders( "terrainVert.glsl", "terrainTesc.glsl", "terrainTese.glsl", "terrainFrag.glsl");
+    //programGeomID  = LoadShaders( "terrenofBm.vert", "Geodesic.geom", "Geodesic.frag");
 }
 
 void deleteProgram(){
@@ -201,9 +201,7 @@ void setUnif(){
     float px = camera.Position.x; float py = camera.Position.y; float pz = camera.Position.z;
 
     glUniformMatrix4fv(glGetUniformLocation(activeShader, "MVP"), 1, GL_FALSE, &MVP[0][0]);
-    glUniform1f(glGetUniformLocation(activeShader, "px"), px);
-    glUniform1f(glGetUniformLocation(activeShader, "py"), py);
-    glUniform1f(glGetUniformLocation(activeShader, "pz"), pz);
+    glUniform3f(glGetUniformLocation(activeShader, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
     glUniform1i(glGetUniformLocation(activeShader, "terra"), 0);
     glUniform1i(glGetUniformLocation(activeShader, "agua"),  1);
     glUniform1i(glGetUniformLocation(activeShader, "grama"), 2);

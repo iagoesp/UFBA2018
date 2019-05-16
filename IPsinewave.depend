@@ -231,8 +231,8 @@
 
 1554960194 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\loadshaders.hpp
 
-1556173105 source:c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\main.cpp
-	"main.hpp"
+1557981136 source:c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\main.cpp
+	"Util.hpp"
 	"camera.h"
 
 1550550805 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\vectormath\vectormath.h
@@ -358,7 +358,7 @@
 
 1550704562 c:\users\iago.labcg-pc\documents\ufba2018\soil.h
 
-1553182822 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\simplex.h
+1557096036 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\simplex.h
 	<functional>
 	<array>
 	<random>
@@ -416,7 +416,7 @@
 	<glm/vec4.hpp>
 	<glm/mat2x2.hpp>
 
-1554970054 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\camera.h
+1557096036 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\camera.h
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
 	<vector>
@@ -425,4 +425,21 @@
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
 	<vector>
+
+1557096036 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\util.hpp
+	<iostream>
+	<vector>
+	<string>
+	<cstdlib>
+	<typeinfo>
+	<cmath>
+	<GL/glew.h>
+	<GLFW/glfw3.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	"stb_image.h"
+	"SOIL.h"
+	"simplex.h"
+	"LoadShaders.hpp"
+	"vectormath/vectormath.h"
 
