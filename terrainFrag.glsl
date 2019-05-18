@@ -2,48 +2,12 @@
 
 in vec3 vcNormal;
 in vec4 vcColor;
-in float p;
-in vec2 vcTexCoord;
 in float vNoise;
 in vec3 tePosition;
-in vec3 tvPosition;
-
-uniform sampler2D terra;
-uniform sampler2D agua;
-uniform sampler2D grama;
-uniform sampler2D snow;
-uniform sampler2D mountain;
-uniform vec3 viewPos;
 
 out vec4 fragColor;
 
 #define clamp01(x) clamp(x, 0.0, 1.0)
-
-vec4 texAgua = texture2D(agua, vcTexCoord);
-vec4 texTerra = texture2D(terra, vcTexCoord);
-vec4 texGrama = texture2D(grama, vcTexCoord);
-vec4 texSnow = texture2D(snow, vcTexCoord);
-vec4 texMountain = texture2D(mountain, vcTexCoord);
-
-float weightWater;
-float weightStone;
-float weightGrass;
-
-vec3 heightblend(vec3 tex1, float height1, vec3 tex2, float height2)
-{
-    float heightBlendFactor = 1.f;
-    float height_start = max(height1, height2 - 1) - heightBlendFactor;
-    float level1 = max(height1 - height_start, 0);
-    float level2 = max(height2 - height_start -1, 0);
-    return ((tex1 * level1) + (tex2 * level2)) / (level1 + level2);
-}
-
-vec3 surf(vec4 tex1, float h1, vec4 tex2, float h2)
-{
-    vec3 t1 = tex1.rgb;
-    vec3 t2 = tex2.rgb;
-    return heightblend (t1, h1, t2, h2);
-}
 
 
 float softShadow(vec3 ro, vec3 rd )
@@ -81,7 +45,8 @@ float noise( in vec2 x )
   return res;
 }
 
-const mat2 m2 = mat2(1.6,-1.2,1.2,1.6);
+//const mat2 m2 = mat2(1.6,-1.2,1.2,1.6);
+const mat2 m2 = mat2(0.8,-0.6,0.6,0.8);
 
 float fbm( vec2 p )
 {
@@ -132,92 +97,186 @@ float terrain2( in vec2 x )
   return 140.0*a;
 }
 
-void main() {
-  vec3 normal = normalize(vcNormal);
-  vec3 light1 = normalize( vec3(30.f, 30.f, 30.f) );
+float SC = 20.f;
 
-  //rock
-  float count = 15;
-  float r = noise(tePosition.xz*count);
-  vec3 col = (r*0.25+0.75)*0.9*mix( vec3(0.08,0.05,0.03), vec3(0.10,0.09,0.08), clamp(terrain2( vec2(tePosition.x,tePosition.y*48.0))/200.0,0.0,1.0));
-  col = mix( col, 0.20*vec3(0.45,.30,0.15)*(0.50+0.50*r),smoothstep(0.70,0.9,normal.y) );
-  col = mix( col, 0.15*vec3(0.30,.30,0.10)*(0.25+0.75*r),smoothstep(0.95,1.0,normal.y) );
-  col *=0.9;
-
-  // snow
-  float h = smoothstep(55.0,80.0, p + 25.0*vNoise );
-  float e = smoothstep(1.0-0.5*h,1.0-0.1*h,normal.y);
-  float o = 0.3 + 0.7*smoothstep(0.0,0.1,normal.x+h*h);
-  float s = h*e*o;
-  col = mix( col, 0.29*vec3(0.62,0.65,0.7), smoothstep( 0.1, 0.9, s ) );
-
-  // lighting
-  float amb = clamp(0.5+0.5*normal.y,0.0,1.0);
-  float dif = clamp( dot( light1, normal ), 0.0, 1.0 );
-  float bac = clamp( 0.2 + 0.8*dot( normalize( vec3(-light1.x, 0.0, light1.z ) ), normal ), 0.0, 1.0 );
-  float sh = 1.0;
-  if( dif>=0.0001 )
-    sh = softShadow(tePosition+light1*0.05, light1);
-
-  vec3 lin  = vec3(0.0);
-  lin += dif*vec3(7.00,5.00,3.00)*1.3*vec3( sh, sh*sh*0.5+0.5*sh, sh*sh*0.8+0.2*sh );
-  lin += amb*vec3(0.40,0.60,1.00)*1.2;
-  lin += bac*vec3(0.40,0.50,0.60);
-  col *= lin;
-
-
-  col = pow(col,vec3(0.45));
-
-  col = col*0.6 + 0.4*col*col*(3.0-2.0*col);
-  col *= 0.7;
-
-  float dist = length(light1 - tvPosition);
-  vec3 L = normalize( light1 - tvPosition);
-  vec3 V = normalize( viewPos - tePosition);
-  float difuza = max(0.1, dot(L, normal));
-
-  //difuza = difuza * (1.0 / (1.0 + (0.25 * dist * dist)));
-
-  vec3 Kd = vec3(0.50,0.50,0.50);
-  Kd = Kd * 0.5 * difuza ;
-  col = col + Kd ;
-
-  //col = sqrt(col);
-  fragColor = vec4(col, 1.f);
+float detailH( in vec2 x )
+{
+    float d = 0.0;//50.0*texture( iChannel2, x*0.03/SC, 0.0 ).x;
+    return d + 0.5*noise(x*2.0/SC);
 }
 
-//void main(){
-//    float height = p;
-//    vec4 blank = vec4 ( 1.0f, 1.0f, 1.0f, 1.0f );
-//    vec4 blue = vec4 ( 0.0f, 0.0f, 1.0f, 1.0f );
-//    vec4 vTexColor = vec4 ( 1.0f, 1.0f, 1.0f, 1.0f );
-//
-//    const float leveli1 = -2.f;
-//    const float level0 = 0.f;
-//	const float level1 = 2.f;
-//	const float level2 = 4.f;
-//	const float level3 = 6.f;
-//	const float level4 = 8.f;
-//
-//	if(height <= leveli1){
-//        vTexColor = vec4(surf(texAgua, leveli1, texGrama , height), 1.f);
-//	}
-//	else if(height > leveli1 && height <= level0){
-//        vTexColor = vec4(surf(texAgua, leveli1, texGrama , height), 1.f);
-//	}
-//	else if(height > level0 && height <= level2){
-//        vTexColor = vec4(surf(texGrama, level0, texTerra , height), 1.f);
-//    }
-//    else if(height > level2 && height <= level3){
-//        vTexColor = vec4(surf(texTerra, level2, texMountain, height), 1.f);
-//    }
-//    else if(height > level3){
-//        vTexColor = vec4(surf(texMountain , level3 , texSnow , height-1), 1.f);
-//    }
-//
-//    vec4 vFinalTexColor;
-//        //vFinalTexColor= vcColor;
-//        vFinalTexColor = vTexColor;
-//
-//   	fragColor = vFinalTexColor;
-//}
+float detailM( in vec2 x )
+{
+    float d = 0.0;//50.0*texture( iChannel2, x*0.03/SC, 0.0 ).x;
+    return d;
+}
+
+float terrainH( in vec2 x )
+{
+	vec2  p = x*0.003/SC;
+    float a = 0.0;
+    float b = 1.0;
+	vec2  d = vec2(0.0);
+    for( int i=0; i<15; i++ )
+    {
+        vec3 n = noised(p);
+        d += n.yz;
+        a += b*n.x/(1.0+dot(d,d));
+		b *= 0.5;
+        p = m2*p*2.0;
+    }
+
+    float de = detailH(x);
+	return SC*100.0*a - de;
+}
+
+float terrainM( in vec2 x )
+{
+	vec2  p = x*0.003/SC;
+    float a = 0.0;
+    float b = 1.0;
+	vec2  d = vec2(0.0);
+    for( int i=0; i<9; i++ )
+    {
+        vec3 n = noised(p);
+        d += n.yz;
+        a += b*n.x/(1.0+dot(d,d));
+		b *= 0.5;
+        p = m2*p*2.0;
+    }
+	return SC*100.0*a - detailH(x);
+}
+
+float terrainL( in vec2 x )
+{
+	vec2  p = x*0.003/SC;
+    float a = 0.0;
+    float b = 1.0;
+	vec2  d = vec2(0.0);
+    for( int i=0; i<7; i++ )
+    {
+        vec3 n = noised(p);
+        d += n.yz;
+        a += b*n.x/(1.0+dot(d,d));
+		b *= 0.5;
+        p = m2*p*2.0;
+    }
+
+	return SC*100.0*a;
+}
+
+float interesct( in vec3 ro, in vec3 rd, in float tmin, in float tmax )
+{
+  float t = tmin;
+	for( int i=0; i<256; i++ )
+	{
+        vec3 pos = ro + t*rd;
+		float h = pos.y - terrainM( pos.xz );
+		if( h<(0.002*t) || t>tmax ) break;
+		t += 0.5*h;
+	}
+
+	return t;
+}
+
+float plaIntersect( in vec3 ro, in vec3 rd, in vec4 p )
+{
+    return -(dot(ro,p.xyz)+p.w)/dot(rd,p.xyz);
+}
+
+vec3 calcNormal( in vec3 pos, float t )
+{
+    vec2  eps = vec2( 0.002*t, 0.0 );
+    return normalize( vec3( terrainH(pos.xz-eps.xy) - terrainH(pos.xz+eps.xy),
+                            2.0*eps.x,
+                            terrainH(pos.xz-eps.yx) - terrainH(pos.xz+eps.yx) ) );
+}
+
+vec3 render(vec3 ro, vec3 rd){
+  vec3 light1 = normalize( vec3(-0.8,0.4,-0.3) );
+    // bounding plane
+    float tmin = 1.0;
+    float tmax = 1000.0;
+    //float tmax = 10000*tePosition.y; //minha Adap
+#if 1
+    float maxh = 100.0;//*tePosition.y;//300.0*SC;
+    float tp = (maxh-ro.y)/rd.y;
+    if( tp>0.0 )
+    {
+        if( ro.y>maxh ) tmin = max( tmin, tp );
+        else            tmax = min( tmax, tp );
+    }
+#endif
+	float sundot = clamp(dot(rd,light1),0.0,1.0);
+	vec3 col;
+  float t = interesct( ro, rd, tmin, tmax );
+  if( t<=tmax)
+    {
+        // mountains
+		vec3 pos = tePosition*ro + t*rd;
+    vec3 nor = calcNormal( pos, t );
+    //nor = normalize( nor + 0.5*( vec3(-1.0,0.0,-1.0) + vec3(2.0,1.0,2.0)*texture(iChannel1,0.01*pos.xz).xyz) );
+    vec3 ref = reflect( rd, nor );
+    float fre = clamp( 1.0+dot(rd,nor), 0.0, 1.0 );
+
+         //rock
+		float r = noise((7.0/SC)*pos.xz/256.0);
+    col = (r*0.25+0.75)*0.9*mix( vec3(0.08,0.05,0.03), vec3(0.10,0.09,0.08),
+                                     noise(0.00007*vec2(pos.x,pos.y*48.0)/SC));
+		col = mix( col, 0.20*vec3(0.45,.30,0.15)*(0.50+0.50*r),smoothstep(0.70,0.9,nor.y) );
+    col = mix( col, 0.15*vec3(0.30,.30,0.10)*(0.25+0.75*r),smoothstep(0.95,1.0,nor.y) );
+
+		// snow
+    float h = smoothstep(55.0,80.0,pos.y + 25.0*vNoise );
+    float e = smoothstep(1.0-0.5*h,1.0-0.1*h,nor.y);
+    float o = 0.3 + 0.7*smoothstep(0.0,0.1,nor.x+h*h);
+    float s = h*e*o;
+    col = mix( col, 0.29*vec3(0.62,0.65,0.7), smoothstep( 0.1, 0.9, s ) );
+
+         // lighting
+    float amb = clamp(0.5+0.5*nor.y,0.0,1.0);
+		float dif = clamp( dot( light1, nor ), 0.0, 1.0 );
+		float bac = clamp( 0.2 + 0.8*dot( normalize( vec3(-light1.x, 0.0, light1.z ) ), nor ), 0.0, 1.0 );
+		float sh = 1.0; if( dif>=0.0001 )
+		sh = softShadow(pos+light1*20.0,light1);
+
+		vec3 lin  = vec3(0.0);
+		lin += dif*vec3(7.00,5.00,3.00)*vec3( sh, sh*sh*0.5+0.5*sh, sh*sh*0.8+0.2*sh );
+		lin += amb*vec3(0.40,0.60,0.80)*1.2;
+        lin += bac*vec3(0.40,0.50,0.60);
+		col *= lin;
+
+        col += s*0.1*pow(fre,4.0)*vec3(7.0,5.0,3.0)*sh * pow( clamp(dot(light1,ref), 0.0, 1.0),16.0);
+        col += s*0.1*pow(fre,4.0)*vec3(0.4,0.5,0.6)*smoothstep(0.0,0.6,ref.y);
+
+		// fog
+        //float fo = 1.0-exp(-0.000004*t*t/(SC*SC) );
+    float fo = 1.0-exp(-0.001*t/SC );
+    vec3 fco = 0.7*vec3(0.5,0.7,0.9) + 0.1*vec3(1.0,0.8,0.5)*pow( sundot, 4.0 );
+    col = mix( col, fco, fo );
+
+        // sun scatter
+		col += 0.3*vec3(1.0,0.8,0.4)*pow( sundot, 8.0 )*(1.0-exp(-0.002*t/SC));
+	}
+
+    // gamma
+	col = pow(col,vec3(0.4545));
+
+	return col;
+}
+void main(){
+//  vec3 xyz = -1.0 + 2.0*tePosition;
+//	vec3 s = xyz;
+//  vec3 ro = vec3(100, 50, 100);
+//  vec3 rd = normalize(s);
+  //ro.y += (1.5 * SC) + (ro.y);
+
+  vec2 xy = -1.0 + 2.0*gl_FragCoord.xy/(vec2(1024,1280));
+	vec2 s = xy*(vec2(1024/1280,1.f));
+  vec3 ro = vec3(100, 50, 100);
+  vec3 rd = normalize(vec3(s,2.f));
+  //ro.y += (1.5 * SC) + terrainL(ro.xz);
+
+  vec3 col = render(ro, rd);
+  fragColor = vec4(col, 1.f);
+}

@@ -17,6 +17,7 @@ in vec3 Position[];
 in vec3 tcNormal[];
 in vec4 tcColor[];
 in vec2 tcTexCoord[];
+in float cNoise[];
 
 out float p;
 out vec3 vcNormal;
@@ -24,6 +25,8 @@ out vec4 vcColor;
 out vec2 vcTexCoord;
 out vec3 tePosition;
 out vec3 tvPosition;
+out vec3 tpPosition;
+out vec4 tmPosition;
 out float vNoise;
 
 float hash(float n) { return fract(sin(n) * 1e4); }
@@ -60,17 +63,15 @@ float fbm( vec3 p ){
     return f/0.9375;
 }
 
-
 void main(){
-    vec3 newTcPosition0 = (tcPosition[0]);
-    vec3 newTcPosition1 = (tcPosition[1]);
-    vec3 newTcPosition2 = (tcPosition[2]);
+    vec3 tcPos0 = (tcPosition[0]);
+    vec3 tcPos1 = (tcPosition[1]);
+    vec3 tcPos2 = (tcPosition[2]);
 
-    vec3 p0 = gl_TessCoord.x * newTcPosition0;
-    vec3 p1 = gl_TessCoord.y * newTcPosition1;
-    vec3 p2 = gl_TessCoord.z * newTcPosition2;
+    vec3 p0 = gl_TessCoord.x * tcPos0;
+    vec3 p1 = gl_TessCoord.y * tcPos1;
+    vec3 p2 = gl_TessCoord.z * tcPos2;
     tePosition = (p0 + p1 + p2);
-    //tePosition.y = iqfBm(tePosition, 1,2,0.5);
 
     vec3 n0 = gl_TessCoord.x * tcNormal[0];
     vec3 n1 = gl_TessCoord.y * tcNormal[1];
@@ -86,12 +87,6 @@ void main(){
     vec4 c0 = gl_TessCoord.x * tcColor[0];
     vec4 c1 = gl_TessCoord.y * tcColor[1];
     vec4 c2 = gl_TessCoord.z * tcColor[2];
-
-/*
-    c0 = vec4(1.f, 0.0, 0.0, 1.f);
-    c1 = vec4(0.0, 1.f, 0.0, 1.f);
-    c2 = vec4(0.0, 0.0, 1.f, 1.f);
-*/
     vcColor = (c0 + c1 + c2);
 
     vec2 t0 = gl_TessCoord.x * tcTexCoord[0];
@@ -101,5 +96,7 @@ void main(){
 
     p = tePosition.y;
     tvPosition = vec3(V * vec4(tePosition, 1.f));
+    tpPosition = vec3(P * vec4(tePosition, 1.f));
+    tmPosition = MVP * vec4(tePosition, 1.f);
     gl_Position = MVP * vec4(tePosition, 1.0);
 }

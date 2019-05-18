@@ -134,16 +134,16 @@ void createVerticesIndexes(){
 		}
 	}
 
-    for (GLfloat i = 0 ; i <= indexSize ; i+=1.0){
-		for (GLfloat j = 0 ; j <= indexSize ; j+=1.0) {
-            glm::vec2 vert = vec2((float)(i*tamAmostra), (float)(j*tamAmostra));
-            float h = 1.f;//Simplex::iqfBm(vert, 3.8, 4.2f, 5.7f);
-            vertices.push_back(vert.x);
-            vertices.push_back(h);
-            vertices.push_back(vert.y);
-            texcoord.push_back((float)i);
-            texcoord.push_back((float)j);
-        }
+  for (GLfloat i = 1 ; i <= indexSize +1; i+=1.0){
+		for (GLfloat j = 1 ; j <= indexSize +1; j+=1.0) {
+      glm::vec2 vert = vec2((float)(i*tamAmostra), (float)(j*tamAmostra));
+      float h = 1.f;//Simplex::iqfBm(vert, 3.8, 4.2f, 5.7f);
+      vertices.push_back(vert.x);
+      vertices.push_back(h);
+      vertices.push_back(vert.y);
+      texcoord.push_back((float)i);
+      texcoord.push_back((float)j);
+		}
 	}
 }
 
@@ -155,6 +155,7 @@ void disableVertexAttribs(){
 
 void createProgram(){
     programTessID = LoadShaders( "terrainVert.glsl", "terrainTesc.glsl", "terrainTese.glsl", "terrainFrag.glsl");
+//  programTessID = LoadShaders( "basinTerrain.glsl", "basicTerrainfrag.glsl");
     //programGeomID  = LoadShaders( "terrenofBm.vert", "Geodesic.geom", "Geodesic.frag");
 }
 

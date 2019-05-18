@@ -15,7 +15,7 @@
 #include "simplex.h"
 #include "LoadShaders.hpp"
 //#include "controls.hpp"
-#include "vectormath/vectormath.h"
+//#include "vectormath/vectormath.h"
 
 #define QTDTEXTURAS 5
 

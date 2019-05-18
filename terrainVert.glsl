@@ -7,12 +7,12 @@ layout (location = 0) in vec3 position;
 layout (location = 1) in vec3 aColor;
 layout (location = 2) in vec2 aTexCoord;
 
-float h;
 out vec3 vPosition;
 out vec3 vNormal;
 out vec4 vColor;
 out vec2 TexCoord;
 out vec3 samePosition;
+out float h;
 
 uniform bool CPUnoise;
 uniform bool noise;
@@ -166,18 +166,82 @@ float iqfBm(vec2 v, int octaves, float lacunarity, float gain ){
 	return sum;
 }
 
+float hash( float n )
+{
+  return fract(sin(n)*43758.5453123);
+}
+
+vec3 noised( in vec2 x )
+{
+  vec2 p = floor(x);
+  vec2 f = fract(x);
+
+  vec2 u = f*f*(3.0-2.0*f);
+
+  float n = p.x + p.y*57.0;
+
+  float a = hash(n+  0.0);
+  float b = hash(n+  1.0);
+  float c = hash(n+ 57.0);
+  float d = hash(n+ 58.0);
+  return vec3(a+(b-a)*u.x+(c-a)*u.y+(a-b-c+d)*u.x*u.y,
+    30.0*f*f*(f*(f-2.0)+1.0)*(vec2(b-a,c-a)+(a-b-c+d)*u.yx));
+
+}
+const mat2 m = mat2(0.8,-0.6,0.6,0.8);
+
+
+float terrain(vec2 p )
+{
+    float a = 0.0;
+    float b = 1.0;
+    vec2  d = vec2(0.0);
+    for( int i=0; i<15; i++ )
+    {
+        vec3 n = noised(p);
+        d += n.yz;
+        a += b*n.x/(1.0+dot(d,d));
+        b *= 0.5;
+        p = m*p*2.0;
+    }
+    return a;
+}
+
+	// triangle degined by vertices v0, v1 and  v2
+vec3 triIntersect( vec3 ro, vec3 rd, vec3 v0, vec3 v1, vec3 v2 )
+{
+    vec3 v1v0 = v1 - v0;
+    vec3 v2v0 = v2 - v0;
+    vec3 rov0 = ro - v0;
+
+    vec3  n = cross( v1v0, v2v0 );
+    vec3  q = cross( rov0, rd );
+    float d = 1.0/dot( rd, n );
+    float u = d*dot( -q, v2v0 );
+    float v = d*dot(  q, v1v0 );
+    float t = d*dot( -n, rov0 );
+
+    if( u < 0.0 || u > 1.0 || v < 0.0 || (u+v) > 1.0 ) t = -1.0;
+
+    return vec3( t, u, v );
+}
+
 void main(){
 	TexCoord    = vec2(aTexCoord.x, aTexCoord.y);
-
+    vec3 ro = vec3(0.0, 0.0, 4.0 );
     if(CPUnoise)
         vPosition 	=  position;
     else{
-        vec2 posVec2    = vec2(position.x, position.z);
-        h               = iqfBm (posVec2, 2, 4.f, 4.f);
-        vNormal     = position;
-        vNormal     = normalize(vNormal);
-        vPosition = position;
+        h           = iqfBm (position.xz, 2, 4.f, 4.f);
+        //h           = terrain (position.xz);//, 2, 4.f, 4.f);
+        vPosition   = position;
         vPosition.y = h;
+
+        if(h>0.5)
+          vColor = normalize(vec4(1, 1, 1, 1));
+        else
+          vColor = normalize(vec4(0, 0, 0, 1));
+        vNormal = normalize (vPosition);
         //vPosition 	    =  position + h*vNormal;
     }
 
