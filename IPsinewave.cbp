@@ -45,8 +45,6 @@
 		<Unit filename="LoadShaders.cpp" />
 		<Unit filename="LoadShaders.hpp" />
 		<Unit filename="Util.hpp" />
-		<Unit filename="basicTerrainfrag.glsl" />
-		<Unit filename="basinTerrain.glsl" />
 		<Unit filename="camera.h" />
 		<Unit filename="culling.geom" />
 		<Unit filename="culling.vert" />
