@@ -73,16 +73,35 @@ void main(){
     vec3 p2 = gl_TessCoord.z * tcPos2;
     tePosition = (p0 + p1 + p2);
 
+    // theta used for small offset
+    float theta = 0.000001;
+
+    // pos x (1,0,0) could be 0, so add pos x (0,1,0).
+    vec3 vecTangent = normalize(cross(tePosition, vec3(1.0, 0.0, 0.0))
+    + cross(tePosition, vec3(0.0, 1.0, 0.0)));
+    // vecTangent is orthonormal to tePosition, compute bitangent
+    // (rotate tangent 90° around tePosition)
+    vec3 vecBitangent = normalize(cross(vecTangent, tePosition));
+
+    vec3 ptTangentSample = (tePosition + theta * normalize(vecTangent));
+    vec3 ptBitangentSample = (tePosition + theta * normalize(vecBitangent));
+
+    vec3 vecNorm = normalize(
+    cross(ptTangentSample - tePosition, ptBitangentSample - tePosition));
+
+
     vec3 n0 = gl_TessCoord.x * tcNormal[0];
     vec3 n1 = gl_TessCoord.y * tcNormal[1];
     vec3 n2 = gl_TessCoord.z * tcNormal[2];
     vcNormal = normalize(n0 + n1 + n2);
 
     vNoise = fbm(tePosition);
-    tePosition = tePosition + vcNormal*vNoise*2;
+    tePosition = tePosition + vecNorm*vNoise;
 
     vcNormal = tePosition;
     vcNormal = normalize(vcNormal);
+
+    //vcNormal = cross(vcNormal,vNormal);
 
     vec4 c0 = gl_TessCoord.x * tcColor[0];
     vec4 c1 = gl_TessCoord.y * tcColor[1];

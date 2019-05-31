@@ -9,22 +9,6 @@ out vec4 fragColor;
 
 #define clamp01(x) clamp(x, 0.0, 1.0)
 
-
-float softShadow(vec3 ro, vec3 rd )
-{
-    float res = 1.0;
-    float t = 0.001;
-	  for( int i=0; i<80; i++ ){
-      vec3  p = ro + t*rd;
-      float h = p.y - vNoise;
-		  res = min( res, 16.0*h/t );
-		  t += h;
-		  if( res<0.001 ||p.y>(200.0) )
-		    break;
-	}
-	return clamp( res, 0.0, 1.0 );
-}
-
 float hash( float n )
 {
   return fract(sin(n)*43758.5453123);
@@ -147,6 +131,21 @@ float terrainM( in vec2 x )
 	return SC*100.0*a - detailH(x);
 }
 
+float softShadow(vec3 ro, vec3 rd )
+{
+    float res = 1.0;
+    float t = 0.1;
+	  for( int i=0; i<80; i++ ){
+      vec3  p = ro + t*rd;
+      float h = p.y - vNoise;
+		  res = min( res, 16.0*h/t );
+		  t += h;
+		  if( res<0.1 ||p.y>(200.0) )
+		    break;
+	}
+	return clamp( res, 0.0, 1.0 );
+}
+
 float terrainL( in vec2 x )
 {
 	vec2  p = x*0.003/SC;
@@ -170,7 +169,7 @@ float interesct( in vec3 ro, in vec3 rd, in float tmin, in float tmax )
   float t = tmin;
 	for( int i=0; i<256; i++ )
 	{
-        vec3 pos = ro + t*rd;
+        vec3 pos = tePosition + t*rd;
 		float h = pos.y - terrainM( pos.xz );
 		if( h<(0.002*t) || t>tmax ) break;
 		t += 0.5*h;
@@ -193,7 +192,7 @@ vec3 calcNormal( in vec3 pos, float t )
 }
 
 vec3 render(vec3 ro, vec3 rd){
-  vec3 light1 = normalize( vec3(-0.8,0.4,-0.3) );
+  vec3 light1 = normalize( vec3(-0.8, 0.4, -0.3) );
     // bounding plane
     float tmin = 1.0;
     float tmax = 1000.0;
@@ -210,20 +209,21 @@ vec3 render(vec3 ro, vec3 rd){
 	float sundot = clamp(dot(rd,light1),0.0,1.0);
 	vec3 col;
   float t = interesct( ro, rd, tmin, tmax );
+
   if( t<=tmax)
     {
         // mountains
-		vec3 pos = tePosition*ro + t*rd;
+    vec3 pos = tePosition*ro + t*rd;
     vec3 nor = calcNormal( pos, t );
     //nor = normalize( nor + 0.5*( vec3(-1.0,0.0,-1.0) + vec3(2.0,1.0,2.0)*texture(iChannel1,0.01*pos.xz).xyz) );
     vec3 ref = reflect( rd, nor );
     float fre = clamp( 1.0+dot(rd,nor), 0.0, 1.0 );
 
          //rock
-		float r = noise((7.0/SC)*pos.xz/256.0);
+    float r = noise((7.0/SC)*pos.xz/256.0);
     col = (r*0.25+0.75)*0.9*mix( vec3(0.08,0.05,0.03), vec3(0.10,0.09,0.08),
                                      noise(0.00007*vec2(pos.x,pos.y*48.0)/SC));
-		col = mix( col, 0.20*vec3(0.45,.30,0.15)*(0.50+0.50*r),smoothstep(0.70,0.9,nor.y) );
+    col = mix( col, 0.20*vec3(0.45,.30,0.15)*(0.50+0.50*r),smoothstep(0.70,0.9,nor.y) );
     col = mix( col, 0.15*vec3(0.30,.30,0.10)*(0.25+0.75*r),smoothstep(0.95,1.0,nor.y) );
 
 		// snow
@@ -235,19 +235,19 @@ vec3 render(vec3 ro, vec3 rd){
 
          // lighting
     float amb = clamp(0.5+0.5*nor.y,0.0,1.0);
-		float dif = clamp( dot( light1, nor ), 0.0, 1.0 );
-		float bac = clamp( 0.2 + 0.8*dot( normalize( vec3(-light1.x, 0.0, light1.z ) ), nor ), 0.0, 1.0 );
-		float sh = 1.0; if( dif>=0.0001 )
-		sh = softShadow(pos+light1*20.0,light1);
+    float dif = clamp( dot( light1, nor ), 0.0, 1.0 );
+    float bac = clamp( 0.2 + 0.8*dot( normalize( vec3(-light1.x, 0.0, light1.z ) ), nor ), 0.0, 1.0 );
+    float sh = 1.0; if( dif>=0.0001 )
+    sh = softShadow(pos+light1*20.0,light1);
 
-		vec3 lin  = vec3(0.0);
-		lin += dif*vec3(7.00,5.00,3.00)*vec3( sh, sh*sh*0.5+0.5*sh, sh*sh*0.8+0.2*sh );
-		lin += amb*vec3(0.40,0.60,0.80)*1.2;
-        lin += bac*vec3(0.40,0.50,0.60);
-		col *= lin;
+    vec3 lin  = vec3(0.0);
+    lin += dif*vec3(7.00,5.00,3.00)*vec3( sh, sh*sh*0.5+0.5*sh, sh*sh*0.8+0.2*sh );
+    lin += amb*vec3(0.40,0.60,0.80)*1.2;
+    lin += bac*vec3(0.40,0.50,0.60);
+    col *= lin;
 
-        col += s*0.1*pow(fre,4.0)*vec3(7.0,5.0,3.0)*sh * pow( clamp(dot(light1,ref), 0.0, 1.0),16.0);
-        col += s*0.1*pow(fre,4.0)*vec3(0.4,0.5,0.6)*smoothstep(0.0,0.6,ref.y);
+    col += s*0.1*pow(fre,4.0)*vec3(7.0,5.0,3.0)*sh * pow( clamp(dot(light1,ref), 0.0, 1.0),16.0);
+    col += s*0.1*pow(fre,4.0)*vec3(0.4,0.5,0.6)*smoothstep(0.0,0.6,ref.y);
 
 		// fog
         //float fo = 1.0-exp(-0.000004*t*t/(SC*SC) );

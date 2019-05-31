@@ -134,17 +134,17 @@ void createVerticesIndexes(){
 		}
 	}
 
-  for (GLfloat i = 1 ; i <= indexSize +1; i+=1.0){
-		for (GLfloat j = 1 ; j <= indexSize +1; j+=1.0) {
-      glm::vec2 vert = vec2((float)(i*tamAmostra), (float)(j*tamAmostra));
-      float h = 1.f;//Simplex::iqfBm(vert, 3.8, 4.2f, 5.7f);
-      vertices.push_back(vert.x);
-      vertices.push_back(h);
-      vertices.push_back(vert.y);
-      texcoord.push_back((float)i);
-      texcoord.push_back((float)j);
-		}
-	}
+    for (GLfloat i = 1 ; i <= indexSize +1; i+=1.0){
+        for (GLfloat j = 1 ; j <= indexSize +1; j+=1.0) {
+          glm::vec2 vert = vec2((float)(i*tamAmostra), (float)(j*tamAmostra));
+          float h = 1.f;//Simplex::iqfBm(vert, 3.8, 4.2f, 5.7f);
+          vertices.push_back(vert.x);
+          vertices.push_back(h);
+          vertices.push_back(vert.y);
+          texcoord.push_back((float)i);
+          texcoord.push_back((float)j);
+        }
+    }
 }
 
 void disableVertexAttribs(){
@@ -203,6 +203,7 @@ void setUnif(){
 
     glUniformMatrix4fv(glGetUniformLocation(activeShader, "MVP"), 1, GL_FALSE, &MVP[0][0]);
     glUniform3f(glGetUniformLocation(activeShader, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
+    //glUniform1f(glGetUniformLocation(activeShader, "cam"), camera.Zoom, camera.Position.y, camera.Position.z);
     glUniform1i(glGetUniformLocation(activeShader, "terra"), 0);
     glUniform1i(glGetUniformLocation(activeShader, "agua"),  1);
     glUniform1i(glGetUniformLocation(activeShader, "grama"), 2);
