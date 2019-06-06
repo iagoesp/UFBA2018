@@ -49,7 +49,6 @@
 		<Unit filename="culling.geom" />
 		<Unit filename="culling.vert" />
 		<Unit filename="main.cpp" />
-		<Unit filename="main.hpp" />
 		<Unit filename="simplex.h" />
 		<Unit filename="terrainFrag.glsl" />
 		<Unit filename="terrainGeo.glsl" />

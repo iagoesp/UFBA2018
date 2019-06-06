@@ -7,12 +7,19 @@ in vec3 tePosition;
 
 out vec4 fragColor;
 
+uniform vec2 iResolution;
+uniform vec3 viewPos;
+
 #define clamp01(x) clamp(x, 0.0, 1.0)
+bool DEBUG = false;
+
+float SC = 250.0f;
 
 float hash( float n )
 {
   return fract(sin(n)*43758.5453123);
 }
+
 
 float noise( in vec2 x )
 {
@@ -27,21 +34,6 @@ float noise( in vec2 x )
     mix( hash(n+ 57.0), hash(n+ 58.0),f.x),f.y);
 
   return res;
-}
-
-//const mat2 m2 = mat2(1.6,-1.2,1.2,1.6);
-const mat2 m2 = mat2(0.8,-0.6,0.6,0.8);
-
-float fbm( vec2 p )
-{
-  float f = 0.0;
-
-  f += 0.5000*noise( p ); p = m2*p*2.02;
-  f += 0.2500*noise( p ); p = m2*p*2.03;
-  f += 0.1250*noise( p ); p = m2*p*2.01;
-  f += 0.0625*noise( p );
-
-  return f/0.9375;
 }
 
 
@@ -63,25 +55,7 @@ vec3 noised( in vec2 x )
 
 }
 
-float terrain2( in vec2 x )
-{
-  vec2  p = x*0.003;
-  float a = 0.0;
-  float b = 1.0;
-  vec2  d = vec2(0.0);
-  for( int i=0; i<14; i++ )
-  {
-    vec3 n = noised(p);
-    d += n.yz;
-    a += b*n.x/(1.0+dot(d,d));
-    b *= 0.5;
-    p=m2*p;
-  }
-
-  return 140.0*a;
-}
-
-float SC = 20.f;
+const mat2 m2 = mat2(0.8,-0.6,0.6,0.8);
 
 float detailH( in vec2 x )
 {
@@ -131,21 +105,6 @@ float terrainM( in vec2 x )
 	return SC*100.0*a - detailH(x);
 }
 
-float softShadow(vec3 ro, vec3 rd )
-{
-    float res = 1.0;
-    float t = 0.1;
-	  for( int i=0; i<80; i++ ){
-      vec3  p = ro + t*rd;
-      float h = p.y - vNoise;
-		  res = min( res, 16.0*h/t );
-		  t += h;
-		  if( res<0.1 ||p.y>(200.0) )
-		    break;
-	}
-	return clamp( res, 0.0, 1.0 );
-}
-
 float terrainL( in vec2 x )
 {
 	vec2  p = x*0.003/SC;
@@ -164,6 +123,26 @@ float terrainL( in vec2 x )
 	return SC*100.0*a;
 }
 
+float terrain2( in vec2 x )
+{
+  vec2  p = x*0.003;
+  float a = 0.0;
+  float b = 1.0;
+  vec2  d = vec2(0.0);
+  for( int i=0; i<14; i++ )
+  {
+    vec3 n = noised(p);
+    d += n.yz;
+    a += b*n.x/(1.0+dot(d,d));
+    b *= 0.5;
+    p=m2*p;
+  }
+
+  return 140.0*a;
+}
+
+
+
 float interesct( in vec3 ro, in vec3 rd, in float tmin, in float tmax )
 {
   float t = tmin;
@@ -178,9 +157,19 @@ float interesct( in vec3 ro, in vec3 rd, in float tmin, in float tmax )
 	return t;
 }
 
-float plaIntersect( in vec3 ro, in vec3 rd, in vec4 p )
+float softShadow(vec3 ro, vec3 rd )
 {
-    return -(dot(ro,p.xyz)+p.w)/dot(rd,p.xyz);
+    float res = 1.0;
+    float t = 0.1;
+	  for( int i=0; i<80; i++ ){
+      vec3  p = ro + t*rd;
+      float h = p.y - vNoise;
+		  res = min( res, 16.0*h/t );
+		  t += h;
+		  if( res<0.1 ||p.y>(200.0) )
+		    break;
+	}
+	return clamp( res, 0.0, 1.0 );
 }
 
 vec3 calcNormal( in vec3 pos, float t )
@@ -190,6 +179,20 @@ vec3 calcNormal( in vec3 pos, float t )
                             2.0*eps.x,
                             terrainH(pos.xz-eps.yx) - terrainH(pos.xz+eps.yx) ) );
 }
+
+
+float fbm( vec2 p )
+{
+  float f = 0.0;
+
+  f += 0.5000*noise( p ); p = m2*p*2.02;
+  f += 0.2500*noise( p ); p = m2*p*2.03;
+  f += 0.1250*noise( p ); p = m2*p*2.01;
+  f += 0.0625*noise( p );
+
+  return f/0.9375;
+}
+
 
 vec3 render(vec3 ro, vec3 rd){
   vec3 light1 = normalize( vec3(-0.8, 0.4, -0.3) );
@@ -265,18 +268,41 @@ vec3 render(vec3 ro, vec3 rd){
 	return col;
 }
 void main(){
-//  vec3 xyz = -1.0 + 2.0*tePosition;
-//	vec3 s = xyz;
-//  vec3 ro = vec3(100, 50, 100);
-//  vec3 rd = normalize(s);
-  //ro.y += (1.5 * SC) + (ro.y);
+    vec2 xy = gl_FragCoord.xy/iResolution.xy;
+    vec2 s  = xy*(vec2(iResolution.x/iResolution.y,1.f));
+    vec3 ro = vec3(100, 50, 100);
+    vec3 rd = normalize(vec3(s,2.f));
+    //ro.y += (1.5 * SC) + terrainL(ro.xz);
 
-  vec2 xy = -1.0 + 2.0*gl_FragCoord.xy/(vec2(1024,1280));
-	vec2 s = xy*(vec2(1024/1280,1.f));
-  vec3 ro = vec3(100, 50, 100);
-  vec3 rd = normalize(vec3(s,2.f));
-  //ro.y += (1.5 * SC) + terrainL(ro.xz);
+    vec3 col = render(ro, rd);
+    col *= 0.5 + 0.5*pow( (xy.x+1.0)*(xy.y+1.0)*(xy.x-1.0)*(xy.y-1.0), 0.1 );
 
-  vec3 col = render(ro, rd);
-  fragColor = vec4(col, 1.f);
+    if(!DEBUG)
+        fragColor = vec4(col, 1.f);
+    else
+    if(DEBUG){
+        vec2 deb = xy;
+        float frame = 1f;
+        float min = 0.0;
+        float max = min + frame;
+        if(deb.x < max && deb.x > min && deb.y < max && deb.y > min)
+            fragColor = vec4(0, 0, 0.25, 1);
+    }
+    if(DEBUG){
+        vec2 deb = s;
+        float frame = 0.5f;
+        float min = 0.0;
+        float max = min + frame;
+        if(deb.x < max && deb.x > min && deb.y < max && deb.y > min)
+            fragColor += vec4(0.25, 0, 0.25, 1);
+    }
+    if(DEBUG){
+        vec3 deb = rd;
+        float frame = 0.25f;
+        float min = 0.0;
+        float max = min + frame;
+        if(deb.x < max && deb.x > min && deb.y < max && deb.y > min)
+            fragColor += vec4(0.25, 0, 0.25, 1);
+    }
+
 }

@@ -212,6 +212,7 @@ void setUnif(){
     glUniform1i(glGetUniformLocation(activeShader, "tess"), enableTess);
     glUniform1f(glGetUniformLocation(activeShader, "noised"), noise);
     glUniform1f(glGetUniformLocation(activeShader, "CPUnoise"), CPUnoise);
+    glUniform2f(glGetUniformLocation(activeShader, "iResolution"), WIDTH, HEIGHT);
 }
 
 void draw(){

@@ -458,3 +458,72 @@
 	"simplex.h"
 	"LoadShaders.hpp"
 
+1555008637 source:c:\users\iago.labcg-pc\documents\ufba2018 - cópia (2)\loadshaders.cpp
+	<stdio.h>
+	<string>
+	<vector>
+	<iostream>
+	<fstream>
+	<algorithm>
+	<stdlib.h>
+	<string.h>
+	<GL/glew.h>
+	"LoadShaders.hpp"
+
+1554492161 c:\users\iago.labcg-pc\documents\ufba2018 - cópia (2)\loadshaders.hpp
+
+1559778738 source:c:\users\iago.labcg-pc\documents\ufba2018 - cópia (2)\main.cpp
+	"Util.hpp"
+	"camera.h"
+
+1558378254 c:\users\iago.labcg-pc\documents\ufba2018 - cópia (2)\util.hpp
+	<iostream>
+	<vector>
+	<string>
+	<cstdlib>
+	<typeinfo>
+	<cmath>
+	<GL/glew.h>
+	<GLFW/glfw3.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	"stb_image.h"
+	"SOIL.h"
+	"simplex.h"
+	"LoadShaders.hpp"
+
+1550704562 c:\users\iago.labcg-pc\documents\ufba2018 - cópia (2)\stb_image.h
+	"stb_image.h"
+	<stdio.h>
+	<stdarg.h>
+	<stddef.h>
+	<stdlib.h>
+	<string.h>
+	<limits.h>
+	<math.h>
+	<stdio.h>
+	<assert.h>
+	<stdint.h>
+	<emmintrin.h>
+	<intrin.h>
+	<arm_neon.h>
+
+1550704562 c:\users\iago.labcg-pc\documents\ufba2018 - cópia (2)\soil.h
+
+1556212973 c:\users\iago.labcg-pc\documents\ufba2018 - cópia (2)\simplex.h
+	<functional>
+	<array>
+	<random>
+	<math.h>
+	<stdlib.h>
+	<glm/geometric.hpp>
+	<glm/vec2.hpp>
+	<glm/vec3.hpp>
+	<glm/vec4.hpp>
+	<glm/mat2x2.hpp>
+
+1559776190 c:\users\iago.labcg-pc\documents\ufba2018 - cópia (2)\camera.h
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<vector>
+
