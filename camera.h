@@ -1,7 +1,7 @@
 #ifndef CAMERA_H
 #define CAMERA_H
-#define HEIGHT 1080
-#define WIDTH  1920
+#define HEIGHT 1024
+#define WIDTH   1280
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -22,7 +22,7 @@ bool tIsPressed, pIsPressed, cIsPressed, plusIsPressed, minusIsPressed, shiftMin
 // Default camera values
 const float YAW         = -90.0f;
 const float PITCH       =  0.0f;
-static float SPEED       =  200.5f;
+static float SPEED       =  25.5f;
 const float SENSITIVITY =  0.1f;
 const float ZOOM        =  45.0f;
 
@@ -75,10 +75,7 @@ public:
 
     glm::mat4 getProjectionMatrix(int SCR_WIDTH, int SCR_HEIGHT)
     {
-
-        GLfloat pLength = abs(glm::length(Position));
-
-        return glm::perspective(glm::radians(this->Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, (0.1f+pLength)/pLength, (1000.0f*pLength));
+        return glm::perspective(glm::radians(this->Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 1000.0f);
     }
     // Processes input received from any keyboard-like input system. Accepts input parameter in the form of camera defined ENUM (to abstract it from windowing systems)
     void ProcessKeyboard(Camera_Movement direction, float deltaTime)
@@ -138,7 +135,7 @@ public:
         }
         noise2IsPressed = noiseIsCurrentlyPressed;
 
-        bool pos2IsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_C ) == GLFW_PRESS);
+        bool pos2IsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_F ) == GLFW_PRESS);
         if (!pos2IsPressed && pos2IsCurrentlyPressed){
             CPUnoise = !CPUnoise;
             if(CPUnoise)

@@ -122,8 +122,8 @@ void clearVectors(){
 
 void createVerticesIndexes(){
     float tamAmostra = meshSize / (float)indexSize;
-    for (GLuint i = 0 ; i < indexSize ; i++){
-		for (GLuint j = 0 ; j < indexSize ; j++) {
+    for (GLuint i = 0; i < indexSize ; i++){
+		for (GLuint j = 0; j < indexSize ; j++) {
 			indices.push_back( i*(indexSize+1) 		+ j);		// V0
 			indices.push_back( i*(indexSize+1) 		+ (j+1));	// V1
 			indices.push_back( (i+1)*(indexSize+1) 	+ j);		// V2
@@ -134,17 +134,17 @@ void createVerticesIndexes(){
 		}
 	}
 
-    for (GLfloat i = 1 ; i <= indexSize +1; i+=1.0){
-        for (GLfloat j = 1 ; j <= indexSize +1; j+=1.0) {
-          glm::vec2 vert = vec2((float)(i*tamAmostra), (float)(j*tamAmostra));
-          float h = 1.f;//Simplex::iqfBm(vert, 3.8, 4.2f, 5.7f);
-          vertices.push_back(vert.x);
-          vertices.push_back(h);
-          vertices.push_back(vert.y);
-          texcoord.push_back((float)i);
-          texcoord.push_back((float)j);
-        }
-    }
+  for (GLfloat i = 1 ; i <= indexSize +1; i+=1.0){
+		for (GLfloat j = 1 ; j <= indexSize +1; j+=1.0) {
+      glm::vec2 vert = vec2((float)(i*tamAmostra), (float)(j*tamAmostra));
+      float h = 1.f;//Simplex::iqfBm(vert, 3.8, 4.2f, 5.7f);
+      vertices.push_back(vert.x);
+      vertices.push_back(h);
+      vertices.push_back(vert.y);
+      texcoord.push_back((float)i);
+      texcoord.push_back((float)j);
+		}
+	}
 }
 
 void disableVertexAttribs(){
@@ -203,16 +203,14 @@ void setUnif(){
 
     glUniformMatrix4fv(glGetUniformLocation(activeShader, "MVP"), 1, GL_FALSE, &MVP[0][0]);
     glUniform3f(glGetUniformLocation(activeShader, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
-    //glUniform1f(glGetUniformLocation(activeShader, "cam"), camera.Zoom, camera.Position.y, camera.Position.z);
     glUniform1i(glGetUniformLocation(activeShader, "terra"), 0);
     glUniform1i(glGetUniformLocation(activeShader, "agua"),  1);
     glUniform1i(glGetUniformLocation(activeShader, "grama"), 2);
-    glUniform1i(glGetUniformLocation(activeShader, "snow"), 3);
-    glUniform1i(glGetUniformLocation(activeShader, "mountain"), 4);
+    glUniform1i(glGetUniformLocation(activeShader, "neve"), 3);
+    glUniform1i(glGetUniformLocation(activeShader, "montanha"), 4);
     glUniform1i(glGetUniformLocation(activeShader, "tess"), enableTess);
     glUniform1f(glGetUniformLocation(activeShader, "noised"), noise);
-    glUniform1f(glGetUniformLocation(activeShader, "CPUnoise"), CPUnoise);
-    glUniform2f(glGetUniformLocation(activeShader, "iResolution"), WIDTH, HEIGHT);
+    glUniform1f(glGetUniformLocation(activeShader, "frag"), CPUnoise);
 }
 
 void draw(){

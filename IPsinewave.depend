@@ -217,7 +217,7 @@
 
 1554481480 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\controls.hpp
 
-1554960194 source:c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\loadshaders.cpp
+1562820697 source:c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\loadshaders.cpp
 	<stdio.h>
 	<string>
 	<vector>
@@ -229,9 +229,9 @@
 	<GL/glew.h>
 	"LoadShaders.hpp"
 
-1554960194 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\loadshaders.hpp
+1562820697 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\loadshaders.hpp
 
-1558082026 source:c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\main.cpp
+1565274427 source:c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\main.cpp
 	"Util.hpp"
 	"camera.h"
 
@@ -265,7 +265,7 @@
 
 1550550805 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\vectormath\mat_aos_v.h
 
-1550550805 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\stb_image.h
+1562820698 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\stb_image.h
 	"stb_image.h"
 	<stdio.h>
 	<stdarg.h>
@@ -281,7 +281,7 @@
 	<intrin.h>
 	<arm_neon.h>
 
-1550550805 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\soil.h
+1562820697 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\soil.h
 
 1554491233 source:c:\users\iago.labcg-pc\documents\ufba2018\controls.cpp
 	<GLFW/glfw3.h>
@@ -306,8 +306,8 @@
 
 1554492161 c:\users\iago.labcg-pc\documents\ufba2018\loadshaders.hpp
 
-1558398357 source:c:\users\iago.labcg-pc\documents\ufba2018\main.cpp
-	"Util.hpp"
+1556213077 source:c:\users\iago.labcg-pc\documents\ufba2018\main.cpp
+	"main.hpp"
 	"camera.h"
 
 1550704562 c:\users\iago.labcg-pc\documents\ufba2018\vectormath\vectormath.h
@@ -358,7 +358,7 @@
 
 1550704562 c:\users\iago.labcg-pc\documents\ufba2018\soil.h
 
-1557096036 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\simplex.h
+1562820698 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\simplex.h
 	<functional>
 	<array>
 	<random>
@@ -416,17 +416,17 @@
 	<glm/vec4.hpp>
 	<glm/mat2x2.hpp>
 
-1558068323 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\camera.h
+1562820697 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\camera.h
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
 	<vector>
 
-1558396149 c:\users\iago.labcg-pc\documents\ufba2018\camera.h
+1556212938 c:\users\iago.labcg-pc\documents\ufba2018\camera.h
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
 	<vector>
 
-1558067293 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\util.hpp
+1562820697 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\util.hpp
 	<iostream>
 	<vector>
 	<string>
@@ -441,89 +441,4 @@
 	"SOIL.h"
 	"simplex.h"
 	"LoadShaders.hpp"
-
-1558378254 c:\users\iago.labcg-pc\documents\ufba2018\util.hpp
-	<iostream>
-	<vector>
-	<string>
-	<cstdlib>
-	<typeinfo>
-	<cmath>
-	<GL/glew.h>
-	<GLFW/glfw3.h>
-	<glm/glm.hpp>
-	<glm/gtc/matrix_transform.hpp>
-	"stb_image.h"
-	"SOIL.h"
-	"simplex.h"
-	"LoadShaders.hpp"
-
-1555008637 source:c:\users\iago.labcg-pc\documents\ufba2018 - cópia (2)\loadshaders.cpp
-	<stdio.h>
-	<string>
-	<vector>
-	<iostream>
-	<fstream>
-	<algorithm>
-	<stdlib.h>
-	<string.h>
-	<GL/glew.h>
-	"LoadShaders.hpp"
-
-1554492161 c:\users\iago.labcg-pc\documents\ufba2018 - cópia (2)\loadshaders.hpp
-
-1559778738 source:c:\users\iago.labcg-pc\documents\ufba2018 - cópia (2)\main.cpp
-	"Util.hpp"
-	"camera.h"
-
-1558378254 c:\users\iago.labcg-pc\documents\ufba2018 - cópia (2)\util.hpp
-	<iostream>
-	<vector>
-	<string>
-	<cstdlib>
-	<typeinfo>
-	<cmath>
-	<GL/glew.h>
-	<GLFW/glfw3.h>
-	<glm/glm.hpp>
-	<glm/gtc/matrix_transform.hpp>
-	"stb_image.h"
-	"SOIL.h"
-	"simplex.h"
-	"LoadShaders.hpp"
-
-1550704562 c:\users\iago.labcg-pc\documents\ufba2018 - cópia (2)\stb_image.h
-	"stb_image.h"
-	<stdio.h>
-	<stdarg.h>
-	<stddef.h>
-	<stdlib.h>
-	<string.h>
-	<limits.h>
-	<math.h>
-	<stdio.h>
-	<assert.h>
-	<stdint.h>
-	<emmintrin.h>
-	<intrin.h>
-	<arm_neon.h>
-
-1550704562 c:\users\iago.labcg-pc\documents\ufba2018 - cópia (2)\soil.h
-
-1556212973 c:\users\iago.labcg-pc\documents\ufba2018 - cópia (2)\simplex.h
-	<functional>
-	<array>
-	<random>
-	<math.h>
-	<stdlib.h>
-	<glm/geometric.hpp>
-	<glm/vec2.hpp>
-	<glm/vec3.hpp>
-	<glm/vec4.hpp>
-	<glm/mat2x2.hpp>
-
-1559776190 c:\users\iago.labcg-pc\documents\ufba2018 - cópia (2)\camera.h
-	<glm/glm.hpp>
-	<glm/gtc/matrix_transform.hpp>
-	<vector>
 
