@@ -292,7 +292,7 @@
 
 1554489915 c:\users\iago.labcg-pc\documents\ufba2018\controls.hpp
 
-1555008637 source:c:\users\iago.labcg-pc\documents\ufba2018\loadshaders.cpp
+1559774725 source:c:\users\iago.labcg-pc\documents\ufba2018\loadshaders.cpp
 	<stdio.h>
 	<string>
 	<vector>
@@ -304,10 +304,10 @@
 	<GL/glew.h>
 	"LoadShaders.hpp"
 
-1554492161 c:\users\iago.labcg-pc\documents\ufba2018\loadshaders.hpp
+1559774725 c:\users\iago.labcg-pc\documents\ufba2018\loadshaders.hpp
 
-1556213077 source:c:\users\iago.labcg-pc\documents\ufba2018\main.cpp
-	"main.hpp"
+1565288948 source:c:\users\iago.labcg-pc\documents\ufba2018\main.cpp
+	"Util.hpp"
 	"camera.h"
 
 1550704562 c:\users\iago.labcg-pc\documents\ufba2018\vectormath\vectormath.h
@@ -340,7 +340,7 @@
 
 1550704562 c:\users\iago.labcg-pc\documents\ufba2018\vectormath\mat_aos_v.h
 
-1550704562 c:\users\iago.labcg-pc\documents\ufba2018\stb_image.h
+1559774725 c:\users\iago.labcg-pc\documents\ufba2018\stb_image.h
 	"stb_image.h"
 	<stdio.h>
 	<stdarg.h>
@@ -356,7 +356,7 @@
 	<intrin.h>
 	<arm_neon.h>
 
-1550704562 c:\users\iago.labcg-pc\documents\ufba2018\soil.h
+1559774725 c:\users\iago.labcg-pc\documents\ufba2018\soil.h
 
 1562820698 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\simplex.h
 	<functional>
@@ -404,7 +404,7 @@
 	"LoadShaders.hpp"
 	"vectormath/vectormath.h"
 
-1556212973 c:\users\iago.labcg-pc\documents\ufba2018\simplex.h
+1559774725 c:\users\iago.labcg-pc\documents\ufba2018\simplex.h
 	<functional>
 	<array>
 	<random>
@@ -421,12 +421,28 @@
 	<glm/gtc/matrix_transform.hpp>
 	<vector>
 
-1556212938 c:\users\iago.labcg-pc\documents\ufba2018\camera.h
+1565286316 c:\users\iago.labcg-pc\documents\ufba2018\camera.h
 	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
 	<vector>
 
 1562820697 c:\users\iagop\documents\pesquisa2018-20190123t160530z-001\ufba2018\util.hpp
+	<iostream>
+	<vector>
+	<string>
+	<cstdlib>
+	<typeinfo>
+	<cmath>
+	<GL/glew.h>
+	<GLFW/glfw3.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	"stb_image.h"
+	"SOIL.h"
+	"simplex.h"
+	"LoadShaders.hpp"
+
+1559774725 c:\users\iago.labcg-pc\documents\ufba2018\util.hpp
 	<iostream>
 	<vector>
 	<string>

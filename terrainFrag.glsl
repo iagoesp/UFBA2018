@@ -342,7 +342,7 @@ void main(){
   }
   else{
     vec2 xy = -1.0 + 2.0*gl_FragCoord.xy/(vec2(1024,1280));
-	  vec2 s = xy*(vec2(1024/1280,1.f));
+    vec2 s = xy*(vec2(1024/1280,1.f));
     vec3 ro = vec3(100, 50, 100);
     vec3 rd = normalize(vec3(s,2.f));
     //ro.y += (1.5 * SC) + terrainL(ro.xz);
@@ -350,5 +350,6 @@ void main(){
     col = vec4(render(ro, rd), 1.f);
   }
   fragColor = col;
+  //fragColor = vec4(vcNormal, 1.0f);
 }
 

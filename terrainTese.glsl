@@ -79,9 +79,6 @@ void main(){
     vNoise = fbm(tePosition);
     tePosition = tePosition + vcNormal*vNoise*2;
 
-    vcNormal = tePosition;
-    vcNormal = normalize(vcNormal);
-
     vec4 c0 = gl_TessCoord.x * tcColor[0];
     vec4 c1 = gl_TessCoord.y * tcColor[1];
     vec4 c2 = gl_TessCoord.z * tcColor[2];
@@ -93,6 +90,8 @@ void main(){
     vcTexCoord = (t0 + t1 + t2);
 
     p = tePosition.y;
+    vcNormal = tePosition;
+    vcNormal = normalize(vcNormal);
     tvPosition = vec3(V * vec4(tePosition, 1.f));
     tpPosition = vec3(P * vec4(tePosition, 1.f));
     tmPosition = MVP * vec4(tePosition, 1.f);

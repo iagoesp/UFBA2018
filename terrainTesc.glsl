@@ -21,6 +21,7 @@ uniform float dy;
 uniform mat4 V;
 uniform float dz;
 uniform float radius;
+uniform float mesh;
 
 #define ID gl_InvocationID
 bool newMet = true;
@@ -28,10 +29,10 @@ bool newMet = true;
 float LOD(vec3 posV, vec3 cam){
   float dist = distance(posV, cam);
   if(newMet){
-    float rsc  = 128.f;
+    float rsc  = mesh/2;
     float a = dist/rsc;
     a = floor(4/a);
-    return 1+a*a;
+    return 1 + a*a;
   }
   else{
     if(dist<=50) return 32.0;
@@ -42,16 +43,6 @@ float LOD(vec3 posV, vec3 cam){
     else if(dist>400) return 1.0;
   }
 }
-
-float dirLOD(vec3 posV, float posCX, float posCY, float posCZ){
-  float param = radius*100/4;
-  vec3 direction = vec3(posCX, posCY, posCZ);
-  float normal = dot(direction, posV);
-  if(normal > param) return 8.0;
-  else if(normal >= -param && normal <= param) return 4.0;
-  else if(normal < -param) return 1.0;
-}
-
 
 void main(){
   float TessLevelInner = 1;
