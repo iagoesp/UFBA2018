@@ -78,7 +78,7 @@ int init(){
     glfwPollEvents();
     glfwSetCursorPos(window, WIDTH/2, HEIGHT/2);
 
-	glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);

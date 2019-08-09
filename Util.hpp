@@ -58,7 +58,7 @@ bool firstMouse = true;
 
 
 float px, py, pz;
-int enableTess = 0, modeMouse=0;
+int enableTess = 1, modeMouse=0;
 int width, height, nrChannels;
 
 GLuint MatrixID, ModelMatrixID, ViewMatrixID, ProjectionMatrixID,

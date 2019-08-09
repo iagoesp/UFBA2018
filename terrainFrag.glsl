@@ -1,12 +1,14 @@
 #version 430 core
 
  in vec3 vcNormal;
+ in vec3 n;
 in vec4 vcColor;
 in float p;
 in vec2 vcTexCoord;
 in float vNoise;
 in vec3 tePosition;
 in vec3 tvPosition;
+
 
 uniform sampler2D terra;
 uniform sampler2D agua;
@@ -349,7 +351,17 @@ void main(){
 
     col = vec4(render(ro, rd), 1.f);
   }
-  fragColor = col;
-  //fragColor = vec4(vcNormal, 1.0f);
+
+    vec3 X = dFdx(tePosition);
+    vec3 Y = dFdy(tePosition);
+    vec3 normal2 = normalize(cross(X,Y));
+
+    vec3 normal3 = normalize(cross(n,normalize(vec3(tePosition.y))));
+
+    vec3 dn0 = normal2 - n;
+    vec3 dn1 = normal3 - n;
+    normal3 = normalize(cross(dn0,dn1));
+  //fragColor = col;
+  fragColor = vec4(normal3, 1.0f);
 }
 

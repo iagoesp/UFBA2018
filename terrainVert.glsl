@@ -228,7 +228,7 @@ vec3 triIntersect( vec3 ro, vec3 rd, vec3 v0, vec3 v1, vec3 v2 )
 
 void main(){
 	TexCoord    = vec2(aTexCoord.x, aTexCoord.y);
-  h           = terrain (position.xz);//, 2, 4.f, 4.f);
+  h           = terrain (position.xz)+1000;//, 2, 4.f, 4.f);
   vPosition   = position;
   vNormal = normalize(vec3(vPosition.x, 1, vPosition.z));
   vPosition.y += iqfBm (vPosition.xz, 2, 4.f, 4.f);
