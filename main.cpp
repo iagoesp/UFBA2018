@@ -210,7 +210,7 @@ void setUnif(){
     glUniform1i(glGetUniformLocation(activeShader, "montanha"), 4);
     glUniform1i(glGetUniformLocation(activeShader, "tess"), enableTess);
     glUniform1f(glGetUniformLocation(activeShader, "noised"), noise);
-    glUniform1f(glGetUniformLocation(activeShader, "frag"), CPUnoise);
+    glUniform1i(glGetUniformLocation(activeShader, "frag"), CPUnoise);
     glUniform1f(glGetUniformLocation(activeShader, "mesh"), meshSize);
 }
 

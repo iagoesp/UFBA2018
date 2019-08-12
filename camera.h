@@ -137,7 +137,8 @@ public:
 
         bool pos2IsCurrentlyPressed = (glfwGetKey( window, GLFW_KEY_F ) == GLFW_PRESS);
         if (!pos2IsPressed && pos2IsCurrentlyPressed){
-            CPUnoise = !CPUnoise;
+            CPUnoise+= 1;
+            CPUnoise = CPUnoise%4;
             if(CPUnoise)
                 cout<<"cpu = true"<<endl;
             else

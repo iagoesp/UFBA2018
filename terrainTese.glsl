@@ -13,19 +13,13 @@ uniform float lac;
 uniform bool noised;
 
 in vec3 tcPosition[];
-in vec3 tcNormal[];
 in vec4 tcColor[];
 in vec2 tcTexCoord[];
 
 out float p;
-out vec3 vcNormal;
 out vec4 vcColor;
 out vec2 vcTexCoord;
 out vec3 tePosition;
-out vec3 tfPosition[];
-out vec3 tvPosition;
-out vec3 tpPosition;
-out vec4 tmPosition;
 out float vNoise;
 out vec3 n;
 
@@ -68,32 +62,15 @@ void main(){
     vec3 tcPos1 = (tcPosition[1]);
     vec3 tcPos2 = (tcPosition[2]);
 
-    n = normalize(cross(tcPos2 - tcPos0, tcPos1 - tcPos0));
-
     vec3 p0 = gl_TessCoord.x * tcPos0;
     vec3 p1 = gl_TessCoord.y * tcPos1;
     vec3 p2 = gl_TessCoord.z * tcPos2;
     tePosition = (p0 + p1 + p2);
 
-//    if(!(tePosition == tcPos0 || tePosition == tcPos1 || tePosition == tcPos2)){
-//        vec3 n4 = normalize(cross(tcPos2 - tePosition, tcPos1 - tePosition));
-//        vec3 n5 = normalize(cross(tcPos2 - tePosition, tcPos0 - tePosition));
-//        vec3 n6 = normalize(cross(tcPos1 - tePosition, tcPos0 - tePosition));
-//
-//        n = normalize((n4 + n5 + n6));
-//    }
-//    n = normalize(cross(n7, n));
-
-    vec3 n0 = gl_TessCoord.x * tcNormal[0];
-    vec3 n1 = gl_TessCoord.y * tcNormal[1];
-    vec3 n2 = gl_TessCoord.z * tcNormal[2];
-    vcNormal = normalize(n0 + n1 + n2);
-
-   // n = normalize(cross(tcPos2 - tcPos0, tcPos1 - tcPos0));
+    n = normalize(cross(tcPos2 - tcPos0, tcPos1 - tcPos0));
 
     vNoise = fbm(tePosition);
     tePosition.y = tePosition.y + vNoise;
-
 
     vec4 c0 = gl_TessCoord.x * tcColor[0];
     vec4 c1 = gl_TessCoord.y * tcColor[1];
@@ -106,10 +83,5 @@ void main(){
     vcTexCoord = (t0 + t1 + t2);
 
     p = tePosition.y;
-    vcNormal = tePosition;
-    vcNormal = normalize(vcNormal);
-    tvPosition = vec3(V * vec4(tePosition, 1.f));
-    tpPosition = vec3(P * vec4(tePosition, 1.f));
-    tmPosition = MVP * vec4(tePosition, 1.f);
     gl_Position = MVP * vec4(tePosition, 1.0);
 }

@@ -36,7 +36,7 @@ vector<unsigned short> indices;
 vector<GLfloat> vertices;
 vector<GLfloat> texcoord;
 
-bool enablePolygon, enableCull,  CPUnoise = false,  noise=false;
+bool enablePolygon, enableCull,  noise=false;
 
 static GLuint indexSize = 32.0;
 static GLfloat meshSize = 128.0;
@@ -58,7 +58,7 @@ bool firstMouse = true;
 
 
 float px, py, pz;
-int enableTess = 1, modeMouse=0;
+int enableTess = 1, modeMouse=0, CPUnoise = 0;
 int width, height, nrChannels;
 
 GLuint MatrixID, ModelMatrixID, ViewMatrixID, ProjectionMatrixID,

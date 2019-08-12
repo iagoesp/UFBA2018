@@ -9,27 +9,28 @@ in float vNoise;
 in vec3 tePosition;
 in vec3 tvPosition;
 
-
 uniform sampler2D terra;
 uniform sampler2D agua;
 uniform sampler2D grama;
 uniform sampler2D neve;
 uniform sampler2D montanha;
 uniform vec3 viewPos;
-uniform bool frag;
+uniform int frag;
 out vec4 fragColor;
 
  #define clamp01(x) clamp(x, 0.0, 1.0)
 
-vec4 texAgua = texture2D(agua, vcTexCoord);
-vec4 texTerra = texture2D(terra, vcTexCoord);
-vec4 texGrama = texture2D(grama, vcTexCoord);
-vec4 texSnow = texture2D(neve, vcTexCoord);
-vec4 texMountain = texture2D(montanha, vcTexCoord);
+vec3 water = texture2D(agua, vcTexCoord).xyz;
+vec3 sand = texture2D(terra, vcTexCoord).xyz;
+vec3 grass = texture2D(grama, vcTexCoord).xyz;
+vec3 snow = texture2D(neve, vcTexCoord).xyz;
+vec3 rock = texture2D(montanha, vcTexCoord).xyz;
 
 float weightWater;
 float weightStone;
 float weightGrass;
+
+vec3 fgNormal;
 
  vec3 heightblend(vec3 tex1, float height1, vec3 tex2, float height2)
 {
@@ -40,10 +41,10 @@ float weightGrass;
     return ((tex1 * level1) + (tex2 * level2)) / (level1 + level2);
 }
 
- vec3 surf(vec4 tex1, float h1, vec4 tex2, float h2)
+ vec3 surf(vec3 tex1, float h1, vec3 tex2, float h2)
 {
-    vec3 t1 = tex1.rgb;
-    vec3 t2 = tex2.rgb;
+    vec3 t1 = tex1;
+    vec3 t2 = tex2;
     return heightblend (t1, h1, t2, h2);
 }
 
@@ -309,9 +310,58 @@ vec3 render(vec3 ro, vec3 rd){
 
 
 void main(){
+  vec3 X = dFdx(tePosition);
+  vec3 Y = dFdy(tePosition);
+  vec3 normal2 = normalize(cross(X,Y));
+  //normal2 = cross(normalize(tePosition),vec3(0,1,0));
+
+  vec3 fNormal = normalize(cross(normal2, normalize(n)));
+  fgNormal = normalize(normal2);
   vec4 col;
-  if(frag){
-    float height = p;
+  if(frag == 2){
+    vec3 vertical = vec3(0, 1, 0);
+
+    float angleDiff = abs(dot(fgNormal.xyz, vertical));
+    float pureRock = 0.4f;
+    float lerpRock = 0.9f;
+    float coef = 1.0 - smoothstep(pureRock, lerpRock, angleDiff);
+    grass = mix(grass, rock, coef);
+    snow = mix(snow, rock, coef);
+    coef = smoothstep(0.8, 9., angleDiff);
+    grass = mix(grass, snow, coef);
+
+
+    float snow_height = 4.0f;
+    float grass_height = 2.4;
+    float sand_height = 0.8f;
+    float mix_zone = 0.4f;
+    vec3 kd = vec3(1.0);
+
+    float gHeight = tePosition.y;
+    if (gHeight > snow_height + mix_zone){
+        kd = snow;
+    } else if (gHeight > snow_height - mix_zone) {
+        float coef = (gHeight-(snow_height - mix_zone))/(2.0 * mix_zone);
+        kd = mix(grass, snow, coef);
+    } else if (gHeight > grass_height + mix_zone){
+        kd = grass;
+    } else if (gHeight > grass_height - mix_zone){
+        float coef = (gHeight-(grass_height - mix_zone))/(2.0 * mix_zone);
+        kd = mix(sand, grass, coef);
+    } else if (gHeight > sand_height + mix_zone){
+        kd = sand;
+    } else if (gHeight > sand_height - mix_zone){
+        float coef = (gHeight-(sand_height - mix_zone))/(2.0 * mix_zone);
+        kd = mix(water, sand, coef);
+    }else{
+      kd= water;
+    }
+
+    col = vec4(kd, 1.0f);
+
+  }
+  else if(frag == 1){
+      float height = p;
     vec4 blank = vec4 ( 1.0f, 1.0f, 1.0f, 1.0f );
     vec4 blue = vec4 ( 0.0f, 0.0f, 1.0f, 1.0f );
     vec4 vTexColor = vec4 ( 1.0f, 1.0f, 1.0f, 1.0f );
@@ -324,25 +374,26 @@ void main(){
     const float level4 = 8.f;
 
     if(height <= leveli1){
-      vTexColor = vec4(surf(texAgua, leveli1, texGrama , height), 1.f);
+      vTexColor = vec4(surf(water, leveli1, grass , height), 1.f);
     }
     else if(height > leveli1 && height <= level0){
-      vTexColor = vec4(surf(texAgua, leveli1, texGrama , height), 1.f);
+      vTexColor = vec4(surf(water, leveli1, grass , height), 1.f);
     }
     else if(height > level0 && height <= level2){
-      vTexColor = vec4(surf(texGrama, level0, texTerra , height), 1.f);
+      vTexColor = vec4(surf(grass, level0, sand , height), 1.f);
     }
     else if(height > level2 && height <= level3){
-      vTexColor = vec4(surf(texTerra, level2, texMountain, height), 1.f);
+      vTexColor = vec4(surf(sand, level2, rock, height), 1.f);
     }
     else if(height > level3){
-      vTexColor = vec4(surf(texMountain , level3 , texSnow , height-1), 1.f);
+      vTexColor = vec4(surf(rock , level3 , snow , height-1), 1.f);
     }
 
     col = vTexColor;
 
+
   }
-  else{
+  else if(frag == 0){
     vec2 xy = -1.0 + 2.0*gl_FragCoord.xy/(vec2(1024,1280));
     vec2 s = xy*(vec2(1024/1280,1.f));
     vec3 ro = vec3(100, 50, 100);
@@ -351,17 +402,9 @@ void main(){
 
     col = vec4(render(ro, rd), 1.f);
   }
-
-    vec3 X = dFdx(tePosition);
-    vec3 Y = dFdy(tePosition);
-    vec3 normal2 = normalize(cross(X,Y));
-
-    vec3 normal3 = normalize(cross(n,normalize(vec3(tePosition.y))));
-
-    vec3 dn0 = normal2 - n;
-    vec3 dn1 = normal3 - n;
-    normal3 = normalize(cross(dn0,dn1));
-  //fragColor = col;
-  fragColor = vec4(normal3, 1.0f);
+  else{
+    col = vec4(fNormal, 1.f);
+  }
+  fragColor = col;
 }
 
