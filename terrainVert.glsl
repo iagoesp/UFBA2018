@@ -8,14 +8,16 @@ layout (location = 1) in vec3 aColor;
 layout (location = 2) in vec2 aTexCoord;
 
 out vec3 vPosition;
-out vec3 vNormal;
 out vec4 vColor;
-out vec2 TexCoord;
-out vec3 samePosition;
-out float h;
+out vec2 vTexCoord;
+
+out float vNoise;
+out vec3 vNormal;
+
 
 uniform bool CPUnoise;
 uniform bool noise;
+uniform mat4 MVP;
 
 float gx0, gy0, gx1, gy1, gx2, gy2;
 
@@ -167,9 +169,11 @@ float iqfBm(vec2 v, int octaves, float lacunarity, float gain ){
 }
 
 void main(){
-	TexCoord    = vec2(aTexCoord.x, aTexCoord.y);
+  vTexCoord    = vec2(aTexCoord.x, aTexCoord.y);
   vPosition   = position;
-  vPosition.y += iqfBm (vPosition.xz, 2, 4.f, 4.f);
-  gl_Position = vec4(vPosition, 1.f);
+  vNoise 	  = iqfBm (vPosition.xz, 2, 4.f, 4.f);
+  vNormal 	  = vec3(1, 1, 1);
+  vPosition.y += vNoise;
+  gl_Position =  vec4(position, 1.f);
 
 }

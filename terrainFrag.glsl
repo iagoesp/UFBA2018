@@ -1,13 +1,10 @@
 #version 430 core
 
- in vec3 vcNormal;
- in vec3 n;
-in vec4 vcColor;
-in float p;
-in vec2 vcTexCoord;
+in vec3 vNormal;
+in vec4 vColor;
+in vec2 vTexCoord;
 in float vNoise;
-in vec3 tePosition;
-in vec3 tvPosition;
+in vec3 vPosition;
 
 uniform sampler2D terra;
 uniform sampler2D agua;
@@ -20,11 +17,11 @@ out vec4 fragColor;
 
  #define clamp01(x) clamp(x, 0.0, 1.0)
 
-vec3 water = texture2D(agua, vcTexCoord).xyz;
-vec3 sand = texture2D(terra, vcTexCoord).xyz;
-vec3 grass = texture2D(grama, vcTexCoord).xyz;
-vec3 snow = texture2D(neve, vcTexCoord).xyz;
-vec3 rock = texture2D(montanha, vcTexCoord).xyz;
+vec3 water = texture2D(agua, vTexCoord).xyz;
+vec3 sand = texture2D(terra, vTexCoord).xyz;
+vec3 grass = texture2D(grama, vTexCoord).xyz;
+vec3 snow = texture2D(neve, vTexCoord).xyz;
+vec3 rock = texture2D(montanha, vTexCoord).xyz;
 
 float weightWater;
 float weightStone;
@@ -238,9 +235,9 @@ vec3 render(vec3 ro, vec3 rd){
     // bounding plane
     float tmin = 1.0;
     float tmax = 1000.0;
-    //float tmax = 10000*tePosition.y; //minha Adap
+    //float tmax = 10000*vPosition.y; //minha Adap
 #if 1
-    float maxh = 100.0;//*tePosition.y;//300.0*SC;
+    float maxh = 100.0;//*vPosition.y;//300.0*SC;
     float tp = (maxh-ro.y)/rd.y;
     if( tp>0.0 )
     {
@@ -254,7 +251,7 @@ vec3 render(vec3 ro, vec3 rd){
   if( t<=tmax)
     {
         // mountains
-		vec3 pos = tePosition*ro + t*rd;
+		vec3 pos = vPosition*ro + t*rd;
     vec3 nor = calcNormal( pos, t );
     //nor = normalize( nor + 0.5*( vec3(-1.0,0.0,-1.0) + vec3(2.0,1.0,2.0)*texture(iChannel1,0.01*pos.xz).xyz) );
     vec3 ref = reflect( rd, nor );
@@ -310,12 +307,12 @@ vec3 render(vec3 ro, vec3 rd){
 
 
 void main(){
-  vec3 X = dFdx(tePosition);
-  vec3 Y = dFdy(tePosition);
+  vec3 X = dFdx(vPosition);
+  vec3 Y = dFdy(vPosition);
   vec3 normal2 = normalize(cross(X,Y));
-  //normal2 = cross(normalize(tePosition),vec3(0,1,0));
+  //normal2 = cross(normalize(vPosition),vec3(0,1,0));
 
-  vec3 fNormal = normalize(cross(normal2, normalize(n)));
+  vec3 fNormal = normalize(cross(normal2, normalize(vNormal)));
   fgNormal = normalize(normal2);
   vec4 col;
   if(frag == 2){
@@ -337,7 +334,7 @@ void main(){
     float mix_zone = 0.4f;
     vec3 kd = vec3(1.0);
 
-    float gHeight = tePosition.y;
+    float gHeight = vPosition.y;
     if (gHeight > snow_height + mix_zone){
         kd = snow;
     } else if (gHeight > snow_height - mix_zone) {
@@ -361,7 +358,7 @@ void main(){
 
   }
   else if(frag == 1){
-      float height = p;
+    float height = vPosition.y;
     vec4 blank = vec4 ( 1.0f, 1.0f, 1.0f, 1.0f );
     vec4 blue = vec4 ( 0.0f, 0.0f, 1.0f, 1.0f );
     vec4 vTexColor = vec4 ( 1.0f, 1.0f, 1.0f, 1.0f );

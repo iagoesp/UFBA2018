@@ -1,6 +1,9 @@
 #include "Util.hpp"
 #include "camera.h"
 
+double previousTime = glfwGetTime();
+int frameCount = 0;
+
 Camera camera(glm::vec3(75.0f, 15.0f, 75.0f));
 
 int main(int argv, char** argc){
@@ -78,7 +81,7 @@ int init(){
     glfwPollEvents();
     glfwSetCursorPos(window, WIDTH/2, HEIGHT/2);
 
-	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -134,15 +137,24 @@ void createVerticesIndexes(){
 		}
 	}
 
-  for (GLfloat i = 1 ; i <= indexSize +1; i+=1.0){
+  	for (GLfloat i = 1 ; i <= indexSize +1; i+=1.0){
 		for (GLfloat j = 1 ; j <= indexSize +1; j+=1.0) {
-      glm::vec2 vert = vec2((float)(i*tamAmostra), (float)(j*tamAmostra));
-      float h = 1.f;//Simplex::iqfBm(vert, 3.8, 4.2f, 5.7f);
-      vertices.push_back(vert.x);
-      vertices.push_back(h);
-      vertices.push_back(vert.y);
-      texcoord.push_back((float)i);
-      texcoord.push_back((float)j);
+      		glm::vec2 vert = vec2((float)(i*tamAmostra), (float)(j*tamAmostra));
+      		float h=0;
+      		cout<<programTessID<<endl;
+      		if(programTessID > 3)
+    	  		h = 1;
+			else{
+	  			h += Simplex::iqfBm(vert, 3.8, 4.2f, 5.7f);
+	  			glm::vec3 v3 = vec3(vert.x, h, vert.y);
+	  			//h += Simplex::ridgedNoise(v3);
+			}
+  		
+	      vertices.push_back(vert.x);
+	      vertices.push_back(h);
+	      vertices.push_back(vert.y);
+	      texcoord.push_back((float)i);
+	      texcoord.push_back((float)j);
 		}
 	}
 }
@@ -154,7 +166,10 @@ void disableVertexAttribs(){
 }
 
 void createProgram(){
+   // programTessID = LoadShaders( "terrainVert.glsl", "terrainFrag.glsl");
     programTessID = LoadShaders( "terrainVert.glsl", "terrainTesc.glsl", "terrainTese.glsl", "terrainFrag.glsl");
+    cout<<programTessID<<endl;
+
 //  programTessID = LoadShaders( "basinTerrain.glsl", "basicTerrainfrag.glsl");
     //programGeomID  = LoadShaders( "terrenofBm.vert", "Geodesic.geom", "Geodesic.frag");
 }
@@ -215,8 +230,23 @@ void setUnif(){
 }
 
 void draw(){
+
+	// Measure speed
+    double currentTime = glfwGetTime();
+    frameCount++;
+    // If a second has passed.
+    if ( currentTime - previousTime >= 1.0 )
+    {
+        // Display the frame count here any way you want.
+        cout<<frameCount<<endl;
+
+        frameCount = 0;
+        previousTime = currentTime;
+    }
+
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+    //if(programTessID > 3)
     glPatchParameteri(GL_PATCH_VERTICES, 3);
 
     // 1rst attribute buffer : vertices
@@ -235,13 +265,13 @@ void draw(){
 
     // indexSize buffer
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elementbuffer);
-    if(activeShader == programTessID){
+    //if(programTessID > 3){
         glDrawElements(GL_PATCHES, indices.size(), GL_UNSIGNED_SHORT, (void*)0);
 
-    }
-    else{
-        glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, (void*)0);
-    }
+    //}
+   // else{
+       // glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_SHORT, (void*)0);
+    //}
 }
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)

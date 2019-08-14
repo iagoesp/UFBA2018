@@ -4,7 +4,7 @@ layout(vertices = 3) out;
 
 in vec3 vPosition[];
 in vec4 vColor[];
-in vec2 TexCoord[];
+in vec2 vTexCoord[];
 
 out vec3 tcPosition[];
 out vec4 tcColor[];
@@ -48,7 +48,7 @@ void main(){
   vec3 d1, d2, d3;
 
   e0 = e1 = e2 = 1;
-   tcTexCoord[ID]  = TexCoord[ID];
+   tcTexCoord[ID]  = vTexCoord[ID];
   tcPosition[ID]  = vPosition[ID];
   tcColor[ID]     = vColor[ID];
 

@@ -38,8 +38,8 @@ vector<GLfloat> texcoord;
 
 bool enablePolygon, enableCull,  CPUnoise = false,  noise=false;
 
-static GLuint indexSize = 32.0;
-static GLfloat meshSize = 128.0;
+static GLuint indexSize = 2048;
+static GLfloat meshSize = 512;
 
 static GLsizei IndexCount;
 static float TessLevelInner;

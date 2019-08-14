@@ -16,12 +16,11 @@ in vec3 tcPosition[];
 in vec4 tcColor[];
 in vec2 tcTexCoord[];
 
-out float p;
-out vec4 vcColor;
-out vec2 vcTexCoord;
-out vec3 tePosition;
+out vec3 vPosition;
+out vec4 vColor;
+out vec2 vTexCoord;
 out float vNoise;
-out vec3 n;
+out vec3 vNormal;
 
 float hash(float n) { return fract(sin(n) * 1e4); }
 float hash(vec2 p) { return fract(1e4 * sin(17.0 * p.x + p.y * 0.1) * (0.1 + abs(sin(p.y * 13.0 + p.x)))); }
@@ -65,23 +64,22 @@ void main(){
     vec3 p0 = gl_TessCoord.x * tcPos0;
     vec3 p1 = gl_TessCoord.y * tcPos1;
     vec3 p2 = gl_TessCoord.z * tcPos2;
-    tePosition = (p0 + p1 + p2);
+    vPosition = (p0 + p1 + p2);
 
-    n = normalize(cross(tcPos2 - tcPos0, tcPos1 - tcPos0));
+    vNormal = normalize(cross(tcPos2 - tcPos0, tcPos1 - tcPos0));
 
-    vNoise = fbm(tePosition);
-    tePosition.y = tePosition.y + vNoise;
+    vNoise = fbm(vPosition);
+    vPosition.y = vPosition.y + vNoise;
 
     vec4 c0 = gl_TessCoord.x * tcColor[0];
     vec4 c1 = gl_TessCoord.y * tcColor[1];
     vec4 c2 = gl_TessCoord.z * tcColor[2];
-    vcColor = (c0 + c1 + c2);
+    vColor = (c0 + c1 + c2);
 
     vec2 t0 = gl_TessCoord.x * tcTexCoord[0];
     vec2 t1 = gl_TessCoord.y * tcTexCoord[1];
     vec2 t2 = gl_TessCoord.z * tcTexCoord[2];
-    vcTexCoord = (t0 + t1 + t2);
+    vTexCoord = (t0 + t1 + t2);
 
-    p = tePosition.y;
-    gl_Position = MVP * vec4(tePosition, 1.0);
+    gl_Position = MVP * vec4(vPosition, 1.0);
 }

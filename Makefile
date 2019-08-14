@@ -35,7 +35,7 @@ all:	main
 
 main:	main.o $(OBJFILES)
 	@echo "Linking ...."
-	g++ -o $@ $^ $(LIB_PATH) $(GL_LDFLAGS) $(GLFW_LDFLAGS)
+	g++ -o $@ $^ $(LIB_PATH) $(GL_LDFLAGS) $(GLFW_LDFLAGS) $(SOIL_LDFLAGS)
 			
 clean:	
 	@echo "Clearing ..."
