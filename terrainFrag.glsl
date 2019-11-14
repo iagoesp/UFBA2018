@@ -23,6 +23,11 @@ vec3 grass = texture2D(grama, vTexCoord).xyz;
 vec3 snow = texture2D(neve, vTexCoord).xyz;
 vec3 rock = texture2D(montanha, vTexCoord).xyz;
 
+vec3 lightColor = vec3(0.4,0.37,0.39);
+vec3 diffuse = vec3(1.0f, 0.5f, 0.2f);
+vec3 ambient = vec3(0.05f, 0.05f, 0.08f);
+vec3 lightPos = vec3(1, 1.3, 1)*5;
+
 float weightWater;
 float weightStone;
 float weightGrass;
@@ -307,16 +312,59 @@ vec3 render(vec3 ro, vec3 rd){
 
 
 void main(){
+//  if(dot(vPosition-viewPos,vNormal)==0)
+//    discard;
+
+
+
+  //normal2 = cross(normalize(vPosition),vec3(0,1,0));
+
+//  float theta = 0.000001;
+//
+//
+//  vec3 vecTangent = normalize(cross(vPosition, vec3(1.0, 0.0, 0.0)) +
+//                               cross(vPosition, vec3(0.0, 1.0, 0.0)));
+//// vecTangent is orthonormal to tePosition, compute bitangent
+//// (rotate tangent 90° around tePosition)
+//    vec3 vecBitangent = normalize(cross(vecTangent, vPosition));
+//
+//    vec3 ptTangentSample = noisy(vPosition + theta * normalize(vecTangent));
+//    vec3 ptBitangentSample = noisy(vPosition + theta * normalize(vecBitangent));
+//
+//    vec3 vecNorm = normalize(
+//  cross(ptTangentSample - vPosition, ptBitangentSample - vPosition));
+
   vec3 X = dFdx(vPosition);
   vec3 Y = dFdy(vPosition);
   vec3 normal2 = normalize(cross(X,Y));
-  //normal2 = cross(normalize(vPosition),vec3(0,1,0));
 
-  vec3 fNormal = normalize(cross(normal2, normalize(vNormal)));
-  fgNormal = normalize(normal2);
+  vec3 fNormal = normalize(vPosition);
+  fNormal = normalize(cross(fNormal, normalize(vec3(1,0,0))) );
+  fNormal = normalize(cross(fNormal, normal2 ));
+  fNormal = normalize(cross(fNormal, normalize(vNormal*vNoise/25) ));
+  float ambientStrength = 1;
+  vec3 ambient = ambientStrength * lightColor;
+
+  vec3 lightDir = normalize(lightPos - vPosition);
+
+
+    float diff = max(dot(fNormal, lightDir), 0.0);
+    vec3 diffuse = diff * lightColor;
+
+    float specularStrength = 1;
+
+  vec3 viewDir = normalize(viewPos - vPosition);
+  vec3 reflectDir = reflect(-lightDir, fNormal);
+
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    vec3 specular = specularStrength * spec * lightColor;
+    vec3 result = (ambient + diffuse + specular);
+
+  fgNormal = normalize(fNormal);
   vec4 col;
+  vec3 tmp;
   if(frag == 2){
-    vec3 vertical = vec3(0, 1, 0);
+    vec3 vertical = vec3(1, 0, 0);
 
     float angleDiff = abs(dot(fgNormal.xyz, vertical));
     float pureRock = 0.4f;
@@ -355,6 +403,10 @@ void main(){
     }
 
     col = vec4(kd, 1.0f);
+    tmp = col.rgb;
+    col.rgb *= result;
+    col.rgb = mix(col.rgb,tmp,0.3);
+
 
   }
   else if(frag == 1){
@@ -387,6 +439,9 @@ void main(){
     }
 
     col = vTexColor;
+    tmp = col.rgb;
+    col.rgb *= result;
+    col.rgb = mix(col.rgb,tmp,0.3);
 
 
   }
@@ -400,7 +455,7 @@ void main(){
     col = vec4(render(ro, rd), 1.f);
   }
   else{
-    col = vec4(fNormal, 1.f);
+    col = vec4(fgNormal, 1.f);
   }
   fragColor = col;
 }

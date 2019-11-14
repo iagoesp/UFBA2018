@@ -5,7 +5,9 @@ layout(vertices = 3) out;
 in vec3 vPosition[];
 in vec4 vColor[];
 in vec2 vTexCoord[];
+in vec3 vNormal[];
 
+out vec3 tcNormal[];
 out vec3 tcPosition[];
 out vec4 tcColor[];
 out vec2 tcTexCoord[];
@@ -27,10 +29,12 @@ bool newMet = true;
 float LOD(vec3 posV, vec3 cam){
   float dist = distance(posV, cam);
   if(newMet){
-    float rsc  = mesh/0.5;
-    float a = dist/rsc;
-    a = floor(4/a);
-    return 1 + a*a;
+    float T = 4*mesh/(0.5*dist);
+    if(T > 64)
+        return 64.f;
+    else if(T < 1)
+        return 1.f;
+    return T;
   }
   else{
     if(dist<=50) return 32.0;
@@ -51,6 +55,7 @@ void main(){
    tcTexCoord[ID]  = vTexCoord[ID];
   tcPosition[ID]  = vPosition[ID];
   tcColor[ID]     = vColor[ID];
+  tcNormal[ID]     = vNormal[ID];
 
 
   if (ID == 0) {

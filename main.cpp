@@ -81,7 +81,7 @@ int init(){
     glfwPollEvents();
     glfwSetCursorPos(window, WIDTH/2, HEIGHT/2);
 
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 
     glEnable(GL_DEPTH_TEST);
     glDepthFunc(GL_LESS);
@@ -141,7 +141,7 @@ void createVerticesIndexes(){
 		for (GLfloat j = 1 ; j <= indexSize +1; j+=1.0) {
       		glm::vec2 vert = vec2((float)(i*tamAmostra), (float)(j*tamAmostra));
       		float h=0;
-      		cout<<programTessID<<endl;
+      		//cout<<programTessID<<endl;
       		if(programTessID > 3)
     	  		h = 1;
 			else{
@@ -149,7 +149,7 @@ void createVerticesIndexes(){
 	  			glm::vec3 v3 = vec3(vert.x, h, vert.y);
 	  			//h += Simplex::ridgedNoise(v3);
 			}
-  		
+
 	      vertices.push_back(vert.x);
 	      vertices.push_back(h);
 	      vertices.push_back(vert.y);
@@ -238,7 +238,7 @@ void draw(){
     if ( currentTime - previousTime >= 1.0 )
     {
         // Display the frame count here any way you want.
-        cout<<frameCount<<endl;
+        //cout<<frameCount<<endl;
 
         frameCount = 0;
         previousTime = currentTime;

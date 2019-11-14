@@ -172,8 +172,7 @@ void main(){
   vTexCoord    = vec2(aTexCoord.x, aTexCoord.y);
   vPosition   = position;
   vNoise 	  = iqfBm (vPosition.xz, 2, 4.f, 4.f);
-  vNormal 	  = vec3(1, 1, 1);
+  vNormal 	  = normalize(vPosition);
   vPosition.y += vNoise;
   gl_Position =  vec4(position, 1.f);
-
 }

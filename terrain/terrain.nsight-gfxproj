@@ -86,7 +86,10 @@
         "platform/linux/autoconnect": true,
         "platform/linux/device": "localhost",
         "platform/linux/environment": "",
-        "platform/linux/executable": "",
+        "platform/linux/executable": "/windows2/Users/Iago.LabCG-PC/Documents/UFBA2018/main",
+        "platform/linux/executable/history": [
+            "/windows2/Users/Iago.LabCG-PC/Documents/UFBA2018/main"
+        ],
         "platform/linux/workingdir": ""
     },
     "uuid": "{34e2d1c8-6c27-4ace-89b8-11024e56267b}",

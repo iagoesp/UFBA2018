@@ -22,6 +22,8 @@ out vec2 vTexCoord;
 out float vNoise;
 out vec3 vNormal;
 
+float noiseGlobal;
+
 float hash(float n) { return fract(sin(n) * 1e4); }
 float hash(vec2 p) { return fract(1e4 * sin(17.0 * p.x + p.y * 0.1) * (0.1 + abs(sin(p.y * 13.0 + p.x)))); }
 
@@ -56,6 +58,41 @@ float fbm( vec3 p ){
     return f/0.9375;
 }
 
+//vec3 noise3( in vec2 x )
+//{
+//    vec2 p = floor(x);
+//    vec2 f = fract(x);
+//    vec2 u = f*f*(3.0-2.0*f);
+//	float a = texture(iChannel0,(p+vec2(0.5,0.5))/256.0,-100.0).x;
+//	float b = texture(iChannel0,(p+vec2(1.5,0.5))/256.0,-100.0).x;
+//	float c = texture(iChannel0,(p+vec2(0.5,1.5))/256.0,-100.0).x;
+//	float d = texture(iChannel0,(p+vec2(1.5,1.5))/256.0,-100.0).x;
+//	return vec3(a+(b-a)*u.x+(c-a)*u.y+(a-b-c+d)*u.x*u.y,
+//				6.0*f*(1.0-f)*(vec2(b-a,c-a)+(a-b-c+d)*u.yx));
+//}
+//
+//vec3 fbm3(vec3 x, int octaves )
+//{
+//    float f = 1.98;  // could be 2.0
+//    float s = 0.49;  // could be 0.5
+//    float a = 0.0;
+//    float b = 0.5;
+//    vec3  d = vec3(0.0);
+//    mat3  m = mat3(1.0,0.0,0.0,
+//    0.0,1.0,0.0,
+//    0.0,0.0,1.0);
+//    for( int i=0; i < octaves; i++ )
+//    {
+//        vec3 n = noise3(x);
+//        a += b*n.x;          // accumulate values
+//        d += b*m*n.yzw;      // accumulate derivatives
+//        b *= s;
+//        x = f*m3*x;
+//        m = f*m3i*m;
+//    }
+//    return vec4( a, d );
+//}
+
 void main(){
     vec3 tcPos0 = (tcPosition[0]);
     vec3 tcPos1 = (tcPosition[1]);
@@ -68,8 +105,11 @@ void main(){
 
     vNormal = normalize(cross(tcPos2 - tcPos0, tcPos1 - tcPos0));
 
+    noiseGlobal = noise(vPosition);
     vNoise = fbm(vPosition);
     vPosition.y = vPosition.y + vNoise;
+    vNormal = normalize(vNormal*vNoise);
+
 
     vec4 c0 = gl_TessCoord.x * tcColor[0];
     vec4 c1 = gl_TessCoord.y * tcColor[1];
