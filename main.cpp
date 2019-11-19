@@ -141,14 +141,9 @@ void createVerticesIndexes(){
 		for (GLfloat j = 1 ; j <= indexSize +1; j+=1.0) {
       		glm::vec2 vert = vec2((float)(i*tamAmostra), (float)(j*tamAmostra));
       		float h=0;
-      		//cout<<programTessID<<endl;
-      		if(programTessID > 3)
-    	  		h = 1;
-			else{
-	  			h += Simplex::iqfBm(vert, 3.8, 4.2f, 5.7f);
 	  			glm::vec3 v3 = vec3(vert.x, h, vert.y);
 	  			//h += Simplex::ridgedNoise(v3);
-			}
+
 
 	      vertices.push_back(vert.x);
 	      vertices.push_back(h);
