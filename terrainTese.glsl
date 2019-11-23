@@ -72,9 +72,13 @@ vec2 hash2( in vec2 x )  // replace this by something better
     return -1.0 + 2.0*fract( 16.0 * k*fract( x.x*x.y*(x.x+x.y)) );
 }
 
+const mat2 m2 = mat2(  0.80,  0.60,
+                      -0.60,  0.80 );
+const mat2 m2i = mat2( 0.80, -0.60,
+                       0.60,  0.80 );
 
 // return gradient noise (in x) and its derivatives (in yz)
-vec3 noised3( in vec2 p )
+vec3 noised( in vec2 p )
 {
     vec2 i = floor( p );
     vec2 f = fract( p );
@@ -161,24 +165,77 @@ vec4 noised4( in vec3 x )
     return vec4( v, d );
 }
 
+vec3 fbmd_9( in vec2 x )
+{
+    float f = 1.9;
+    float s = 0.55;
+    float a = 0.0;
+    float b = 0.5;
+    vec2  d = vec2(0.0);
+    mat2  m = mat2(1.0,0.0,0.0,1.0);
+    for( int i=0; i<9; i++ )
+    {
+        vec3 n = noised(x);
+        a += b*n.x;          // accumulate values
+        d += b*m*n.yz;       // accumulate derivatives
+        b *= s;
+        x = f*m2*x;
+        m = f*m2i*m;
+    }
+	return vec3( a, d );
+}
+
+vec2 smoothstepd( float a, float b, float x)
+{
+	if( x<a ) return vec2( 0.0, 0.0 );
+	if( x>b ) return vec2( 1.0, 0.0 );
+    float ir = 1.0/(b-a);
+    x = (x-a)*ir;
+    return vec2( x*x*(3.0-2.0*x), 6.0*x*(1.0-x)*ir );
+}
+
+vec4 terrainMapD( in vec2 p )
+{
+	const float sca = 0.0010;
+    const float amp = 300.0;
+    p *= sca;
+    vec3 e = fbmd_9( p + vec2(1.0,-2.0) );
+    vec2 c = smoothstepd( -0.08, -0.01, e.x );
+	e.x = e.x + 0.15*c.x;
+	e.yz = e.yz + 0.15*c.y*e.yz;
+    e.x *= amp;
+    e.yz *= amp*sca;
+    return vec4( e.x, normalize( vec3(-e.y,1.0,-e.z) ) );
+}
+
+vec3 terrainNormal( in vec2 pos )
+{
+#if 1
+    return terrainMapD(pos).yzw;
+#else
+    vec2 e = vec2(0.03,0.0);
+	return normalize( vec3(terrainMap(pos-e.xy).x - terrainMap(pos+e.xy).x,
+                           2.0*e.x,
+                           terrainMap(pos-e.yx).x - terrainMap(pos+e.yx).x ) );
+#endif
+}
+
+
 void main(){
     vec3 p0 = gl_TessCoord.x * tcPosition[0];
     vec3 p1 = gl_TessCoord.y * tcPosition[1];
     vec3 p2 = gl_TessCoord.z * tcPosition[2];
     vPosition = (p0 + p1 + p2);
     //vec3 n = cross(p0-p1,p2-p1); legal
-
     vPosition.y += fbm(vPosition);
-
-
-    upNormal = normalize(cross(normalize(vPosition),vec3(1,0,0)));
+    //upNormal = normalize(cross(normalize(vPosition),vec3(1,0,0)));
 
     vec3 n0 = gl_TessCoord.x * tcNormal[0];
     vec3 n1 = gl_TessCoord.y * tcNormal[1];
     vec3 n2 = gl_TessCoord.z * tcNormal[2];
     teNormal = (n0 + n1 + n2);
 
-    teNormal = 0.5 + 0.5*noised4(vPosition*0.5).yzw;
+    teNormal = terrainNormal(vPosition.xz);
 
     vec4 c0 = gl_TessCoord.x * tcColor[0];
     vec4 c1 = gl_TessCoord.y * tcColor[1];

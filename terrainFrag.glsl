@@ -5,7 +5,7 @@ in vec4 vColor;
 in vec2 vTexCoord;
 in float vNoise;
 in vec3 vPosition;
-in vec3 upNormal;
+//in vec3 upNormal;
 
 uniform sampler2D terra;
 uniform sampler2D agua;
@@ -316,9 +316,9 @@ void main(){
     vec3 X = dFdx(vPosition);
     vec3 Y = dFdy(vPosition);
     vec3 normal2 = normalize(cross(X,Y));
-    normal2 = normalize(cross(upNormal,normal2));
-    normal2 = normalize(cross(normal2,calcNormal(vPosition,vPosition.y)));
-    normal2 = normalize(cross(normal2,teNormal));
+    //normal2 = normalize(cross(upNormal,normal2));
+    //normal2 = normalize(cross(normal2,calcNormal(vPosition,vPosition.y)));
+//    normal2 = normalize(cross(normal2,teNormal));
 
     float ambientStrength = 1;
     vec3 ambient = ambientStrength * lightColor;
@@ -331,7 +331,7 @@ void main(){
     float specularStrength = 1;
 
     vec3 viewDir = normalize(viewPos - vPosition);
-    vec3 reflectDir = reflect(-lightDir, normal2);
+    vec3 reflectDir = reflect(-lightDir, teNormal);
 
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
     vec3 specular = specularStrength * spec * lightColor;
@@ -429,7 +429,7 @@ void main(){
         col = vec4(render(ro, rd), 1.f);
     }
     else{
-        col = vec4(normal2, 1.f);
+        col = vec4(teNormal, 1.f);
     }
     fragColor = vec4(result, 1);
     fragColor = col;
