@@ -142,7 +142,7 @@ void createVerticesIndexes(){
       		glm::vec2 vert = vec2((float)(i*tamAmostra), (float)(j*tamAmostra));
       		float h=0;
 	  			glm::vec3 v3 = vec3(vert.x, h, vert.y);
-	  			//h += Simplex::ridgedNoise(v3);
+	  			h += Simplex::ridgedNoise(v3);
 
 
 	      vertices.push_back(vert.x);
@@ -163,6 +163,7 @@ void disableVertexAttribs(){
 void createProgram(){
    // programTessID = LoadShaders( "terrainVert.glsl", "terrainFrag.glsl");
     programTessID = LoadShaders( "terrainVert.glsl", "terrainTesc.glsl", "terrainTese.glsl", "terrainFrag.glsl");
+    //programTessID = LoadShaders( "terrainVert.glsl", "terrainTesc.glsl", "terrainTese.glsl", "terrainGeom.glsl", "terrainFrag.glsl");
     cout<<programTessID<<endl;
 
 //  programTessID = LoadShaders( "basinTerrain.glsl", "basicTerrainfrag.glsl");

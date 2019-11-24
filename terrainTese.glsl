@@ -220,26 +220,41 @@ vec3 terrainNormal( in vec2 pos )
 #endif
 }
 
-
 void main(){
     vec3 p0 = gl_TessCoord.x * tcPosition[0];
     vec3 p1 = gl_TessCoord.y * tcPosition[1];
     vec3 p2 = gl_TessCoord.z * tcPosition[2];
     vPosition = (p0 + p1 + p2);
-    //vec3 n = cross(p0-p1,p2-p1); legal
-    vPosition.y += fbm(vPosition);
+
+
+    //teNormal = normalize(cross(p1-p0,p2-p1));
+    float f = fbm(vPosition);
+    vPosition.y += f;
+    p0 = tcPosition[0];
+    p1 = tcPosition[1];
+    p2 = tcPosition[2];
+    p0.y += f;
+    p1.y += f;
+    p2.y += f;
+    teNormal = normalize(cross(p1-p0,p2-p1));
     upNormal = normalize(cross(normalize(vPosition),vec3(1,0,0)));
+
+    teNormal = upNormal - teNormal;
+    teNormal = normalize(cross(teNormal,upNormal));
+    teNormal = terrainNormal(teNormal.xz);
+
 
     vec3 n0 = gl_TessCoord.x * tcNormal[0];
     vec3 n1 = gl_TessCoord.y * tcNormal[1];
     vec3 n2 = gl_TessCoord.z * tcNormal[2];
-    teNormal = (n0 + n1 + n2);
+    //teNormal = (n0 + n1 + n2);
 
-    teNormal = terrainNormal(vPosition.xz);
+    teNormal = 0.5 + 0.5*teNormal + 0.5*terrainNormal(vPosition.xz);
 
 
-    teNormal = normalize(cross(upNormal, teNormal));
-    teNormal = upNormal - 0.5*teNormal;
+    //teNormal = normalize(cross(upNormal, teNormal));
+    //teNormal = upNormal - 0.5*teNormal;
+
     vec4 c0 = gl_TessCoord.x * tcColor[0];
     vec4 c1 = gl_TessCoord.y * tcColor[1];
     vec4 c2 = gl_TessCoord.z * tcColor[2];
