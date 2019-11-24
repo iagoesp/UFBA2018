@@ -24,145 +24,54 @@ out float vNoise;
 out vec3 teNormal;
 out vec3 upNormal;
 
-float hash(float n) { return fract(sin(n) * 1e4); }
-float hash(vec2 p) { return fract(1e4 * sin(17.0 * p.x + p.y * 0.1) * (0.1 + abs(sin(p.y * 13.0 + p.x)))); }
-
-float noise(vec3 x) {
-	const vec3 step = vec3(110, 241, 171);
-
-	vec3 i = floor(x);
-	vec3 f = fract(x);
-
-	// For performance, compute the base input to a 1D hash from the integer part of the argument and the
-	// incremental change to the 1D based on the 3D -> 1D wrapping
-    float n = dot(i, step);
-
-	vec3 u = f * f * (3.0 - 2.0 * f);
-	return mix(mix(mix( hash(n + dot(step, vec3(0, 0, 0))), hash(n + dot(step, vec3(1, 0, 0))), u.x),
-                   mix( hash(n + dot(step, vec3(0, 1, 0))), hash(n + dot(step, vec3(1, 1, 0))), u.x), u.y),
-               mix(mix( hash(n + dot(step, vec3(0, 0, 1))), hash(n + dot(step, vec3(1, 0, 1))), u.x),
-                   mix( hash(n + dot(step, vec3(0, 1, 1))), hash(n + dot(step, vec3(1, 1, 1))), u.x), u.y), u.z);
-}
-
-const mat3 m3  = mat3( 0.00,  0.80,  0.60,
-                      -0.80,  0.36, -0.48,
-                      -0.60, -0.48,  0.64 );
-
-float fbm( vec3 p ){
-    float f = 0.0;
-    f += 0.5000*noise( p ); p = m3*p*2.02;
-    f += 0.2500*noise( p ); p = m3*p*2.03;
-    f += 0.1250*noise( p ); p = m3*p*2.01;
-    f += 0.0625*noise( p );
-
-    return f/0.9375;
-}
-
-vec3 hash( vec3 p )
-{
-    p = vec3( dot(p,vec3(127.1,311.7, 74.7)), dot(p,vec3(269.5,183.3,246.1)), dot(p,vec3(113.5,271.9,124.6)));
-
-    return -1.0 + 2.0*fract(sin(p)*43758.5453123);
-}
-
-vec2 hash2( in vec2 x )  // replace this by something better
-{
-    const vec2 k = vec2( 0.3183099, 0.3678794 );
-    x = x*k + k.yx;
-    return -1.0 + 2.0*fract( 16.0 * k*fract( x.x*x.y*(x.x+x.y)) );
-}
-
 const mat2 m2 = mat2(  0.80,  0.60,
                       -0.60,  0.80 );
 const mat2 m2i = mat2( 0.80, -0.60,
                        0.60,  0.80 );
 
-// return gradient noise (in x) and its derivatives (in yz)
-vec3 noised( in vec2 p )
+const mat3 m3  = mat3( 0.00,  0.80,  0.60,
+                      -0.80,  0.36, -0.48,
+                      -0.60, -0.48,  0.64 );
+const mat3 m3i = mat3( 0.00, -0.80, -0.60,
+                       0.80,  0.36, -0.48,
+                       0.60, -0.48,  0.64 );
+
+vec2 smoothstepd( float a, float b, float x)
 {
-    vec2 i = floor( p );
-    vec2 f = fract( p );
-
-#if 1
-    // quintic interpolation
-    vec2 u = f*f*f*(f*(f*6.0-15.0)+10.0);
-    vec2 du = 30.0*f*f*(f*(f-2.0)+1.0);
-#else
-    // cubic interpolation
-    vec2 u = f*f*(3.0-2.0*f);
-    vec2 du = 6.0*f*(1.0-f);
-#endif
-
-    vec2 ga = hash2( i + vec2(0.0,0.0) );
-    vec2 gb = hash2( i + vec2(1.0,0.0) );
-    vec2 gc = hash2( i + vec2(0.0,1.0) );
-    vec2 gd = hash2( i + vec2(1.0,1.0) );
-
-    float va = dot( ga, f - vec2(0.0,0.0) );
-    float vb = dot( gb, f - vec2(1.0,0.0) );
-    float vc = dot( gc, f - vec2(0.0,1.0) );
-    float vd = dot( gd, f - vec2(1.0,1.0) );
-
-    return vec3( va + u.x*(vb-va) + u.y*(vc-va) + u.x*u.y*(va-vb-vc+vd),   // value
-                 ga + u.x*(gb-ga) + u.y*(gc-ga) + u.x*u.y*(ga-gb-gc+gd) +  // derivatives
-                 du * (u.yx*(va-vb-vc+vd) + vec2(vb,vc) - va));
+	if( x<a ) return vec2( 0.0, 0.0 );
+	if( x>b ) return vec2( 1.0, 0.0 );
+    float ir = 1.0/(b-a);
+    x = (x-a)*ir;
+    return vec2( x*x*(3.0-2.0*x), 6.0*x*(1.0-x)*ir );
 }
 
-vec4 noised4( in vec3 x )
+float hash1( vec2 p )
 {
-    // grid
-    vec3 p = floor(x);
-    vec3 w = fract(x);
+    p  = 50.0*fract( p*0.3183099 );
+    return fract( p.x*p.y*(p.x+p.y) );
+}
 
-    // quintic interpolant
-    vec3 u = w*w*w*(w*(w*6.0-15.0)+10.0);
-    vec3 du = 30.0*w*w*(w*(w-2.0)+1.0);
+vec3 noised( in vec2 x )
+{
+    vec2 p = floor(x);
+    vec2 w = fract(x);
 
-    // gradients
-    vec3 ga = hash( p+vec3(0.0,0.0,0.0) );
-    vec3 gb = hash( p+vec3(1.0,0.0,0.0) );
-    vec3 gc = hash( p+vec3(0.0,1.0,0.0) );
-    vec3 gd = hash( p+vec3(1.0,1.0,0.0) );
-    vec3 ge = hash( p+vec3(0.0,0.0,1.0) );
-    vec3 gf = hash( p+vec3(1.0,0.0,1.0) );
-    vec3 gg = hash( p+vec3(0.0,1.0,1.0) );
-    vec3 gh = hash( p+vec3(1.0,1.0,1.0) );
+    vec2 u = w*w*w*(w*(w*6.0-15.0)+10.0);
+    vec2 du = 30.0*w*w*(w*(w-2.0)+1.0);
 
-    // projections
-    float va = dot( ga, w-vec3(0.0,0.0,0.0) );
-    float vb = dot( gb, w-vec3(1.0,0.0,0.0) );
-    float vc = dot( gc, w-vec3(0.0,1.0,0.0) );
-    float vd = dot( gd, w-vec3(1.0,1.0,0.0) );
-    float ve = dot( ge, w-vec3(0.0,0.0,1.0) );
-    float vf = dot( gf, w-vec3(1.0,0.0,1.0) );
-    float vg = dot( gg, w-vec3(0.0,1.0,1.0) );
-    float vh = dot( gh, w-vec3(1.0,1.0,1.0) );
+    float a = hash1(p+vec2(0,0));
+    float b = hash1(p+vec2(1,0));
+    float c = hash1(p+vec2(0,1));
+    float d = hash1(p+vec2(1,1));
 
-    // interpolation
-    float v = va +
-              u.x*(vb-va) +
-              u.y*(vc-va) +
-              u.z*(ve-va) +
-              u.x*u.y*(va-vb-vc+vd) +
-              u.y*u.z*(va-vc-ve+vg) +
-              u.z*u.x*(va-vb-ve+vf) +
-              u.x*u.y*u.z*(-va+vb+vc-vd+ve-vf-vg+vh);
+    float k0 = a;
+    float k1 = b - a;
+    float k2 = c - a;
+    float k4 = a - b - c + d;
 
-    vec3 d = ga +
-             u.x*(gb-ga) +
-             u.y*(gc-ga) +
-             u.z*(ge-ga) +
-             u.x*u.y*(ga-gb-gc+gd) +
-             u.y*u.z*(ga-gc-ge+gg) +
-             u.z*u.x*(ga-gb-ge+gf) +
-             u.x*u.y*u.z*(-ga+gb+gc-gd+ge-gf-gg+gh) +
-
-             du * (vec3(vb-va,vc-va,ve-va) +
-                   u.yzx*vec3(va-vb-vc+vd,va-vc-ve+vg,va-vb-ve+vf) +
-                   u.zxy*vec3(va-vb-ve+vf,va-vb-vc+vd,va-vc-ve+vg) +
-                   u.yzx*u.zxy*(-va+vb+vc-vd+ve-vf-vg+vh) );
-
-    return vec4( v, d );
+    return vec3( -1.0+2.0*(k0 + k1*u.x + k2*u.y + k4*u.x*u.y),
+                      2.0* du * vec2( k1 + k4*u.y,
+                                      k2 + k4*u.x ) );
 }
 
 vec3 fbmd_9( in vec2 x )
@@ -183,15 +92,6 @@ vec3 fbmd_9( in vec2 x )
         m = f*m2i*m;
     }
 	return vec3( a, d );
-}
-
-vec2 smoothstepd( float a, float b, float x)
-{
-	if( x<a ) return vec2( 0.0, 0.0 );
-	if( x>b ) return vec2( 1.0, 0.0 );
-    float ir = 1.0/(b-a);
-    x = (x-a)*ir;
-    return vec2( x*x*(3.0-2.0*x), 6.0*x*(1.0-x)*ir );
 }
 
 vec4 terrainMapD( in vec2 p )
@@ -220,36 +120,88 @@ vec3 terrainNormal( in vec2 pos )
 #endif
 }
 
+
+float hash1( float n )
+{
+    return fract( n*17.0*fract( n*0.3183099 ) );
+}
+
+vec4 noised( in vec3 x )
+{
+    vec3 p = floor(x);
+    vec3 w = fract(x);
+
+    vec3 u = w*w*w*(w*(w*6.0-15.0)+10.0);
+    vec3 du = 30.0*w*w*(w*(w-2.0)+1.0);
+
+    float n = p.x + 317.0*p.y + 157.0*p.z;
+
+    float a = hash1(n+0.0);
+    float b = hash1(n+1.0);
+    float c = hash1(n+317.0);
+    float d = hash1(n+318.0);
+    float e = hash1(n+157.0);
+	float f = hash1(n+158.0);
+    float g = hash1(n+474.0);
+    float h = hash1(n+475.0);
+
+    float k0 =   a;
+    float k1 =   b - a;
+    float k2 =   c - a;
+    float k3 =   e - a;
+    float k4 =   a - b - c + d;
+    float k5 =   a - c - e + g;
+    float k6 =   a - b - e + f;
+    float k7 = - a + b + c - d + e - f - g + h;
+
+    return vec4( -1.0+2.0*(k0 + k1*u.x + k2*u.y + k3*u.z + k4*u.x*u.y + k5*u.y*u.z + k6*u.z*u.x + k7*u.x*u.y*u.z),
+                      2.0* du * vec3( k1 + k4*u.y + k6*u.z + k7*u.y*u.z,
+                                      k2 + k5*u.z + k4*u.x + k7*u.z*u.x,
+                                      k3 + k6*u.x + k5*u.y + k7*u.x*u.y ) );
+}
+
+
+vec4 fbmd_8( in vec3 x )
+{
+    float f = 1.92;
+    float s = 0.5;
+    float a = 0.0;
+    float b = 0.5;
+    vec3  d = vec3(0.0);
+    mat3  m = mat3(1.0,0.0,0.0,
+                   0.0,1.0,0.0,
+                   0.0,0.0,1.0);
+    for( int i=0; i<7; i++ )
+    {
+        vec4 n = noised(x);
+        a += b*n.x;          // accumulate values
+        d += b*m*n.yzw;      // accumulate derivatives
+        b *= s;
+        x = f*m3*x;
+        m = f*m3i*m;
+    }
+	return vec4( a, d );
+}
+
 void main(){
     vec3 p0 = gl_TessCoord.x * tcPosition[0];
     vec3 p1 = gl_TessCoord.y * tcPosition[1];
     vec3 p2 = gl_TessCoord.z * tcPosition[2];
     vPosition = (p0 + p1 + p2);
 
+    vec3 col = vec3(0.18,0.11,0.10)*.75;
 
-    //teNormal = normalize(cross(p1-p0,p2-p1));
-    float f = fbm(vPosition);
-    vPosition.y += f;
-    p0 = tcPosition[0];
-    p1 = tcPosition[1];
-    p2 = tcPosition[2];
-    p0.y += f;
-    p1.y += f;
-    p2.y += f;
-    teNormal = normalize(cross(p1-p0,p2-p1));
-    upNormal = normalize(cross(normalize(vPosition),vec3(1,0,0)));
+    teNormal = terrainNormal(vPosition.xz);
+    teNormal = normalize( teNormal + 0.8*(1.0-abs(teNormal.y))*0.8*fbmd_8( vPosition*0.3*vec3(1.0,0.2,1.0) ).yzw );
 
-    teNormal = upNormal - teNormal;
-    teNormal = normalize(cross(teNormal,upNormal));
-    teNormal = terrainNormal(teNormal.xz);
-
+    vPosition += vec3(1.0*mix( col, vec3(0.1,0.1,0.0)*0.3, smoothstep(0.7,0.9,teNormal.y) )).y;
 
     vec3 n0 = gl_TessCoord.x * tcNormal[0];
     vec3 n1 = gl_TessCoord.y * tcNormal[1];
     vec3 n2 = gl_TessCoord.z * tcNormal[2];
     //teNormal = (n0 + n1 + n2);
 
-    teNormal = 0.5 + 0.5*teNormal + 0.5*terrainNormal(vPosition.xz);
+
 
 
     //teNormal = normalize(cross(upNormal, teNormal));
