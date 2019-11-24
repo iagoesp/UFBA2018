@@ -195,7 +195,6 @@ void main(){
     teNormal = normalize( teNormal + 0.8*(1.0-abs(teNormal.y))*0.8*fbmd_8( vPosition*0.3*vec3(1.0,0.2,1.0) ).yzw );
 
     vPosition += vec3(1.0*mix( col, vec3(0.1,0.1,0.0)*0.3, smoothstep(0.7,0.9,teNormal.y) )).y;
-
     vec3 n0 = gl_TessCoord.x * tcNormal[0];
     vec3 n1 = gl_TessCoord.y * tcNormal[1];
     vec3 n2 = gl_TessCoord.z * tcNormal[2];
