@@ -228,7 +228,7 @@ void main(){
     vPosition = (p0 + p1 + p2);
     //vec3 n = cross(p0-p1,p2-p1); legal
     vPosition.y += fbm(vPosition);
-    //upNormal = normalize(cross(normalize(vPosition),vec3(1,0,0)));
+    upNormal = normalize(cross(normalize(vPosition),vec3(1,0,0)));
 
     vec3 n0 = gl_TessCoord.x * tcNormal[0];
     vec3 n1 = gl_TessCoord.y * tcNormal[1];
@@ -237,6 +237,9 @@ void main(){
 
     teNormal = terrainNormal(vPosition.xz);
 
+
+    teNormal = normalize(cross(upNormal, teNormal));
+    teNormal = upNormal - 0.5*teNormal;
     vec4 c0 = gl_TessCoord.x * tcColor[0];
     vec4 c1 = gl_TessCoord.y * tcColor[1];
     vec4 c2 = gl_TessCoord.z * tcColor[2];
