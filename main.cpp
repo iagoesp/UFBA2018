@@ -162,8 +162,8 @@ void disableVertexAttribs(){
 
 void createProgram(){
    // programTessID = LoadShaders( "terrainVert.glsl", "terrainFrag.glsl");
-    programTessID = LoadShaders( "terrainVert.glsl", "terrainTesc.glsl", "terrainTese.glsl", "terrainFrag.glsl");
-    //programTessID = LoadShaders( "terrainVert.glsl", "terrainTesc.glsl", "terrainTese.glsl", "terrainGeom.glsl", "terrainFrag.glsl");
+    //programTessID = LoadShaders( "terrainVert.glsl", "terrainTesc.glsl", "terrainTese.glsl", "terrainFrag.glsl");
+    programTessID = LoadShaders( "terrainVert.glsl", "terrainTesc.glsl", "terrainTese.glsl", "terrainGeo.glsl", "terrainFrag.glsl");
     cout<<programTessID<<endl;
 
 //  programTessID = LoadShaders( "basinTerrain.glsl", "basicTerrainfrag.glsl");
