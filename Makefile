@@ -16,7 +16,7 @@ LIBRARY_PATHS =
 #COMPILER_FLAGS = -w -Wl,-subsystem,windows
 
 #LINKER_FLAGS specifies the libraries we're linking against
-LINKER_FLAGS = -lmingw32 -lSOIL -lassimp -lopengl32 -lglfw3 -lglew32 -lglu32
+LINKER_FLAGS = -lmingw32 -lSOIL -lopengl32 -lglfw3 -lglew32 -lglu32
 
 #OBJ_NAME specifies the name of our exectuable
 OBJ_NAME = Application

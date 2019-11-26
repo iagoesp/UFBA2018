@@ -10,8 +10,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "stb_image.h"
-#include "SOIL.h"
+#include <SOIL/stb_image_aug.h>
+#include <SOIL/SOIL.h>
 #include "simplex.h"
 #include "LoadShaders.hpp"
 //#include "controls.hpp"
