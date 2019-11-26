@@ -432,7 +432,7 @@ void main(){
         col = vec4(render(ro, rd), 1.f);
     }*/
     else{
-        col = vec4(normalize(fNormal*result), 1.f);
+        col = vec4(normalize(fNormal), 1.f);
     }
     fragColor = vec4(result, 1);
     fragColor = col;

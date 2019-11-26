@@ -1,42 +1,26 @@
-.SUFFIXES: .c .cc .cpp .cxx .h
+#OBJS specifies which files to compile as part of the project
+OBJS = main.cpp LoadShaders.cpp controls.cpp
 
-# compiler names:
-CXX		= g++ 
-CC		= gcc
+#CC specifies which compiler we're using
+CC = g++
 
-# flags for C++ compiler:
-CFLAGS		= -g 
-CXXFLAGS	= -g
+#INCLUDE_PATHS specifies the additional include paths we'll need
+INCLUDE_PATHS =
 
-# libraries to link with:
+#LIBRARY_PATHS specifies the additional library paths we'll need
+LIBRARY_PATHS = 
 
-INC_PATH		=	
-LIB_PATH 		=	-L/usr/lib/nvidia-375/ -L/usr/lib/x86_64-linux-gnu/
+#COMPILER_FLAGS specifies the additional compilation options we're using
+#-w suppresses all warnings
+#-Wl,-subsystem,windows gets rid of the console window
+#COMPILER_FLAGS = -w -Wl,-subsystem,windows
 
-GL_LDFLAGS 		=	-lGL -lGLU -lGLEW
-GLFW_LDFLAGS 	=	-lglfw
-GLUT_LDFLAGS 	=	-lglut
-ASSIMP_LDFLAGS 	=	-lassimp
-SOIL_LDFLAGS	= 	-lSOIL
+#LINKER_FLAGS specifies the libraries we're linking against
+LINKER_FLAGS = -lmingw32 -lSOIL -lassimp -lopengl32 -lglfw3 -lglew32 -lglu32
 
-OBJFILES 		=	controls.o LoadShaders.o  
+#OBJ_NAME specifies the name of our exectuable
+OBJ_NAME = Application
 
-# compile rules
-.c.o:	$*.h
-	@echo "Compiling C code ...."
-	$(CC) -o $*.o -c $(CXXFLAGS) $(INC_PATH) $*.c
-
-.cpp.o:	$*.h
-	@echo "Compiling C++ code ...."
-	$(CXX) -o $*.o -c $(CXXFLAGS) $(INC_PATH) $*.cpp
-
-# ***********************************************************************************
-all:	main
-
-main:	main.o $(OBJFILES)
-	@echo "Linking ...."
-	g++ -o $@ $^ $(LIB_PATH) $(GL_LDFLAGS) $(GLFW_LDFLAGS) $(SOIL_LDFLAGS)
-			
-clean:	
-	@echo "Clearing ..."
-	rm -f *.o core *.*~ *~ main
+#This is the target that compiles our executable
+all : $(OBJS)
+	$(CC) $(OBJS) $(INCLUDE_PATHS) $(LIBRARY_PATHS)  $(LINKER_FLAGS) $(COMPILER_FLAGS) -o $(OBJ_NAME)

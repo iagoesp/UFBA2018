@@ -25,7 +25,7 @@ void main( void )
     vec3 edge1 = tePosition[1] - tePosition[0];
     vec3 N = normalize( cross(edge1, edge2 ) );
 
-    for( int i=0; i<gl_in.length( ); ++i )
+    for( int i=0; i<gl_in.length( ); i++ )
     {
         fColor = teColor[i];
         fTexCoord = teTexCoord[i];
