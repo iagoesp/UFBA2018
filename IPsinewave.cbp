@@ -48,6 +48,8 @@
 		<Unit filename="camera.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="simplex.h" />
+		<Unit filename="terrain.cpp" />
+		<Unit filename="terrain.h" />
 		<Unit filename="terrainFrag.glsl" />
 		<Unit filename="terrainGeo.glsl" />
 		<Unit filename="terrainTesc.glsl" />

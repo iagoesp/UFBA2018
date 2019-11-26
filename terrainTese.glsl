@@ -17,10 +17,10 @@ in vec4 tcColor[];
 in vec2 tcTexCoord[];
 in vec3 tcNormal[];
 
-out vec3 fPosition;
-out vec4 fColor;
-out vec2 fTexCoord;
-out vec3 fNormal;
+out vec3 f00Position;
+out vec4 f00Color;
+out vec2 f00TexCoord;
+out vec3 f00Normal;
 
 out vec3 upNormal;
 
@@ -350,22 +350,23 @@ void main(){
     vec3 p0 = gl_TessCoord.x * tcPosition[0];
     vec3 p1 = gl_TessCoord.y * tcPosition[1];
     vec3 p2 = gl_TessCoord.z * tcPosition[2];
-    fPosition = (p0 + p1 + p2);
-    vec4 vecfbm = dfBm(fPosition, 2, 2.2f, 2.2f);
-    fPosition.y += vecfbm.x;
-    fNormal = normalize(vecfbm.yzw);
+    f00Position = (p0 + p1 + p2);
 
+    vec3 edge01 = tcPosition[1]-tcPosition[0];
+    vec3 edge02 = tcPosition[2]-tcPosition[0];
 
+    vec4 vecfbm = dfBm(f00Position, 2, 2.2f, 2.2f);
+    f00Position.y += vecfbm.x;
 
     vec4 c0 = gl_TessCoord.x * tcColor[0];
     vec4 c1 = gl_TessCoord.y * tcColor[1];
     vec4 c2 = gl_TessCoord.z * tcColor[2];
-    fColor = (c0 + c1 + c2);
+    f00Color = (c0 + c1 + c2);
 
     vec2 t0 = gl_TessCoord.x * tcTexCoord[0];
     vec2 t1 = gl_TessCoord.y * tcTexCoord[1];
     vec2 t2 = gl_TessCoord.z * tcTexCoord[2];
-    fTexCoord = (t0 + t1 + t2);
+    f00TexCoord = (t0 + t1 + t2);
 
-    gl_Position = MVP * vec4(fPosition, 1.0);
+    gl_Position =  vec4(f00Position, 1.0);
 }

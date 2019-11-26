@@ -129,9 +129,9 @@ void createVerticesIndexes(){
 		for (GLuint j = 0; j < indexSize ; j++) {
 			indices.push_back( i*(indexSize+1) 		+ j);		// V0
 			indices.push_back( i*(indexSize+1) 		+ (j+1));	// V1
-			indices.push_back( (i+1)*(indexSize+1) 	+ j);		// V2
+			indices.push_back( (i+1)*(indexSize+1) 	+ (j+1));		// V2
 
-			indices.push_back( i*(indexSize+1) 		+ (j+1));	// V1
+			indices.push_back( i*(indexSize+1) 		+ j);	// V1
 			indices.push_back( (i+1)*(indexSize+1) 	+ (j+1));	// V3
 			indices.push_back( (i+1)*(indexSize+1) 	+ j);		// V2
 		}
@@ -163,7 +163,7 @@ void disableVertexAttribs(){
 void createProgram(){
    // programTessID = LoadShaders( "terrainVert.glsl", "terrainFrag.glsl");
     //programTessID = LoadShaders( "terrainVert.glsl", "terrainTesc.glsl", "terrainTese.glsl", "terrainFrag.glsl");
-    programTessID = LoadShaders( "terrainVert.glsl", "terrainTesc.glsl", "terrainTese.glsl", "terrainFrag.glsl");
+    programTessID = LoadShaders( "terrainVert.glsl", "terrainTesc.glsl", "terrainTese.glsl", "terrainGeo.glsl","terrainFrag.glsl");
     cout<<programTessID<<endl;
 
 //  programTessID = LoadShaders( "basinTerrain.glsl", "basicTerrainfrag.glsl");

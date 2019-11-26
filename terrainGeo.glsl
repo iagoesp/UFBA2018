@@ -3,10 +3,10 @@
 layout(triangles) in;
 layout(triangle_strip, max_vertices = 3) out;
 
-in vec4 teColor[];
-in vec2 teTexCoord[];
-in vec3 tePosition[];
-in vec3 teNormal[];
+in vec4 f00Color[];
+in vec2 f00TexCoord[];
+in vec3 f00Position[];
+in vec3 f00Normal[];
 
 uniform vec3 viewPos;
 uniform mat4 MVP;
@@ -27,18 +27,19 @@ void main( void )
     vec3 edge01 = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
     vec3 edge02 = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
 
-    vec3 Nv = normalize( cross(normalize(cross(edge01, edge02)), vec3(1,0,0)) );
+    vec3 N = normalize(cross(edge01, edge02));
 
     for( int i=0; i < gl_in.length( ); i++ )
     {
-        fColor = teColor[i];
-        fTexCoord = teTexCoord[i];
-        fPosition = tePosition[i];
+        fColor = f00Color[i];
+        fTexCoord = f00TexCoord[i];
+        fPosition = f00Position[i];
         gl_Position = MVP * gl_in[i].gl_Position;
-        fNormal = teNormal[i];
+        fNormal = N;
+        EmitVertex();
+
 
         //normalize(cross(gl_in[i+2].gl_Position.xyz - gl_in[i].gl_Position.xyz, gl_in[i+1].gl_Position.xyz - gl_in[i].gl_Position.xyz));
-        EmitVertex( );
     }
 
 //    vec2 deltaUV1 = teTexCoord[1] - teTexCoord[0];
