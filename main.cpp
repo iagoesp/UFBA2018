@@ -163,7 +163,7 @@ void disableVertexAttribs(){
 void createProgram(){
    // programTessID = LoadShaders( "terrainVert.glsl", "terrainFrag.glsl");
     //programTessID = LoadShaders( "terrainVert.glsl", "terrainTesc.glsl", "terrainTese.glsl", "terrainFrag.glsl");
-    programTessID = LoadShaders( "terrainVert.glsl", "terrainTesc.glsl", "terrainTese.glsl", "terrainGeo.glsl", "terrainFrag.glsl");
+    programTessID = LoadShaders( "terrainVert.glsl", "terrainTesc.glsl", "terrainTese.glsl", "terrainFrag.glsl");
     cout<<programTessID<<endl;
 
 //  programTessID = LoadShaders( "basinTerrain.glsl", "basicTerrainfrag.glsl");
@@ -212,7 +212,12 @@ void setUnif(){
     glm::mat4 MVP = camera.getProjectionMatrix(WIDTH, HEIGHT) * camera.getViewMatrix() * glm::mat4(1.0);
     float px = camera.Position.x; float py = camera.Position.y; float pz = camera.Position.z;
 
+    glm::mat4 V = camera.getViewMatrix() * glm::mat4(1.0);
+    glm::mat4 N = glm::transpose(glm::inverse(V));
     glUniformMatrix4fv(glGetUniformLocation(activeShader, "MVP"), 1, GL_FALSE, &MVP[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(activeShader, "V"), 1, GL_FALSE, &V[0][0]);
+    glUniformMatrix4fv(glGetUniformLocation(activeShader, "N"), 1, GL_FALSE, &N[0][0]);
+
     glUniform3f(glGetUniformLocation(activeShader, "viewPos"), camera.Position.x, camera.Position.y, camera.Position.z);
     glUniform1i(glGetUniformLocation(activeShader, "terra"), 0);
     glUniform1i(glGetUniformLocation(activeShader, "agua"),  1);

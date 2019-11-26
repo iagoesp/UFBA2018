@@ -47,7 +47,6 @@
 		<Unit filename="Util.hpp" />
 		<Unit filename="camera.h" />
 		<Unit filename="main.cpp" />
-		<Unit filename="main.hpp" />
 		<Unit filename="simplex.h" />
 		<Unit filename="terrainFrag.glsl" />
 		<Unit filename="terrainGeo.glsl" />

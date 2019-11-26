@@ -6,9 +6,12 @@ layout(triangle_strip, max_vertices = 3) out;
 in vec4 teColor[];
 in vec2 teTexCoord[];
 in vec3 tePosition[];
+in vec3 teNormal[];
 
 uniform vec3 viewPos;
-
+uniform mat4 MVP;
+uniform mat4 V;
+uniform mat4 N;
 
 out vec3 fNormal;
 out vec4 fColor;
@@ -21,17 +24,20 @@ out vec3 TangentFragPos;
 
 void main( void )
 {
-    vec3 edge2 = tePosition[2] - tePosition[0];
-    vec3 edge1 = tePosition[1] - tePosition[0];
-    vec3 N = normalize( cross(edge1, edge2 ) );
+    vec3 edge01 = gl_in[1].gl_Position.xyz - gl_in[0].gl_Position.xyz;
+    vec3 edge02 = gl_in[2].gl_Position.xyz - gl_in[0].gl_Position.xyz;
 
-    for( int i=0; i<gl_in.length( ); i++ )
+    vec3 Nv = normalize( cross(normalize(cross(edge01, edge02)), vec3(1,0,0)) );
+
+    for( int i=0; i < gl_in.length( ); i++ )
     {
         fColor = teColor[i];
         fTexCoord = teTexCoord[i];
         fPosition = tePosition[i];
-        gl_Position = gl_in[i].gl_Position;
-        fNormal = N;
+        gl_Position = MVP * gl_in[i].gl_Position;
+        fNormal = teNormal[i];
+
+        //normalize(cross(gl_in[i+2].gl_Position.xyz - gl_in[i].gl_Position.xyz, gl_in[i+1].gl_Position.xyz - gl_in[i].gl_Position.xyz));
         EmitVertex( );
     }
 

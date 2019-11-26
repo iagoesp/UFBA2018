@@ -237,9 +237,9 @@ vec4 noised( in vec3 x )
 
 void main(){
   vTexCoord    = vec2(aTexCoord.x, aTexCoord.y);
-  vPosition   = position;
-  vNoise 	  = iqfBm (vPosition.xz*16, 16, 0.5f, 1.f);
-  vPosition.y += vNoise;
+  vPosition   = position+vec3(1,1,1);
+  vNoise 	  = iqfBm (vPosition.xz, 2, 2.f, 2.f);
+  vPosition.y = vNoise;
   vec4 n = noised(vPosition);
 
   vNormal 	  = 0.5 + 0.5*n.yzw;

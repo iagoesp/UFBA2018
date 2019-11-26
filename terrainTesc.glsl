@@ -49,7 +49,7 @@ float LOD(vec3 posV, vec3 cam){
 void main(){
   float TessLevelInner = 1;
   float e0, e1, e2;
-  vec3 d1, d2, d3;
+  vec3 d0, d1, d2;
 
   e0 = e1 = e2 = 1;
    tcTexCoord[ID]  = vTexCoord[ID];
@@ -68,13 +68,13 @@ void main(){
     if(tess==1){
       TessLevelInner = LOD(bTriangulo, viewPos);
 
-      d1=v1+(v2-v1)/2;
-      d2=v0+(v2-v0)/2;
-      d3=v0+(v1-v0)/2;
+      d0=v1+(v2-v1)/2;
+      d1=v0+(v2-v0)/2;
+      d2=v0+(v1-v0)/2;
 
-      e0=LOD(d1,viewPos);
-      e1=LOD(d2,viewPos);
-      e2=LOD(d3,viewPos);
+      e0=LOD(d0,viewPos);
+      e1=LOD(d1,viewPos);
+      e2=LOD(d2,viewPos);
     }
     else if(tess == 0){
       TessLevelInner = 1;
