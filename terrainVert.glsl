@@ -70,7 +70,9 @@ float ridgedNoise(in vec3 p, int octaves, float H, float gain, float amplitude, 
 void main(){
   vTexCoord    = vec2(aTexCoord.x, aTexCoord.y);
   vPosition   = position - vec3(0,12,0);
-  for(int i = 1; i < 6; i++)
+  vNoise = 0.f;
+  int i = 1;
+  for(i; i < 6; i++)
       vNoise 	  += fbm(vPosition*i*10)*5;
     vPosition.y += vNoise;
   gl_Position =  vec4(vPosition, 1.f);
