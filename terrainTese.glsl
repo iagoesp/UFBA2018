@@ -10,6 +10,8 @@ uniform mat4 V;
 uniform mat4 MVP;
 uniform int oct;
 uniform float lac;
+uniform sampler2D texture1;
+
 //uniform bool noised;
 
 in vec3 tcPosition[];
@@ -78,7 +80,6 @@ void main(){
     vec3 edge01 = tcPosition[1]-tcPosition[0];
     vec3 edge02 = tcPosition[2]-tcPosition[0];
 
-    f00Position.y += fbm(f00Position) ;
 
     vec4 c0 = gl_TessCoord.x * tcColor[0];
     vec4 c1 = gl_TessCoord.y * tcColor[1];
@@ -89,6 +90,11 @@ void main(){
     vec2 t1 = gl_TessCoord.y * tcTexCoord[1];
     vec2 t2 = gl_TessCoord.z * tcTexCoord[2];
     f00TexCoord = (t0 + t1 + t2);
+
+    vec4 heightNormal = texture(texture1, f00TexCoord);
+
+    f00Position.y += fbm(f00Position.xyz*0.1) ;
+    //f00Position.y = heightNormal.r;
 
     gl_Position =  vec4(f00Position, 1.0);
 }

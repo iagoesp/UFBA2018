@@ -17,7 +17,7 @@
 //#include "controls.hpp"
 //#include "vectormath/vectormath.h"
 
-#define QTDTEXTURAS 5
+#define QTDTEXTURAS 7
 
 
 const char* projectTitle = "Terrain";
@@ -49,7 +49,9 @@ const char* filenames[QTDTEXTURAS] = {"container.jpg",
                                     "agua.jpg",
                                     "grama.jpg",
                                     "snow.jpg",
-                                    "mountain.jpg"};
+                                    "mountain.jpg",
+                                    "texture1.jpg",
+                                    "texture2.png"};
 
 GLuint allTextures[QTDTEXTURAS];
 float deltaTime = 0.0f;
